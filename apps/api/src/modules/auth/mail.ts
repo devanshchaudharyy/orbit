@@ -7,8 +7,8 @@ export interface AuthMailer {
   send(email: string, purpose: 'verify-email' | 'reset-password', token: string): Promise<void>;
 }
 
-export function createAuthMailer(env: Environment): AuthMailer {
-  const transport = nodemailer.createTransport({
+export function createMailTransport(env: Environment) {
+  return nodemailer.createTransport({
     host: env.SMTP_HOST,
     port: env.SMTP_PORT,
     secure: env.SMTP_SECURE,
@@ -22,12 +22,16 @@ export function createAuthMailer(env: Environment): AuthMailer {
     disableFileAccess: true,
     disableUrlAccess: true,
   });
-  const failure = () =>
-    new AuthError(
-      503,
-      'EMAIL_UNAVAILABLE',
-      'Email delivery is unavailable. Please try again shortly.',
-    );
+}
+export const emailFailure = () =>
+  new AuthError(
+    503,
+    'EMAIL_UNAVAILABLE',
+    'Email delivery is unavailable. Please try again shortly.',
+  );
+export function createAuthMailer(env: Environment): AuthMailer {
+  const transport = createMailTransport(env);
+  const failure = emailFailure;
   return {
     async available() {
       try {

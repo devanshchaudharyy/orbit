@@ -110,6 +110,8 @@ async function audit(page: Page, name: string) {
         .getByRole('button', { name: `${theme === 'dark' ? 'Dark' : 'Light'} theme`, exact: true })
         .click();
       await page.evaluate(() => document.fonts.ready);
+      await page.mouse.move(0, 0);
+      await settle(page);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
         true,
       );
@@ -135,6 +137,16 @@ async function createOrganization(page: Page, name = 'Northstar Studio') {
   await page.getByRole('button', { name: 'Create organization', exact: true }).click();
   await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
   return new URL(page.url()).pathname;
+}
+async function settle(page: Page) {
+  await page.evaluate(async () => {
+    await Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity)
+        .map((animation) => animation.finished.catch(() => {})),
+    );
+  });
 }
 async function createWorkspace(page: Page, name = 'Product studio') {
   await page.getByRole('button', { name: 'Create workspace', exact: true }).click();
@@ -270,6 +282,7 @@ test('creation dialogs validate, trap focus, restore it and support mobile navig
   await createWorkspace(page);
   await page.setViewportSize({ width: 375, height: 850 });
   await page.getByRole('button', { name: 'Open workspace navigation' }).click();
+  await settle(page);
   await expect(page.getByRole('dialog')).toBeVisible();
   expect(
     (await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze())

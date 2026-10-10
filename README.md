@@ -2,9 +2,9 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 3 adds real organization/workspace creation, explicit tenant isolation, switching, and settings to secure accounts, the marketing website, and the ORBIT Design Language lab. Marketing sample content demonstrates the intended product. Invitations and role management, projects, collaboration, AI, and billing remain in later phases.
+Phase 4 adds real email invitations, membership lifecycle, roles, explicit workspace grants, and password-protected ownership transfer to organizations/workspaces, secure accounts, the marketing website, and the ORBIT Design Language lab. Marketing sample content demonstrates the intended product. Projects, collaboration, AI, and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Current delivery covers Phases 0–3 and runs locally.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Current delivery covers Phases 0–4 and runs locally.
 
 ## Screenshots
 
@@ -40,9 +40,15 @@ Captured from the running application. Marketing product content is illustrative
 
 See [the screenshot gallery](docs/SCREENSHOTS.md) for all themes, viewport sizes, account states, and full-page marketing captures.
 
-## Verification through Phase 3
+### Teams and permissions
 
-Passed locally: **86 unit/component/API tests**, **39 real integration/transaction checks** (21 tenant + 15 account + 3 account transaction), **40 browser scenarios**, and **82 theme/viewport accessibility scans** with zero axe violations. Lint, formatting, strict TypeScript, production builds, and **7 production route/build checks** passed. Exact commands and evidence are recorded in [the Phase 3 report](docs/PHASE3_REPORT.md).
+![ORBIT team roster with explicit roles and workspace grants](docs/screenshots/team-members-dark-1440.png)
+
+![ORBIT invitation acceptance connected to the real email and API flow](docs/screenshots/invitation-accept-light-1440.png)
+
+## Verification through Phase 4
+
+Passed locally: **96 unit/component/API tests**, **64 real integration/transaction checks** (25 team + 21 tenant + 15 account + 3 account transaction), **45 browser scenarios**, and **130 theme/viewport and overlay accessibility scans** with zero axe violations. Lint, formatting, strict TypeScript, production builds, and **9 production route/build checks** passed. Exact commands and evidence are recorded in [the Phase 4 report](docs/PHASE4_REPORT.md).
 
 The isolated authentication fixture was verified with MongoDB **8.3.4** and Mailpit **1.27.10**. Docker/WSL setup, the pinned full Compose stack, Redis, Garage, and container-restart durability remain deferred. GitHub Actions is configured; its remote results are separate from these local results.
 

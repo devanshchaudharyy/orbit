@@ -36,6 +36,11 @@ function useLinkToken() {
 export function RegisterPage() {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const invited = safeReturnTo(params.get('returnTo')) === '/invitations/accept';
+  const onboardingDestination = invited
+    ? '/onboarding?returnTo=%2Finvitations%2Faccept'
+    : '/onboarding';
   const [failure, setFailure] = useState('');
   const {
     register,
@@ -46,7 +51,18 @@ export function RegisterPage() {
     defaultValues: { name: '', email: '', password: '' },
   });
   if (auth.user && !auth.isLoading)
-    return <Navigate to={auth.user.onboardingCompleted ? '/account' : '/onboarding'} replace />;
+    return (
+      <Navigate
+        to={
+          auth.user.onboardingCompleted
+            ? invited
+              ? '/invitations/accept'
+              : '/account'
+            : onboardingDestination
+        }
+        replace
+      />
+    );
   return (
     <AuthLayout
       title="Find your orbit."
@@ -54,7 +70,10 @@ export function RegisterPage() {
       description="A fresh account. A little room for your next big idea."
       footer={
         <>
-          Already have an account? <Link to="/auth/login">Sign in</Link>
+          Already have an account?{' '}
+          <Link to={invited ? '/auth/login?returnTo=%2Finvitations%2Faccept' : '/auth/login'}>
+            Sign in
+          </Link>
         </>
       }
     >
@@ -67,7 +86,7 @@ export function RegisterPage() {
           try {
             const session = await auth.request('/register', authSessionSchema, 'POST', data);
             auth.acceptSession(session);
-            navigate('/onboarding', { replace: true });
+            navigate(onboardingDestination, { replace: true });
           } catch (error) {
             setFailure(authErrorMessage(error));
           }
@@ -122,6 +141,10 @@ export function LoginPage() {
   const auth = useAuth();
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const invited = safeReturnTo(params.get('returnTo')) === '/invitations/accept';
+  const onboardingDestination = invited
+    ? '/onboarding?returnTo=%2Finvitations%2Faccept'
+    : '/onboarding';
   const [failure, setFailure] = useState('');
   const {
     register,
@@ -133,7 +156,7 @@ export function LoginPage() {
   });
   const destination = auth.user?.onboardingCompleted
     ? safeReturnTo(params.get('returnTo') ?? '/account')
-    : '/onboarding';
+    : onboardingDestination;
   if (auth.user && !auth.isLoading) return <Navigate to={destination} replace />;
   return (
     <AuthLayout
@@ -142,7 +165,10 @@ export function LoginPage() {
       description="Pick up where you left off. We saved you a spot."
       footer={
         <>
-          New to ORBIT? <Link to="/auth/register">Create an account</Link>
+          New to ORBIT?{' '}
+          <Link to={invited ? '/auth/register?returnTo=%2Finvitations%2Faccept' : '/auth/register'}>
+            Create an account
+          </Link>
         </>
       }
     >
@@ -171,7 +197,7 @@ export function LoginPage() {
             navigate(
               session.user?.onboardingCompleted
                 ? safeReturnTo(params.get('returnTo') ?? '/account')
-                : '/onboarding',
+                : onboardingDestination,
               { replace: true },
             );
           } catch (error) {

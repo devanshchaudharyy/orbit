@@ -1,0 +1,213 @@
+.team-policy {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 25px;
+  background: var(--primary-soft);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin: 0 0 38px;
+}
+.team-policy-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.team-policy > div {
+  flex: 1;
+}
+.team-policy strong {
+  font-size: 14px;
+}
+.team-policy p {
+  margin: 7px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 590px;
+}
+.team-roster {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.team-person {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding: 24px;
+  flex-wrap: wrap;
+}
+.team-person + .team-person {
+  border-top: 1px solid var(--border);
+}
+.team-person-avatar {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border-radius: 13px;
+  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 650;
+}
+.team-person-info {
+  flex: 1;
+  min-width: 140px;
+  overflow-wrap: anywhere;
+}
+.team-person-info h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+}
+.team-person-info h3 > span {
+  color: var(--muted);
+  font-weight: 400;
+}
+.team-person-info p {
+  margin: 5px 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.team-person-info > span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.team-person-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.team-invites-heading {
+  margin-top: 42px;
+}
+.team-empty {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 32px;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+}
+.team-empty > svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.team-empty h3 {
+  font-size: 14px;
+  margin: 0 0 7px;
+}
+.team-empty p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0;
+}
+.team-leave {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 28px;
+  margin-top: 50px;
+}
+.team-leave h2 {
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+.team-leave p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 520px;
+  margin: 0;
+}
+.team-dialog {
+  max-height: 90svh;
+  overflow-y: auto;
+}
+.team-dialog-mark {
+  width: 47px;
+  height: 47px;
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  background: var(--primary-soft);
+  border-radius: 13px;
+  margin-bottom: 20px;
+}
+.team-form {
+  margin-top: 24px;
+}
+.team-grants {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  margin: 0;
+  min-width: 0;
+}
+.team-grants legend {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 6px;
+}
+.team-grants p,
+.team-grants > span {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+.team-grants label {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  font-size: 13px;
+  padding: 9px 0;
+  overflow-wrap: anywhere;
+}
+.team-grants input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  flex-shrink: 0;
+}
+@media (max-width: 767px) {
+  .team-policy {
+    padding: 20px;
+    flex-wrap: wrap;
+    gap: 13px;
+  }
+  .team-policy > div {
+    min-width: 180px;
+  }
+  .team-person {
+    padding: 20px;
+    gap: 12px;
+  }
+  .team-person-actions {
+    flex-basis: 100%;
+    padding-left: 54px;
+  }
+  .team-empty {
+    padding: 24px;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .team-leave {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

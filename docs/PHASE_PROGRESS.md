@@ -1,6 +1,6 @@
 # Phase progress
 
-Current delivery: Phase 2 accounts, secure sessions, personal profiles, and onboarding. Final verification results are recorded in the Phase 2 section below. The full Docker infrastructure acceptance remains pending; earlier results are retained as historical records.
+Current delivery: Phase 4 teams, invitations, membership lifecycle, permissions, and safe ownership transfer. Final results are recorded in the Phase 4 section below. Docker infrastructure acceptance remains deferred locally; earlier sections are historical records.
 
 ## Phase 0 — foundation implemented; infrastructure verification blocked
 
@@ -131,4 +131,20 @@ The previous GitHub workflow failed at Mongo's health check. The command now rec
 
 ### Preparation for Phase 4
 
-Explicit organization/workspace authority records, unique membership indexes, owner/admin checks, transaction fences, and resource navigation are ready for invitations, membership lifecycle, role/permission management, and safe ownership transfer. Preserve server scope and grants when extending them. No Phase 4 features are introduced. Stop after Phase 3.
+Explicit organization/workspace authority records, unique membership indexes, owner/admin checks, transaction fences, and resource navigation prepared Phase 4. The user subsequently authorized it; results follow.
+
+## Phase 4 — teams, lifecycle and permissions
+
+Date: 10 October 2026 (Asia/Kolkata). [Plan](PHASE4_PLAN.md), [verification report](PHASE4_REPORT.md), and [screenshots](SCREENSHOTS.md).
+
+Implemented SMTP invitations with hashed, email-bound, seven-day single-use credentials; explicit acceptance; pending lists/revocation; roles including project manager; workspace grant replacement; member removal; leaving; and current-password ownership transfer. Owners control admins/ownership, admins control lower roles, and organization administration never bypasses workspace membership. Transaction fences coordinate races and member versions reject stale edits. Removal/leave clears all workspace grants and affected pending links.
+
+The original responsive Team & access page includes private rosters, role badges, explicit workspace checkboxes, invitation/access overlays, confirmations, unavailable/error/conflict/pending/success states, and a non-admin access explanation. New invitees can register, verify email and complete onboarding before returning to explicit acceptance. Tokens survive SPA navigation in tab memory only; refreshed scrubbed links require reopening email. Public marketing/account/resource behavior remains intact.
+
+Added the `teams` API module, contracts, invitation indexes, service/persistence separation, browser pages/hooks/styles, unit/integration/browser checks and CI coverage. Extended existing organization membership versions/roles and organization teamRevision. Updated README, architecture, database, API, design, testing, gallery and progress. No new dependency or service provisioning. Projects/tasks, realtime, AI, billing and deployment remain future work.
+
+Final executed results and evidence are in the Phase 4 report. Docker/WSL and local full-stack restart acceptance remain deferred at the user's request. The isolated MongoDB/Mailpit fixture verifies actual account/team persistence and email flows; it does not verify local Redis or Garage. The previous remote workflow reached production verification and failed its preview-start detection, which now uses safe port reservation and HTTP readiness instead of colored Vite output. New remote workflow status is recorded independently.
+
+### Preparation for Phase 5
+
+Verified tenant parents, current membership, explicit workspace grants, hierarchy rules, optimistic versions and write fences are ready for project/task/subtask/assignment/filter/label/activity work. Define project privileges and guest grants against these boundaries before adding endpoints. Phase 5 is not implemented. Stop after Phase 4.

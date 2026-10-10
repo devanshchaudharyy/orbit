@@ -102,9 +102,10 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
   const queryClient = useQueryClient();
-  const active = /^\/(?:auth(?:\/|$)|account(?:\/|$)|onboarding(?:\/|$)|app(?:\/|$))/.test(
-    location.pathname,
-  );
+  const active =
+    /^\/(?:auth(?:\/|$)|invitations(?:\/|$)|account(?:\/|$)|onboarding(?:\/|$)|app(?:\/|$))/.test(
+      location.pathname,
+    );
   const query = useQuery({
     queryKey: sessionKey,
     queryFn: () => authRequest('/session', authSessionSchema),
@@ -209,10 +210,10 @@ export function authErrorMessage(error: unknown): string {
 }
 
 export function safeReturnTo(value: string | null): string {
-  if (value === '/account' || value === '/app') return value;
+  if (value === '/account' || value === '/app' || value === '/invitations/accept') return value;
   if (
     value &&
-    /^\/app\/organizations\/[a-f0-9]{24}(?:\/settings|\/workspaces\/[a-f0-9]{24}(?:\/settings)?)?$/.test(
+    /^\/app\/organizations\/[a-f0-9]{24}(?:\/(?:settings|team)|\/workspaces\/[a-f0-9]{24}(?:\/settings)?)?$/.test(
       value,
     )
   )

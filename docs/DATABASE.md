@@ -42,14 +42,26 @@ Membership-driven lists sort by resource ObjectId, exclude foreign/mismatched pa
 
 Tests create unique synthetic records only in the guarded loopback `orbit_test_phase2`/`orbit_test_auth` databases and remove their own IDs. No tenant data is seeded for a real account. Fresh-connection persistence is verified; container-restart durability is still deferred.
 
-## Remaining planned relationships — not implemented
+## Phase 4 implemented membership lifecycle
+
+`organization_memberships` adds `project-manager` to its role enum and an integer `version` (default 1). Legacy records without it are read as version 1 and receive a stored version on their next role/grant edit. `accessRevision` remains the transaction authority fence. `organizations.teamRevision` defaults to zero and advances for every team mutation. Existing unique tenant membership indexes remain authoritative.
+
+`team_invitations` stores organizationId, inviterId, normalized recipient email, assignable role, explicit workspace ObjectIds, SHA-256 token hash, createdAt, expiresAt and pending/accepted/revoked/expired state. Indexes: unique tokenHash; unique organizationId + email only for pending invitations; organizationId + ObjectId pagination; expiresAt TTL. The application checks seven-day expiry before acceptance/listing without depending on delayed TTL deletion. Tokens are random 256-bit secrets; plaintext is never stored. Expired pending invitations are marked expired before replacement. Consumed/revoked metadata expires at the original link deadline; this is not a permanent audit log.
+
+Transactions cover invitation creation and synchronous delivery failure rollback; acceptance plus organization membership and chosen workspace grants; role/grant replacement; removal/leave plus all grants and pending-link invalidation; ownership transfer plus both membership roles, organization ownerId/version, issuer-link revocation and credential fence. A teamRevision write and current membership writes coordinate concurrent acceptance/revocation/removal/transfer. Optimistic membership versions reject competing edits. Existing resource-setting writes share membership fences.
+
+Ownership is represented consistently by one owner membership and organization.ownerId. There is no direct owner-role assignment, owner deletion or owner leave. Transfer requires an existing verified/onboarded member and current password. Workspace grants remain unchanged on transfer. The API owns these invariants; database clients outside the service must not bypass them.
+
+The repository reuses existing tenant models and auth user records; it exposes only explicit DTOs. No business records, projects, tasks, notifications, permanent audit log, or deletion/archive lifecycle are added.
+
+## Remaining planned relationships — not implemented (continued)
 
 | Collection family                     | Relationships and anticipated indexes                                                                               |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Users, Sessions                       | Implemented identity collections above; future tenant relationships extend them without accepting client membership |
 | Organizations, Workspaces             | Core Phase 3 records above; future billing, lifecycle, archive/deletion policies                                    |
 | Memberships                           | Explicit Phase 3 authority records above; lifecycle and role management extend them in Phase 4                      |
-| Invitations                           | Scoped recipient, inviter, expiry, and one-time hashed token; expiry TTL; explicit acceptance/revocation state      |
+| Invitations                           | Phase 4 implementation above; future delivery outbox and audit retention policy                                     |
 | Projects, Tasks                       | Organization/workspace/project parents; compound tenant + status/due-date indexes; bounded cursor pagination        |
 | Comments, Events, Milestones, Sprints | Verified project/task parents; tenant + parent + creation-time indexes                                              |
 | Notifications                         | Tenant and recipient ownership; recipient/read-state/time index                                                     |

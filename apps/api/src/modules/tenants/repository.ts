@@ -57,7 +57,7 @@ const workspaceDto = (ws: StoredWorkspace, member: OrganizationMembership): Work
 export class MongoTenantRepository {
   readonly models;
   private indexes: Promise<void> | undefined;
-  constructor(private readonly connection: Connection) {
+  constructor(readonly connection: Connection) {
     this.models = createTenantModels(connection);
   }
   async ready() {
@@ -73,7 +73,7 @@ export class MongoTenantRepository {
   // On mutations, write the authority record within the transaction. A future
   // membership revocation/role edit conflicts with this fence rather than
   // letting a stale authorization snapshot commit an update.
-  private async organizationAccess(
+  async organizationAccess(
     userId: string,
     organizationId: string,
     session?: ClientSession,

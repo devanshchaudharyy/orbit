@@ -10,6 +10,7 @@ import {
   Menu,
   ArrowUpRight,
   LockKeyhole,
+  UsersRound,
 } from 'lucide-react';
 import {
   Button,
@@ -116,6 +117,12 @@ export function TenantShell({
         </Link>
       ) : null}
       <nav aria-label="Organization navigation" className="tenant-navigation">
+        {organization ? (
+          <NavLink to={`${orgPath(organization.id)}/team`} onClick={() => setMobileOpen(false)}>
+            <UsersRound size={17} />
+            Team & access
+          </NavLink>
+        ) : null}
         <NavLink
           to={organization ? orgPath(organization.id) : '/app'}
           end

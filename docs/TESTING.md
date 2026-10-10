@@ -98,7 +98,26 @@ The browser suite signs synthetic users into the running API, creates organizati
 
 For manual review, register at `http://127.0.0.1:5174/auth/register`, verify through Mailpit, finish onboarding, and follow **Open my organizations** from `/account`. Create an organization and multiple workspaces, switch scopes, edit both settings screens, and refresh. Open two settings tabs to verify stale-version feedback. Use another account against copied resource URLs and confirm no private content or edit controls appear.
 
-## Full service acceptance
+## Phase 4 team verification
+
+Start/check the isolated fixture, then run checks sequentially so synthetic account cleanup and contract-build HMR cannot interrupt another browser suite:
+
+```powershell
+pnpm auth:fixture status
+# If not running: pnpm auth:fixture start
+pnpm test:teams:integration
+pnpm test:teams:e2e
+```
+
+The integration driver uses real MongoDB transactions and Supertest, with a controlled invitation mail adapter for failure/retry cases. Browser tests use actual SMTP capture and persisted records: invite an existing or new recipient, explicitly accept, register/verify/onboard, change roles/grants in competing tabs, remove/reinvite, transfer with password, leave, revoke, and recover from service errors. Only unique test users/tenant IDs/mail IDs are cleaned up. Both themes at three widths include page and overlay axe audits and focus trapping/restoration.
+
+`pnpm test:auth:compose` includes team integration/browser suites after the prior phases. Default Playwright excludes auth/tenant/team suites; their separate configs target the isolated API fixture. Production checks claim port 4173 safely and test HTTP readiness without depending on Vite's colored terminal output. Direct team routes require sign-in; incomplete invitation links stay safe after refresh.
+
+For manual review: finish account verification/profile, create an organization/workspace from `/app`, open **Team & access**, invite another email, find its message in Mailpit, and open/accept with that verified account. Edit explicit workspace grants, try a stale edit in two tabs, transfer ownership with the current password, then leave from the former-owner account. A browser refresh of a scrubbed invitation URL requires reopening the email; secrets are deliberately not persisted in browser storage.
+
+Docker/WSL remain deferred locally. Exact recovery: `pnpm setup`, `pnpm infra:up`, `pnpm infra:check`, `pnpm test:auth:compose`, then the container-restart sentinel check below. Resolve occupied ports first; never stop unrelated services or remove volumes to make verification pass.
+
+## Full service acceptance (all infrastructure)
 
 `pnpm test:integration` / `pnpm infra:check` fail nonzero if any service check fails. Checks execute concurrently and use bounded network operations. They restrict themselves to loopback endpoints and an explicitly named `orbit_test` database:
 

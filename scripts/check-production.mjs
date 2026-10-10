@@ -5,41 +5,51 @@ import { resolve, dirname } from 'node:path';
 import { readFile, readdir } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { chromium } from '@playwright/test';
+import { createServer } from 'node:net';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const require = createRequire(import.meta.url);
 const vite = resolve(dirname(require.resolve('vite/package.json')), 'bin/vite.js');
+await new Promise((done, fail) => {
+  const probe = createServer();
+  probe.once('error', () =>
+    fail(
+      new Error(
+        'Production verification port 4173 is occupied. Existing processes were left untouched.',
+      ),
+    ),
+  );
+  probe.listen(4173, '127.0.0.1', () => probe.close(done));
+});
 const server = spawn(
   process.execPath,
   [vite, 'preview', '--host', '127.0.0.1', '--port', '4173', '--strictPort'],
   { cwd: resolve(root, 'apps/web'), stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true },
 );
-let announced = false;
 let startupError;
-server.stdout.on('data', (data) => {
-  if (data.toString().includes('http://127.0.0.1:4173')) announced = true;
-});
+server.stdout.resume();
+server.stderr.resume();
 server.on('error', (error) => {
   startupError = error;
 });
 let browser;
 try {
   let ready = false;
-  for (let attempt = 0; attempt < 40; attempt++) {
+  for (let attempt = 0; attempt < 80; attempt++) {
     if (startupError || server.exitCode !== null)
       throw new Error(
         'The owned production preview failed to start. Check that port 4173 is available.',
       );
     try {
       const response = await fetch('http://127.0.0.1:4173', { signal: AbortSignal.timeout(500) });
-      if (announced && response.ok) {
+      if (response.ok) {
         ready = true;
         break;
       }
     } catch {
       /* Await local startup. */
     }
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 250));
   }
   assert.ok(ready, 'Production preview must start');
   browser = await chromium.launch();
@@ -79,6 +89,7 @@ try {
   );
   for (const path of [
     '/app',
+    `/app/organizations/${'a'.repeat(24)}/team`,
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/settings`,
   ]) {
     await page.goto(`http://127.0.0.1:4173${path}`);
@@ -86,6 +97,15 @@ try {
     assert.equal(new URL(page.url()).searchParams.get('returnTo'), path);
     console.log(`PASS production protected direct route ${path} requires sign-in`);
   }
+  await page.goto('http://127.0.0.1:4173/invitations/accept');
+  await page.getByRole('alert').filter({ hasText: 'Reopen the invitation link' }).waitFor();
+  await page.reload();
+  await page.getByRole('alert').filter({ hasText: 'Reopen the invitation link' }).waitFor();
+  assert.equal(
+    await page.getByRole('button', { name: 'Accept invitation', exact: true }).count(),
+    0,
+  );
+  console.log('PASS production invitation direct-route refresh handles missing credentials safely');
   const files = await readdir(resolve(root, 'apps/web/dist/assets'));
   for (const file of files.filter((file) => file.endsWith('.js'))) {
     assert.ok(

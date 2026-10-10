@@ -7,10 +7,11 @@ export interface StoredOrganization {
   name: string;
   description: string;
   version: number;
+  teamRevision: number;
   createdAt: Date;
   updatedAt: Date;
 }
-export interface StoredWorkspace extends Omit<StoredOrganization, 'ownerId'> {
+export interface StoredWorkspace extends Omit<StoredOrganization, 'ownerId' | 'teamRevision'> {
   organizationId: Types.ObjectId;
   timezone: string;
 }
@@ -20,6 +21,7 @@ export interface OrganizationMembership {
   userId: Types.ObjectId;
   role: OrganizationRole;
   accessRevision: number;
+  version: number;
 }
 export interface WorkspaceMembership {
   _id: Types.ObjectId;
@@ -35,7 +37,11 @@ export function createTenantModels(connection: Connection) {
     version: { type: Number, default: 1 },
   };
   const org = new Schema<StoredOrganization>(
-    { ...fields, ownerId: { type: Schema.Types.ObjectId, required: true } },
+    {
+      ...fields,
+      teamRevision: { type: Number, default: 0 },
+      ownerId: { type: Schema.Types.ObjectId, required: true },
+    },
     { collection: 'organizations', timestamps: true, autoIndex: false, bufferCommands: false },
   );
   const workspace = new Schema<StoredWorkspace>(
@@ -51,8 +57,13 @@ export function createTenantModels(connection: Connection) {
     {
       organizationId: { type: Schema.Types.ObjectId, required: true },
       userId: { type: Schema.Types.ObjectId, required: true },
-      role: { type: String, enum: ['owner', 'admin', 'member', 'guest'], required: true },
+      role: {
+        type: String,
+        enum: ['owner', 'admin', 'project-manager', 'member', 'guest'],
+        required: true,
+      },
       accessRevision: { type: Number, default: 0 },
+      version: { type: Number, default: 1 },
     },
     { collection: 'organization_memberships', autoIndex: false, bufferCommands: false },
   );

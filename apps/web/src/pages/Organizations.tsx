@@ -173,7 +173,7 @@ export function OrganizationOverview() {
               <p>
                 {manage
                   ? 'Create your first workspace. Give each initiative its own name, focus, and time zone.'
-                  : 'You have no workspace access here yet. An owner or admin will need to grant membership when team invitations are available.'}
+                  : 'You have no workspace access here yet. Ask an owner or admin to grant access from Team & access.'}
               </p>
               {manage ? (
                 <span className="tenant-empty-tip">

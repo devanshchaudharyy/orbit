@@ -19,7 +19,13 @@ export const workspaceUpdateSchema = workspaceInputSchema
   .extend({ version: z.int().min(1) })
   .strict();
 export const tenantListInputSchema = z.object({ cursor: resourceIdSchema.optional() }).strict();
-export const organizationRoleSchema = z.enum(['owner', 'admin', 'member', 'guest']);
+export const organizationRoleSchema = z.enum([
+  'owner',
+  'admin',
+  'project-manager',
+  'member',
+  'guest',
+]);
 export const organizationSchema = z.object({
   id: resourceIdSchema,
   name: z.string(),

@@ -59,4 +59,14 @@ The application area extends ORBIT's semantic tokens with a restrained charcoal 
 
 Creation uses accessible Radix dialogs with validation, contained/restored focus, pending submissions, and server errors. Settings use a stable form version, explicit conflict reload, and success feedback. Mobile replaces the sidebar with a focus-managed drawer. Theme controls, skip links, page-title/main focus, reduced motion, and responsive typography remain shared with prior pages.
 
-Real captures and axe/layout checks cover the empty and populated organization entry, organization overview, workspace overview, organization settings, and workspace settings in both themes at 375/768/1440px. Invitations/projects/tasks appear only as future explanatory text; navigation exposes implemented operations.
+Real captures and axe/layout checks cover the empty and populated organization entry, organization overview, workspace overview, organization settings, and workspace settings in both themes at 375/768/1440px. Phase 4 adds team navigation below; projects/tasks remain planned.
+
+## Phase 4 team experience
+
+Team & access uses the same semantic surfaces, violet invitation accents, quiet role badges and original initials. The roster and pending invitations show actual server records; empty invitations explain the next useful action. Members see their role and access boundaries without the administrator roster. Workspace checkboxes make grants explicit; organization roles never visually promise access to all spaces.
+
+An invitation dialog and access sheet use Radix focus trapping, Escape, and explicit focus restoration to their initiating controls; after removal the roster heading receives focus. Confirmation dialogs explain removal, revocation, leaving and ownership transfer. Transfer requires a current password with the shared accessible visibility control. Pending submissions disable actions; success/error/conflict reload states come from real API outcomes.
+
+The acceptance page reuses the account layout and handles anonymous, unverified, incomplete-profile, ready, malformed, wrong-recipient and unavailable invitation states. Sign-in/registration/profile completion preserve the invitation's tab-memory credential; refresh asks the user to reopen their email. Forms use strict shared Zod schemas; new team forms keep controlled local values while TanStack Query owns remote records.
+
+Both themes are captured at 375/768/1440px for six page states and two overlay families. Keyboard trapping/restoration, reduced-motion preference, horizontal overflow, console/runtime state, and WCAG A/AA axe checks accompany browser → API → MongoDB → SMTP verification. Theme-transition animations settle before contrast measurements.

@@ -32,6 +32,8 @@ const VerifyEmailPage = lazy(() =>
 );
 const Onboarding = lazy(() => import('./pages/Onboarding'));
 const Account = lazy(() => import('./pages/Account'));
+const TeamPage = lazy(() => import('./pages/Team'));
+const InvitationPage = lazy(() => import('./pages/Invitation'));
 const Organizations = lazy(() => import('./pages/Organizations'));
 const OrganizationOverview = lazy(() =>
   import('./pages/Organizations').then((module) => ({ default: module.OrganizationOverview })),
@@ -80,6 +82,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/auth/verify-email" element={<VerifyEmailPage />} />
+                    <Route path="/invitations/accept" element={<InvitationPage />} />
+                    <Route
+                      path="/app/organizations/:organizationId/team"
+                      element={
+                        <AuthGate requireOnboarding>
+                          <TeamPage />
+                        </AuthGate>
+                      }
+                    />
                     <Route
                       path="/app"
                       element={

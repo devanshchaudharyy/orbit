@@ -9,12 +9,15 @@ import { authRoutes } from './modules/auth/routes.js';
 import type { AuthService } from './modules/auth/service.js';
 import { tenantRoutes } from './modules/tenants/routes.js';
 import type { TenantService } from './modules/tenants/service.js';
+import type { TeamService } from './modules/teams/service.js';
+import { teamRoutes } from './modules/teams/routes.js';
 
 export function createApp(
   dependencies: Dependencies,
   logger: Logger,
   auth?: AuthService,
   tenants?: TenantService,
+  teams?: TeamService,
 ) {
   const app = express();
   app.disable('x-powered-by');
@@ -40,6 +43,7 @@ export function createApp(
   app.use(express.json({ limit: '64kb' }));
   app.use('/api/v1/health', healthRoutes(dependencies));
   if (auth) app.use('/api/v1/auth', authRoutes(auth));
+  if (auth && tenants && teams) app.use('/api/v1/organizations', teamRoutes(auth, tenants, teams));
   if (auth && tenants) app.use('/api/v1/organizations', tenantRoutes(auth, tenants));
   app.use((_req, res) =>
     res.status(404).json({

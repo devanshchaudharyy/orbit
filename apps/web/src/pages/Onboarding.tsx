@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -7,7 +7,7 @@ import { UserRound, UsersRound, BriefcaseBusiness, Mail, LoaderCircle } from 'lu
 import { Button, Input } from '@orbit/ui';
 import { messageSchema, onboardingSchema, userSchema } from '@orbit/contracts';
 import { AuthLayout, FormField, StatusNotice, SubmitButton } from '../components/AuthLayout';
-import { authErrorMessage, useAuth } from '../lib/auth';
+import { authErrorMessage, useAuth, safeReturnTo } from '../lib/auth';
 
 export function timezoneOptions(current: string): string[] {
   return [...new Set([current, 'UTC', ...Intl.supportedValuesOf('timeZone')])];
@@ -78,6 +78,11 @@ export function VerificationBanner() {
 export default function Onboarding() {
   const auth = useAuth();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const destination =
+    safeReturnTo(params.get('returnTo')) === '/invitations/accept'
+      ? '/invitations/accept'
+      : '/account';
   const user = auth.user!;
   const [failure, setFailure] = useState('');
   const {
@@ -93,7 +98,7 @@ export default function Onboarding() {
       useCase: user.useCase ?? 'personal',
     },
   });
-  if (user.onboardingCompleted) return <Navigate to="/account" replace />;
+  if (user.onboardingCompleted) return <Navigate to={destination} replace />;
   return (
     <AuthLayout
       title="Make yourself at home."
@@ -126,7 +131,7 @@ export default function Onboarding() {
           try {
             const updated = await auth.request('/onboarding', userSchema, 'POST', data);
             auth.updateUser(updated);
-            navigate('/account', { replace: true });
+            navigate(destination, { replace: true });
           } catch (error) {
             setFailure(authErrorMessage(error));
           }

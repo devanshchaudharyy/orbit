@@ -101,8 +101,8 @@ export default function WorkspacePage() {
             <div>
               <strong>The foundation is in place.</strong>
               <p>
-                Team invitations come next. Projects and tasks will arrive in a later phase; this
-                workspace contains no demonstration records.
+                Invite teammates from Team & access. Projects and tasks are coming; this workspace
+                contains no demonstration records.
               </p>
             </div>
           </div>
@@ -191,7 +191,8 @@ export function TenantSettings({ workspace: workspaceSettings = false }: { works
             />
           </section>
           <p className="tenant-settings-caption">
-            Membership, invitations, and ownership transfer will be managed in the next phase.
+            Manage membership, invitations, and ownership transfer from{' '}
+            <Link to={`${orgPath(organizationId!)}/team`}>Team & access</Link>.
           </p>
         </>
       ) : null}

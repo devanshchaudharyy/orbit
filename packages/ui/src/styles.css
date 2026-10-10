@@ -137,6 +137,10 @@ a {
   color: var(--primary-foreground);
   background: var(--primary);
   box-shadow: 0 2px 10px #8671f51a;
+  /* Theme foreground/background must change together to preserve contrast. */
+  transition:
+    transform var(--motion-fast),
+    border-color var(--motion-fast);
 }
 .button-primary:hover {
   background: color-mix(in srgb, var(--primary) 88%, var(--foreground));

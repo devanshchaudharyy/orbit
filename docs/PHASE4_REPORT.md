@@ -54,7 +54,15 @@ An invitation fragment opened on the already-mounted acceptance route initially 
 
 The previous [Phase 3 GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38066306026) completed with failure at production-preview startup detection. The checker had depended on an exact URL substring in Vite's colored output. It now safely reserves its port, drains output, and verifies HTTP readiness. The corrected production check passed locally with CI-style color settings. New remote workflow results are independent of the local results above.
 
-## Screenshots and review
+## GitHub publication and remote verification
+
+Implementation commit: `674006f54b8e85417211f03c9f7a278658482bbe`, pushed to private [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit). GitHub's `main` SHA matched the local commit. The staged audit checked **281 tracked files**, **129 screenshots**, five generated development secrets and local links with zero issues. Local configuration, fixture databases/executables and test reports remain ignored.
+
+[Initial Phase 4 workflow run](https://github.com/devanshchaudharyy/orbit/actions/runs/38069410641) independently passed frozen installation, formatting, lint, typechecks, unit tests, builds, Compose startup, the four full infrastructure checks and production verification. It failed two mobile lab axe checks because the setup code block could scroll horizontally on Linux but had no keyboard focus target. The setup and health-response blocks now have labeled, focusable regions; mobile tests verify focus and keyboard scrolling when overflow exists. The initial overall run failed and skipped the Compose account/team suite; it is not counted as passing CI. A corrective run follows. The local verification table above stands independently.
+
+Remote infrastructure checks use the pinned MongoDB8.0.17/Redis/Garage/Mailpit Compose environment and exercise transactions, reconnect persistence, private objects and captured email. They do not prove restart-sentinel durability on the user's Windows machine or a production deployment.
+
+## Screenshots and review (local evidence)
 
 Retained **48 new Phase 4 captures** in [the gallery](SCREENSHOTS.md): empty team, pending invitation, populated team, member permissions, anonymous invitation/sign-in, ready acceptance, invitation dialog and access sheet; each in both themes at three widths. Existing account and tenant captures are refreshed from regression runs. Dark desktop, light mobile and the access sheet were visually inspected for hierarchy, readable text, wrapping and controls.
 

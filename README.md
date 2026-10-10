@@ -50,7 +50,7 @@ See [the screenshot gallery](docs/SCREENSHOTS.md) for all themes, viewport sizes
 
 Passed locally: **96 unit/component/API tests**, **64 real integration/transaction checks** (25 team + 21 tenant + 15 account + 3 account transaction), **45 browser scenarios**, and **130 theme/viewport and overlay accessibility scans** with zero axe violations. Lint, formatting, strict TypeScript, production builds, and **9 production route/build checks** passed. Exact commands and evidence are recorded in [the Phase 4 report](docs/PHASE4_REPORT.md).
 
-The isolated authentication fixture was verified with MongoDB **8.3.4** and Mailpit **1.27.10**. Docker/WSL setup, the pinned full Compose stack, Redis, Garage, and container-restart durability remain deferred. GitHub Actions is configured; its remote results are separate from these local results.
+The isolated authentication fixture was verified with MongoDB **8.3.4** and Mailpit **1.27.10**. Local Docker/WSL setup and container-restart durability remain deferred. GitHub verifies the pinned Compose stack separately; remote results are recorded independently in the phase report.
 
 ## Start locally
 

@@ -115,7 +115,7 @@ export function SystemStatus() {
           <span>LOCAL SETUP</span>
           <Badge>Run in the repository root</Badge>
         </div>
-        <pre>
+        <pre tabIndex={0} role="region" aria-label="Local infrastructure setup commands">
           <code>
             <span className="terminal-comment">
               # Generate secrets, start services, verify infrastructure
@@ -125,7 +125,7 @@ export function SystemStatus() {
         </pre>
       </Card>
       <Accordion title="Inspect the health response">
-        <pre className="response-json">
+        <pre className="response-json" tabIndex={0} role="region" aria-label="Live health response">
           {JSON.stringify(
             {
               liveness: live.data ?? { error: live.error?.message ?? 'Checking' },

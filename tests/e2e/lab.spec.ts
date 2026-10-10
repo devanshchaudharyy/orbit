@@ -35,6 +35,17 @@ for (const theme of ['dark', 'light'] as const) {
       await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
       await expect(page.getByText('API online', { exact: true })).toBeVisible();
       await page.mouse.move(0, 0);
+      if (width === 375) {
+        const commands = page.getByRole('region', { name: 'Local infrastructure setup commands' });
+        await commands.focus();
+        await expect(commands).toBeFocused();
+        if (await commands.evaluate((element) => element.scrollWidth > element.clientWidth)) {
+          await commands.press('ArrowRight');
+          await expect
+            .poll(() => commands.evaluate((element) => element.scrollLeft))
+            .toBeGreaterThan(0);
+        }
+      }
       await page.evaluate(async () => {
         await Promise.all(
           document

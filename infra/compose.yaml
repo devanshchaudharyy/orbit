@@ -1,0 +1,104 @@
+name: orbit-local
+services:
+  mongo-key:
+    image: busybox:1.37.0
+    environment:
+      MONGO_REPLICA_KEY: ${MONGO_REPLICA_KEY:?Run pnpm setup}
+    volumes:
+      - mongo-key:/key
+    command:
+      [
+        'sh',
+        '-c',
+        'printf "%s" "$$MONGO_REPLICA_KEY" > /key/keyfile && chmod 400 /key/keyfile && chown 999:999 /key/keyfile',
+      ]
+    restart: 'no'
+  mongo:
+    image: mongo:8.0.17
+    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--keyFile', '/run/mongo-key/keyfile']
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:?Run pnpm setup}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?Run pnpm setup}
+    ports: ['127.0.0.1:27017:27017']
+    volumes:
+      - mongo-data:/data/db
+      - mongo-key:/run/mongo-key:ro
+    depends_on:
+      mongo-key:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'mongosh --quiet --username "$$MONGO_INITDB_ROOT_USERNAME" --password "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval ''const result=db.adminCommand({getCmdLineOpts:1}); quit(result.ok && result.parsed.replication?.replSetName === "rs0" ? 0 : 1)''',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+  mongo-init:
+    image: mongo:8.0.17
+    environment:
+      MONGO_USER: ${MONGO_USER}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - ./mongo-init.js:/init.js:ro
+    entrypoint:
+      [
+        'sh',
+        '-c',
+        'mongosh "mongodb://$$MONGO_USER:$$MONGO_PASSWORD@mongo:27017/admin?directConnection=true" --quiet /init.js',
+      ]
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: 'no'
+  redis:
+    image: redis:8.2.2-alpine
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Run pnpm setup}
+    command: ['sh', '-c', 'exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"']
+    ports: ['127.0.0.1:6379:6379']
+    volumes: ['redis-data:/data']
+    healthcheck:
+      test: ['CMD-SHELL', 'REDISCLI_AUTH="$$REDIS_PASSWORD" redis-cli ping | grep -q PONG']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+  garage:
+    image: dxflrs/garage:v2.4.1
+    command: ['/garage', 'server', '--single-node', '--default-bucket']
+    environment:
+      GARAGE_DEFAULT_ACCESS_KEY: ${S3_ACCESS_KEY:?Run pnpm setup}
+      GARAGE_DEFAULT_SECRET_KEY: ${S3_SECRET_KEY:?Run pnpm setup}
+      GARAGE_DEFAULT_BUCKET: ${S3_BUCKET:?Run pnpm setup}
+    ports: ['127.0.0.1:3900:3900']
+    volumes:
+      - ./.local/garage.toml:/etc/garage.toml:ro
+      - garage-data:/var/lib/garage
+    healthcheck:
+      test: ['CMD', '/garage', 'status']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+  mailpit:
+    image: axllent/mailpit:v1.27.10
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_MAX_MESSAGES: '100'
+    ports: ['127.0.0.1:1025:1025', '127.0.0.1:8025:8025']
+    volumes: ['mailpit-data:/data']
+    healthcheck:
+      test: ['CMD', '/mailpit', 'readyz']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+volumes:
+  mongo-key:
+  mongo-data:
+  redis-data:
+  garage-data:
+  mailpit-data:

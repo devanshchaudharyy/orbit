@@ -1,0 +1,68 @@
+{
+  "runId": "362df17a-c803-4e6e-9b65-50ccb0ee8a63",
+  "source": "real loopback MongoDB and Mailpit",
+  "origin": "http://127.0.0.1:5174",
+  "api": "http://127.0.0.1:4001",
+  "checks": [
+    {
+      "name": "Anonymous session persists an opaque HttpOnly SameSite cookie",
+      "passed": true
+    },
+    {
+      "name": "CSRF token and exact allowed Origin are mandatory",
+      "passed": true
+    },
+    {
+      "name": "Registration rotates the anonymous session and durably hashes the password",
+      "passed": true
+    },
+    {
+      "name": "Unverified users cannot complete onboarding",
+      "passed": true
+    },
+    {
+      "name": "Malformed and expired verification links are rejected before TTL cleanup",
+      "passed": true
+    },
+    {
+      "name": "Email verification consumes a hashed token exactly once",
+      "passed": true
+    },
+    {
+      "name": "Verified onboarding and profile updates survive a fresh connection",
+      "passed": true
+    },
+    {
+      "name": "A signed-in user cannot revoke another account’s session or overwrite its profile",
+      "passed": true
+    },
+    {
+      "name": "Independent browser sessions are visible and individual revocation works",
+      "passed": true
+    },
+    {
+      "name": "Changing a password requires the current password and invalidates all older sessions",
+      "passed": true
+    },
+    {
+      "name": "Password recovery is enumeration-safe and delivers a private hashed link",
+      "passed": true
+    },
+    {
+      "name": "Password reset cannot be replayed and revokes every authenticated session",
+      "passed": true
+    },
+    {
+      "name": "Logout everywhere invalidates concurrent browser sessions",
+      "passed": true
+    },
+    {
+      "name": "Expired persistent sessions are rejected before TTL cleanup",
+      "passed": true
+    },
+    {
+      "name": "Invalid logins are bounded by persistent rate limiting",
+      "passed": true
+    }
+  ]
+}

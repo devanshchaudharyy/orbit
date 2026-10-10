@@ -1,0 +1,44 @@
+name: ORBIT verification
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.18.0
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm setup
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm infra:up
+      - run: pnpm test:integration
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: node scripts/check-production.mjs
+      - run: pnpm test:e2e
+      - run: pnpm test:auth:compose
+      - name: Preserve browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-verification
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+      - name: Stop local services
+        if: always()
+        run: pnpm infra:down

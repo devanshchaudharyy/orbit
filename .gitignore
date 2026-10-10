@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.local
+infra/.local/
+.local/
+.env.auth-test.local
+coverage/
+test-results/
+playwright-report/
+*.log
+.DS_Store

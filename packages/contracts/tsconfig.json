@@ -1,0 +1,5 @@
+{
+  "extends": "@orbit/config/tsconfig",
+  "compilerOptions": { "outDir": "dist", "rootDir": "src", "declaration": true },
+  "include": ["src"]
+}

@@ -1,6 +1,6 @@
 # ORBIT screenshot gallery
 
-All captures come from the running local application through Phase 2. Marketing and lab content is explicitly illustrative. Account captures use synthetic verification users and real local API/MongoDB/Mailpit workflows. These images contain no production credentials or business records.
+All captures come from the running local application through Phase 3. Marketing and lab content is explicitly illustrative. Account and workspace captures use synthetic verification users and real local API/MongoDB/Mailpit workflows. These images contain no production credentials or business records.
 
 Each theme was verified at 375px, 768px, and 1440px. The full set remains versioned under `docs/screenshots/`; the README shows selected views.
 
@@ -50,4 +50,27 @@ Each theme was verified at 375px, 768px, and 1440px. The full set remains versio
 - [Password/security tab, light desktop](screenshots/account-security-light-1440.png).
 - [Session management, light desktop](screenshots/account-sessions-light-1440.png).
 
-See [phase progress](PHASE_PROGRESS.md) and [the Phase 2 verification report](PHASE2_REPORT.md) for executed results and deferred Docker acceptance.
+## Organizations and workspaces — Phase 3
+
+| Screen / viewport              | Dark                                                          | Light                                                          |
+| ------------------------------ | ------------------------------------------------------------- | -------------------------------------------------------------- |
+| Empty organizations / 375px    | [Screenshot](screenshots/organizations-empty-dark-375.png)    | [Screenshot](screenshots/organizations-empty-light-375.png)    |
+| Empty organizations / 768px    | [Screenshot](screenshots/organizations-empty-dark-768.png)    | [Screenshot](screenshots/organizations-empty-light-768.png)    |
+| Empty organizations / 1440px   | [Screenshot](screenshots/organizations-empty-dark-1440.png)   | [Screenshot](screenshots/organizations-empty-light-1440.png)   |
+| Organizations / 375px          | [Screenshot](screenshots/organizations-dark-375.png)          | [Screenshot](screenshots/organizations-light-375.png)          |
+| Organizations / 768px          | [Screenshot](screenshots/organizations-dark-768.png)          | [Screenshot](screenshots/organizations-light-768.png)          |
+| Organizations / 1440px         | [Screenshot](screenshots/organizations-dark-1440.png)         | [Screenshot](screenshots/organizations-light-1440.png)         |
+| Organization overview / 375px  | [Screenshot](screenshots/organization-dark-375.png)           | [Screenshot](screenshots/organization-light-375.png)           |
+| Organization overview / 768px  | [Screenshot](screenshots/organization-dark-768.png)           | [Screenshot](screenshots/organization-light-768.png)           |
+| Organization overview / 1440px | [Screenshot](screenshots/organization-dark-1440.png)          | [Screenshot](screenshots/organization-light-1440.png)          |
+| Workspace overview / 375px     | [Screenshot](screenshots/workspace-dark-375.png)              | [Screenshot](screenshots/workspace-light-375.png)              |
+| Workspace overview / 768px     | [Screenshot](screenshots/workspace-dark-768.png)              | [Screenshot](screenshots/workspace-light-768.png)              |
+| Workspace overview / 1440px    | [Screenshot](screenshots/workspace-dark-1440.png)             | [Screenshot](screenshots/workspace-light-1440.png)             |
+| Organization settings / 375px  | [Screenshot](screenshots/organization-settings-dark-375.png)  | [Screenshot](screenshots/organization-settings-light-375.png)  |
+| Organization settings / 768px  | [Screenshot](screenshots/organization-settings-dark-768.png)  | [Screenshot](screenshots/organization-settings-light-768.png)  |
+| Organization settings / 1440px | [Screenshot](screenshots/organization-settings-dark-1440.png) | [Screenshot](screenshots/organization-settings-light-1440.png) |
+| Workspace settings / 375px     | [Screenshot](screenshots/workspace-settings-dark-375.png)     | [Screenshot](screenshots/workspace-settings-light-375.png)     |
+| Workspace settings / 768px     | [Screenshot](screenshots/workspace-settings-dark-768.png)     | [Screenshot](screenshots/workspace-settings-light-768.png)     |
+| Workspace settings / 1440px    | [Screenshot](screenshots/workspace-settings-dark-1440.png)    | [Screenshot](screenshots/workspace-settings-light-1440.png)    |
+
+See [phase progress](PHASE_PROGRESS.md) and [the Phase 3 verification report](PHASE3_REPORT.md) for executed results and deferred Docker acceptance.

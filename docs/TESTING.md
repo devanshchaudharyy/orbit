@@ -81,7 +81,24 @@ pnpm test:auth:compose
 
 Stop the isolated fixture first so ports 4001/5174 are available. The Compose auth harness derives a loopback-only `orbit_test_auth` database from generated configuration, starts owned API/web processes on 4001/5174, uses the configured Mailpit instance, and runs the real auth integration and browser suites. GitHub Actions includes this harness. No remote workflow run is claimed locally.
 
-### Full service acceptance
+## Phase 3 tenant verification
+
+With the isolated fixture running, execute these checks sequentially. Do not rebuild or edit application modules during browser checks; Vite can reload an active page.
+
+```powershell
+pnpm test:tenants:integration
+pnpm test:tenants:e2e
+```
+
+The integration driver uses Supertest, real application services, and actual MongoDB transactions. It creates unique synthetic verified users in the guarded loopback test database, logs them in through the real session API, and verifies tenant/parent substitution, explicit membership, owner/admin versus member/guest restrictions, both cursor lists, compound uniqueness, rollback, optimistic conflicts, membership revocation ordering, sanitized errors, and fresh-connection persistence. Failure and revocation are deliberately injected against owned test records only.
+
+The browser suite signs synthetic users into the running API, creates organizations/workspaces through the UI, checks MongoDB records, switches scopes, refreshes direct links, edits settings in two tabs, exercises access failures/recovery, and signs out. Six page families are captured in both themes at 375/768/1440px. Keyboard-only creation/settings navigation, Radix focus containment/restoration, a mobile drawer, reduced motion, overflow, and axe audits are included. Cleanup targets each run's own account and tenant IDs. No synthetic tenant is seeded into a real user's account.
+
+`pnpm test:auth:compose` now runs tenant integration and browser checks after the account checks. It requires the full Compose services and available owned fixture ports. Docker acceptance is deferred locally. The previously published workflow failed at MongoDB's health check; that check now accepts the command-line `replSet` field as well as configuration `replSetName`. The new remote workflow result must be reported independently.
+
+For manual review, register at `http://127.0.0.1:5174/auth/register`, verify through Mailpit, finish onboarding, and follow **Open my organizations** from `/account`. Create an organization and multiple workspaces, switch scopes, edit both settings screens, and refresh. Open two settings tabs to verify stale-version feedback. Use another account against copied resource URLs and confirm no private content or edit controls appear.
+
+## Full service acceptance
 
 `pnpm test:integration` / `pnpm infra:check` fail nonzero if any service check fails. Checks execute concurrently and use bounded network operations. They restrict themselves to loopback endpoints and an explicitly named `orbit_test` database:
 
@@ -113,4 +130,4 @@ After that check, rebuild normally to restore the lab-disabled artifact.
 
 Open the lab at desktop/mobile sizes; switch each theme; reload; navigate via sidebar and keyboard palette; copy tokens; submit invalid/valid form values; change priority and switch/checkbox state; open/close every overlay; check Tab/Shift+Tab/Escape; select/clear table rows; switch state tabs; refresh health and inspect the actual response. Emulate reduced motion and verify moving effects stop. All interactions are component examples unless labeled as real API status.
 
-CI runs formatting, lint, typechecks, tests, builds, Compose-backed integration checks, and Chromium/axe checks, then preserves browser artifacts and stops services. The workflow is configured locally; a GitHub CI run is not claimed until this repository is published and the workflow actually executes.
+CI runs formatting, lint, typechecks, tests, builds, Compose-backed integration checks, and Chromium/axe checks, then preserves browser artifacts and stops services. The private GitHub repository is published; distinguish a running or failed remote workflow from independent local verification. Consult the phase report for the remote status observed at handoff.

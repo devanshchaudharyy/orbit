@@ -12,13 +12,16 @@ import {
 } from 'lucide-react';
 import { Button, Input, Label } from '@orbit/ui';
 import { ThemeControl } from './ThemeControl';
-import { useAuth } from '../lib/auth';
+import { safeReturnTo, useAuth } from '../lib/auth';
 import '../auth.css';
 
 export function usePageTitle(title: string) {
   useEffect(() => {
     document.title = `${title} · ORBIT`;
-    const main = document.getElementById('auth-main') ?? document.getElementById('account-main');
+    const main =
+      document.getElementById('auth-main') ??
+      document.getElementById('account-main') ??
+      document.getElementById('workspace-main');
     main?.focus({ preventScroll: true });
   }, [title]);
 }
@@ -278,7 +281,7 @@ export function AuthGate({
   if (!auth.user)
     return (
       <Navigate
-        to={`/auth/login?returnTo=${encodeURIComponent(location.pathname === '/account' ? '/account' : '/onboarding')}`}
+        to={`/auth/login?returnTo=${encodeURIComponent(safeReturnTo(location.pathname))}`}
         replace
       />
     );

@@ -49,6 +49,14 @@ Account routes share a responsive split layout: original orbital artwork and sho
 
 Password inputs provide accessible reveal controls. Client validation associates error messages with fields and moves focus to invalid inputs; the API validates independently. Submitted forms expose busy states and prevent repeated clicks. Token links are removed from the address bar after capture and require an explicit POST action. Recovery confirmation uses the same neutral message for existing and unknown accounts.
 
-Protected onboarding collects personal preferences and blocks completion until email verification. The account page supports profile edits, password changes, active session review, individual revocation, and signing out everywhere. Unavailable identity services show a retry screen without inventing a logged-in user. Upcoming workspaces are labeled as future functionality; no navigation points to an unimplemented product dashboard.
+Protected onboarding collects personal preferences and blocks completion until email verification. The account page supports profile edits, password changes, active session review, individual revocation, and signing out everywhere. Unavailable identity services show a retry screen without inventing a logged-in user. Phase 3 adds the real organizations entry from the account page.
 
 Appearance persistence continues to use only `orbit.theme.v1`; authentication credentials remain in HttpOnly cookies. Keyboard focus, responsive overflow, reduced motion, and axe checks accompany the real account browser flows.
+
+## Phase 3 application workspace
+
+The application area extends ORBIT's semantic tokens with a restrained charcoal sidebar, violet selection, quiet breadcrumbs, native organization switching, private workspace initials, responsive resource cards, and an original SVG/CSS orbital welcome illustration. Content comes from authorized API responses. Counts describe accessible records and show a plus when additional pages remain; no charts or fabricated activity appear.
+
+Creation uses accessible Radix dialogs with validation, contained/restored focus, pending submissions, and server errors. Settings use a stable form version, explicit conflict reload, and success feedback. Mobile replaces the sidebar with a focus-managed drawer. Theme controls, skip links, page-title/main focus, reduced motion, and responsive typography remain shared with prior pages.
+
+Real captures and axe/layout checks cover the empty and populated organization entry, organization overview, workspace overview, organization settings, and workspace settings in both themes at 375/768/1440px. Invitations/projects/tasks appear only as future explanatory text; navigation exposes implemented operations.

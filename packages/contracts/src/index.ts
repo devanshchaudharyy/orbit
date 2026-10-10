@@ -1,5 +1,6 @@
 import { z } from 'zod';
 export * from './auth.js';
+export * from './tenants.js';
 
 export const responseMetaSchema = z.object({ requestId: z.uuid() });
 export const healthSchema = z.object({ status: z.enum(['alive', 'ready', 'unavailable']) });

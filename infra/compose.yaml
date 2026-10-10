@@ -30,7 +30,7 @@ services:
       test:
         [
           'CMD-SHELL',
-          'mongosh --quiet --username "$$MONGO_INITDB_ROOT_USERNAME" --password "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval ''const result=db.adminCommand({getCmdLineOpts:1}); quit(result.ok && result.parsed.replication?.replSetName === "rs0" ? 0 : 1)''',
+          'mongosh --quiet --username "$$MONGO_INITDB_ROOT_USERNAME" --password "$$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval ''const result=db.adminCommand({getCmdLineOpts:1}); const replication=result.parsed.replication; quit(result.ok && (replication?.replSetName ?? replication?.replSet) === "rs0" ? 0 : 1)''',
         ]
       interval: 5s
       timeout: 5s

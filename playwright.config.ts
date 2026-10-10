@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/e2e',
-  testIgnore: '**/auth.spec.ts',
+  testIgnore: ['**/auth.spec.ts', '**/tenants.spec.ts'],
   outputDir: 'test-results/foundation',
   fullyParallel: false,
   workers: 1,

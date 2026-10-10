@@ -115,4 +115,20 @@ The user chose to install Docker and WSL later. Docker Compose MongoDB 8.0.17, R
 
 ### Preparation for Phase 3
 
-Verified user identity and personal onboarding are available for organization/workspace membership checks. Phase 3 must implement explicit membership, server tenant isolation, authorized workspace switching, and settings without inferring access from organization membership alone. No Phase 3 code is introduced here. Stop after Phase 2.
+Verified user identity and personal onboarding were prepared for organization/workspace membership checks. The user subsequently authorized Phase 3 and its GitHub commit; results follow.
+
+## Phase 3 — organizations and workspaces
+
+Date: 10 October 2026 (Asia/Kolkata). [Plan](PHASE3_PLAN.md) and [implementation/verification report](PHASE3_REPORT.md).
+
+Implemented the persistent `/app` area with organization creation, multiple workspaces, organization/workspace switching, settings, and account navigation. Four real MongoDB collections store tenant resources and explicit membership. Creation is atomic with creator grants. Every endpoint checks verified/onboarded identity, organization membership, matching workspace parent, and explicit workspace membership. Owners/admins retain organization administration; members/guests with workspace grants are read-only. No invitations or membership-management routes are introduced.
+
+Settings update transactionally with optimistic versions and membership write fences. A background refetch cannot replace the version paired with the user's edits. Lists are bounded at 50 records with canonical cursors. Query caches include identity and verified resource scope and clear on identity changes/sign-out. Original responsive workspace screens, creation dialogs, a mobile navigation drawer, loading/empty/error/success states, keyboard focus, and all three appearance preferences are implemented.
+
+Executed independent checks include **86 unit/component/API tests**, **21 real MongoDB/Supertest tenant checks**, **6 tenant browser scenarios**, **38 tenant axe scans with zero violations**, **7 production route checks**, strict TypeScript, production builds, **15 account integration checks**, and **3 account transaction regressions**. Exact final command results, prior browser regressions, screenshot evidence, and limitations are kept in the report. The gallery retains **36 new Phase 3 screenshots** in both themes at 375/768/1440px.
+
+The previous GitHub workflow failed at Mongo's health check. The command now recognizes the observed `replication.replSet` field as well as `replSetName`. Docker/WSL remain deferred; local Compose acceptance, Redis/Garage, and restart durability are not counted as passed. Recover with the commands in TESTING.md and the phase report. New remote CI results are reported independently after the phase is pushed.
+
+### Preparation for Phase 4
+
+Explicit organization/workspace authority records, unique membership indexes, owner/admin checks, transaction fences, and resource navigation are ready for invitations, membership lifecycle, role/permission management, and safe ownership transfer. Preserve server scope and grants when extending them. No Phase 4 features are introduced. Stop after Phase 3.

@@ -67,6 +67,25 @@ try {
   await page.getByRole('alert').filter({ hasText: 'This reset link is incomplete.' }).waitFor();
   assert.equal(await page.getByLabel('New password', { exact: true }).count(), 0);
   console.log('PASS production password reset rejects an incomplete token link');
+  await page.route('**/api/v1/auth/session', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        data: { user: null, csrfToken: 'a'.repeat(64) },
+        meta: { requestId: '37dc6e3a-356d-4321-a482-fc0ab5111c86' },
+      }),
+    }),
+  );
+  for (const path of [
+    '/app',
+    `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/settings`,
+  ]) {
+    await page.goto(`http://127.0.0.1:4173${path}`);
+    await page.getByRole('heading', { name: 'Welcome back.', exact: true }).waitFor();
+    assert.equal(new URL(page.url()).searchParams.get('returnTo'), path);
+    console.log(`PASS production protected direct route ${path} requires sign-in`);
+  }
   const files = await readdir(resolve(root, 'apps/web/dist/assets'));
   for (const file of files.filter((file) => file.endsWith('.js'))) {
     assert.ok(

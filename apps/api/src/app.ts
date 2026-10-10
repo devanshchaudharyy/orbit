@@ -7,8 +7,15 @@ import { errorHandler } from './http/errors.js';
 import { healthRoutes } from './modules/health/routes.js';
 import { authRoutes } from './modules/auth/routes.js';
 import type { AuthService } from './modules/auth/service.js';
+import { tenantRoutes } from './modules/tenants/routes.js';
+import type { TenantService } from './modules/tenants/service.js';
 
-export function createApp(dependencies: Dependencies, logger: Logger, auth?: AuthService) {
+export function createApp(
+  dependencies: Dependencies,
+  logger: Logger,
+  auth?: AuthService,
+  tenants?: TenantService,
+) {
   const app = express();
   app.disable('x-powered-by');
   app.use(helmet());
@@ -33,6 +40,7 @@ export function createApp(dependencies: Dependencies, logger: Logger, auth?: Aut
   app.use(express.json({ limit: '64kb' }));
   app.use('/api/v1/health', healthRoutes(dependencies));
   if (auth) app.use('/api/v1/auth', authRoutes(auth));
+  if (auth && tenants) app.use('/api/v1/organizations', tenantRoutes(auth, tenants));
   app.use((_req, res) =>
     res.status(404).json({
       error: { code: 'NOT_FOUND', message: 'This endpoint does not exist.' },

@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, type ReactNode } from 'react';
 import { useLocation } from 'react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -31,13 +31,14 @@ export async function authRequest<T>(
     method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
     data?: unknown;
     csrfToken?: string;
+    scope?: 'auth' | 'organizations';
   } = {},
 ): Promise<T> {
   let response: Response;
   const method = options.method ?? 'GET';
   const hasBody = method !== 'GET';
   try {
-    response = await fetch(`/api/v1/auth${path}`, {
+    response = await fetch(`/api/v1/${options.scope ?? 'auth'}${path}`, {
       method,
       credentials: 'same-origin',
       headers: {
@@ -88,6 +89,7 @@ interface AuthContextValue {
     schema: z.ZodType<T>,
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
     data?: unknown,
+    scope?: 'auth' | 'organizations',
   ) => Promise<T>;
   acceptSession: (session: AuthSession) => void;
   updateUser: (user: OrbitUser) => void;
@@ -100,7 +102,9 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
   const queryClient = useQueryClient();
-  const active = /^\/(?:auth(?:\/|$)|account(?:\/|$)|onboarding(?:\/|$))/.test(location.pathname);
+  const active = /^\/(?:auth(?:\/|$)|account(?:\/|$)|onboarding(?:\/|$)|app(?:\/|$))/.test(
+    location.pathname,
+  );
   const query = useQuery({
     queryKey: sessionKey,
     queryFn: () => authRequest('/session', authSessionSchema),
@@ -112,7 +116,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refetchOnWindowFocus: true,
     refetchInterval: active ? 60000 : false,
   });
+  const identity = query.data?.user?.id;
+  useEffect(() => {
+    const predicate = (entry: { queryKey: readonly unknown[] }) =>
+      entry.queryKey[0] === 'tenant' && entry.queryKey[1] !== identity;
+    void queryClient.cancelQueries({ predicate });
+    queryClient.removeQueries({ predicate });
+  }, [identity, queryClient]);
   async function forgetSession() {
+    await queryClient.cancelQueries({ queryKey: ['tenant'] });
+    queryClient.removeQueries({ queryKey: ['tenant'] });
     queryClient.removeQueries({ queryKey: ['auth', 'sessions'] });
     queryClient.setQueryData(sessionKey, (previous: AuthSession | undefined) =>
       previous ? { ...previous, user: null } : undefined,
@@ -132,6 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     schema: z.ZodType<T>,
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
     data?: unknown,
+    scope: 'auth' | 'organizations' = 'auth',
   ): Promise<T> {
     const session =
       method === 'GET'
@@ -145,6 +159,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return await authRequest(path, schema, {
         method,
         data,
+        scope,
         ...(session ? { csrfToken: session.csrfToken } : {}),
       });
     } catch (error) {
@@ -193,6 +208,14 @@ export function authErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Something went wrong. Please try again.';
 }
 
-export function safeReturnTo(value: string | null): '/account' | '/onboarding' {
-  return value === '/account' ? '/account' : '/onboarding';
+export function safeReturnTo(value: string | null): string {
+  if (value === '/account' || value === '/app') return value;
+  if (
+    value &&
+    /^\/app\/organizations\/[a-f0-9]{24}(?:\/settings|\/workspaces\/[a-f0-9]{24}(?:\/settings)?)?$/.test(
+      value,
+    )
+  )
+    return value;
+  return '/onboarding';
 }

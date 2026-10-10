@@ -472,17 +472,17 @@ export default function Account() {
               </div>
               <div>
                 <span className="auth-eyebrow">YOUR NEXT CHAPTER</span>
-                <h2>You’re in. More room is on the way.</h2>
+                <h2>Your next chapter starts here.</h2>
                 <p>
-                  Your account is ready. Organization and workspace tools are coming next. Explore
-                  the product preview in the meantime.
+                  Your account is ready. Create an organization, give your work a space, and make
+                  yourself at home.
                 </p>
               </div>
               <Button asChild variant="outline" size="small">
-                <a href="/#product">
-                  Explore the preview
+                <Link to="/app">
+                  Open my organizations
                   <ArrowUpRight size={14} />
-                </a>
+                </Link>
               </Button>
             </section>
           </div>

@@ -193,7 +193,8 @@ export default function Onboarding() {
           Continue to my account
         </SubmitButton>
         <p className="auth-form-caption">
-          These preferences personalize your profile. Team workspaces are coming later.
+          These preferences personalize your profile. You can create organizations and workspaces
+          from your account.
         </p>
       </form>
     </AuthLayout>

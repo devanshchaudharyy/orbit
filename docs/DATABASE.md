@@ -25,13 +25,30 @@ Transactions cover registration (user, verification token, new session, revocati
 
 Profile/onboarding writes update only the authenticated user. Onboarding requires a verified email and persists personal preferences without creating an organization or granting membership. Session revocation queries include the authenticated user's ID. Login's credential fence prevents an old-password login racing a reset from recreating a session after reset invalidation.
 
-## Planned relationships — not implemented
+## Phase 3 implemented tenant records
+
+| Collection                 | Fields and indexes                                                                                                                                  |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `organizations`            | Name, description, ownerId, integer version, creation/update timestamps; ObjectId primary key                                                       |
+| `organization_memberships` | organizationId, userId, owner/admin/member/guest role, accessRevision; unique organizationId + userId; userId + organizationId list index           |
+| `workspaces`               | organizationId, name, description, Intl-valid time zone, version, timestamps; organizationId + ObjectId index                                       |
+| `workspace_memberships`    | organizationId, workspaceId, userId, accessRevision; unique organizationId + workspaceId + userId; organizationId + userId + workspaceId list index |
+
+Role values form the server permission foundation; only a creator's owner role is granted by this phase's APIs. Membership administration and invitations are Phase 4. Organization ownerId is bookkeeping, never an authorization bypass. Workspace access requires both current organization membership and explicit workspace membership with matching parents. No automatic membership is inferred from the organization's ownership or role.
+
+Organization creation atomically inserts the organization and owner membership. Workspace creation atomically inserts the workspace and creator membership after writing the organization's authority fence. Settings updates fence organization/workspace membership and compare the caller's resource version; competing edits yield one commit and a 409 conflict. Failure before commit rolls the resource and membership back. Real tests also hold a creation transaction while a membership deletion attempts to commit, confirming authority ordering.
+
+Membership-driven lists sort by resource ObjectId, exclude foreign/mismatched parents, and join only authorized records. Pages contain up to 50 records; the cursor is the last returned canonical 24-character ObjectId. Soft deletion, archiving, leave/remove flows, and ownership transfer are deliberately absent until their lifecycle is implemented; there are no deletion endpoints in Phase 3. Name collisions across organizations are permitted and disclose no global namespace.
+
+Tests create unique synthetic records only in the guarded loopback `orbit_test_phase2`/`orbit_test_auth` databases and remove their own IDs. No tenant data is seeded for a real account. Fresh-connection persistence is verified; container-restart durability is still deferred.
+
+## Remaining planned relationships — not implemented
 
 | Collection family                     | Relationships and anticipated indexes                                                                               |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | Users, Sessions                       | Implemented identity collections above; future tenant relationships extend them without accepting client membership |
-| Organizations, Workspaces             | Organization ownership and billing boundary; workspaces indexed by organization and deletion/archive state          |
-| Memberships                           | Organization/workspace membership; unique resource + user membership; active-state lookup                           |
+| Organizations, Workspaces             | Core Phase 3 records above; future billing, lifecycle, archive/deletion policies                                    |
+| Memberships                           | Explicit Phase 3 authority records above; lifecycle and role management extend them in Phase 4                      |
 | Invitations                           | Scoped recipient, inviter, expiry, and one-time hashed token; expiry TTL; explicit acceptance/revocation state      |
 | Projects, Tasks                       | Organization/workspace/project parents; compound tenant + status/due-date indexes; bounded cursor pagination        |
 | Comments, Events, Milestones, Sprints | Verified project/task parents; tenant + parent + creation-time indexes                                              |

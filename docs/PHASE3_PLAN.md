@@ -1,0 +1,11 @@
+# Phase 3 — organizations and workspaces
+
+Implement only organization/workspace creation, explicit tenant access, switching, and settings. Invitations, ownership transfer, membership lifecycle, role management, projects, and tasks remain in later phases.
+
+1. Extend shared strict Zod contracts with opaque ObjectId strings, organization/workspace input and response schemas, bounded cursor lists, and optimistic settings versions. Reuse verified cookie sessions, CSRF, exact Origin checks, and abuse controls.
+2. Add a tenant module with separate HTTP, service, and Mongo repository/model layers. Persist organizations, organization memberships, workspaces, and workspace memberships. Creation transactions include the creator's explicit membership; regular organization membership never implies workspace access. Owners/admins may administer organizations, but workspace access still requires explicit membership. Foreign or mismatched parent identifiers return the same 404 response.
+3. Build `/app` and nested organization/workspace routes. Provide an original responsive application shell, real organization/workspace switchers, creation dialogs, authorized settings, meaningful empty/error/loading states, and account navigation. Keep active scope in the URL; no local preference grants authority. Partition Query caches by signed-in user and resource scope, cancel and clear tenant data on identity changes.
+4. Verify strict input validation, authentication/verification/onboarding requirements, CSRF/Origin, cross-tenant reads/writes/lists, membership-only access, role restrictions, rollback, concurrent updates, pagination, persistence, switching, refresh, keyboard/focus, reduced motion, both themes at 375/768/1440px, and prior-phase regressions. Use the real isolated MongoDB/Mailpit fixture; extend the Compose CI harness without claiming local Docker acceptance.
+5. Update README, architecture/database/API/design/testing/progress documentation, retain real screenshots, run the required checks, then commit and push this phase to the existing private GitHub repository. Stop after Phase 3.
+
+No new direct dependencies, paid services, system installations, production deployment, business-data seeds, or membership-management endpoints are required. Docker/WSL and full Compose durability remain deferred by the user's earlier instruction.

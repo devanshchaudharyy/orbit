@@ -26,7 +26,9 @@
     "test:auth:integration": "node scripts/check-auth.mjs",
     "test:auth:transactions": "pnpm --filter @orbit/api exec tsx ../../tests/integration/auth-races.ts",
     "test:auth:e2e": "playwright test -c playwright.auth.config.ts",
-    "test:auth:compose": "pnpm --filter @orbit/contracts build && node scripts/auth-compose-check.mjs"
+    "test:auth:compose": "pnpm --filter @orbit/contracts build && node scripts/auth-compose-check.mjs",
+    "test:tenants:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/tenants.ts",
+    "test:tenants:e2e": "playwright test -c playwright.tenants.config.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

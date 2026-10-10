@@ -32,6 +32,14 @@ const VerifyEmailPage = lazy(() =>
 );
 const Onboarding = lazy(() => import('./pages/Onboarding'));
 const Account = lazy(() => import('./pages/Account'));
+const Organizations = lazy(() => import('./pages/Organizations'));
+const OrganizationOverview = lazy(() =>
+  import('./pages/Organizations').then((module) => ({ default: module.OrganizationOverview })),
+);
+const WorkspacePage = lazy(() => import('./pages/Workspace'));
+const TenantSettings = lazy(() =>
+  import('./pages/Workspace').then((module) => ({ default: module.TenantSettings })),
+);
 const client = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 15000, refetchOnWindowFocus: false } },
 });
@@ -72,6 +80,46 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                     <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/auth/verify-email" element={<VerifyEmailPage />} />
+                    <Route
+                      path="/app"
+                      element={
+                        <AuthGate requireOnboarding>
+                          <Organizations />
+                        </AuthGate>
+                      }
+                    />
+                    <Route
+                      path="/app/organizations/:organizationId"
+                      element={
+                        <AuthGate requireOnboarding>
+                          <OrganizationOverview />
+                        </AuthGate>
+                      }
+                    />
+                    <Route
+                      path="/app/organizations/:organizationId/settings"
+                      element={
+                        <AuthGate requireOnboarding>
+                          <TenantSettings />
+                        </AuthGate>
+                      }
+                    />
+                    <Route
+                      path="/app/organizations/:organizationId/workspaces/:workspaceId"
+                      element={
+                        <AuthGate requireOnboarding>
+                          <WorkspacePage />
+                        </AuthGate>
+                      }
+                    />
+                    <Route
+                      path="/app/organizations/:organizationId/workspaces/:workspaceId/settings"
+                      element={
+                        <AuthGate requireOnboarding>
+                          <TenantSettings workspace />
+                        </AuthGate>
+                      }
+                    />
                     <Route
                       path="/onboarding"
                       element={

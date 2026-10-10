@@ -2,9 +2,9 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 2 adds real account registration, email verification, password recovery, secure cookie sessions, personal profiles, and onboarding to the marketing website and ORBIT Design Language lab. Marketing sample content demonstrates the intended product. Organizations, workspaces, projects, collaboration, AI, and billing remain in later phases.
+Phase 3 adds real organization/workspace creation, explicit tenant isolation, switching, and settings to secure accounts, the marketing website, and the ORBIT Design Language lab. Marketing sample content demonstrates the intended product. Invitations and role management, projects, collaboration, AI, and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Current delivery covers Phases 0–2 and runs locally.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Current delivery covers Phases 0–3 and runs locally.
 
 ## Screenshots
 
@@ -20,6 +20,12 @@ Captured from the running application. Marketing product content is illustrative
 
 ![ORBIT verified personal account and profile](docs/screenshots/account-dark-1440.png)
 
+### Organizations and workspaces
+
+![ORBIT private workspace backed by the real API and database](docs/screenshots/workspace-dark-1440.png)
+
+![ORBIT organization overview and accessible workspaces](docs/screenshots/organization-light-1440.png)
+
 <details>
 <summary>Mobile onboarding and the design system lab</summary>
 
@@ -34,9 +40,9 @@ Captured from the running application. Marketing product content is illustrative
 
 See [the screenshot gallery](docs/SCREENSHOTS.md) for all themes, viewport sizes, account states, and full-page marketing captures.
 
-## Verification through Phase 2
+## Verification through Phase 3
 
-Passed locally: **77 unit/component/API tests**, **15 API/database/email integration checks**, **3 MongoDB transaction checks**, **34 browser tests**, and **44 accessibility scans** with zero axe violations. Lint, formatting, strict TypeScript checks, production builds, and five production route checks passed. Exact commands and evidence are recorded in [the Phase 2 report](docs/PHASE2_REPORT.md).
+Passed locally: **86 unit/component/API tests**, **39 real integration/transaction checks** (21 tenant + 15 account + 3 account transaction), **40 browser scenarios**, and **82 theme/viewport accessibility scans** with zero axe violations. Lint, formatting, strict TypeScript, production builds, and **7 production route/build checks** passed. Exact commands and evidence are recorded in [the Phase 3 report](docs/PHASE3_REPORT.md).
 
 The isolated authentication fixture was verified with MongoDB **8.3.4** and Mailpit **1.27.10**. Docker/WSL setup, the pinned full Compose stack, Redis, Garage, and container-restart durability remain deferred. GitHub Actions is configured; its remote results are separate from these local results.
 
@@ -64,6 +70,8 @@ pnpm auth:fixture start
 
 Open [account registration](http://127.0.0.1:5174/auth/register) and [captured email](http://127.0.0.1:18025/). The fixture uses separate ports and `orbit_test_phase2`, retains its ignored local data, refuses occupied ports, and stops only the child processes it starts. See [testing instructions](docs/TESTING.md) for requirements and verification commands.
 
+After registration, email verification, and personal onboarding, choose **Open my organizations** on the account page or visit [`/app`](http://127.0.0.1:5174/app). Create an organization, then its workspaces. No sample tenant data is seeded into your account.
+
 ## Repository layout
 
 | Package                     | Responsibility                                                          |
@@ -77,24 +85,26 @@ Open [account registration](http://127.0.0.1:5174/auth/register) and [captured e
 
 ## Commands
 
-| Command                                      | Purpose                                                                               |
-| -------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `pnpm run setup`                             | Generate ignored local credentials and Garage configuration; preserve existing values |
-| `pnpm dev`                                   | Build contracts and start both applications                                           |
-| `pnpm build`                                 | Build contracts/API and a lab-disabled production frontend                            |
-| `pnpm typecheck`                             | Check every TypeScript package                                                        |
-| `pnpm lint`                                  | ESLint with zero warnings allowed                                                     |
-| `pnpm format:check`                          | Verify formatting without editing                                                     |
-| `pnpm format`                                | Apply repository formatting                                                           |
-| `pnpm test`                                  | Vitest, React Testing Library, and Supertest checks                                   |
-| `pnpm test:e2e`                              | Chromium interactions, responsive checks, axe audits, screenshots                     |
-| `pnpm infra:up` / `pnpm infra:down`          | Start/stop Compose services, retaining volumes                                        |
-| `pnpm test:integration` / `pnpm infra:check` | Real database, Redis, S3, and captured-email checks                                   |
-| `pnpm auth:fixture prepare` / `start`        | Prepare and start the isolated MongoDB/Mailpit authentication preview                 |
-| `pnpm test:auth:integration`                 | Real account/session/token tests against the isolated fixture                         |
-| `pnpm test:auth:transactions`                | Controlled real MongoDB credential races and registration rollback                    |
-| `pnpm test:auth:e2e`                         | API-backed account browser flows, responsive and accessibility checks                 |
-| `pnpm test:auth:compose`                     | Run auth verification against running Compose services in an isolated test database   |
+| Command                                      | Purpose                                                                                  |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `pnpm run setup`                             | Generate ignored local credentials and Garage configuration; preserve existing values    |
+| `pnpm dev`                                   | Build contracts and start both applications                                              |
+| `pnpm build`                                 | Build contracts/API and a lab-disabled production frontend                               |
+| `pnpm typecheck`                             | Check every TypeScript package                                                           |
+| `pnpm lint`                                  | ESLint with zero warnings allowed                                                        |
+| `pnpm format:check`                          | Verify formatting without editing                                                        |
+| `pnpm format`                                | Apply repository formatting                                                              |
+| `pnpm test`                                  | Vitest, React Testing Library, and Supertest checks                                      |
+| `pnpm test:e2e`                              | Chromium interactions, responsive checks, axe audits, screenshots                        |
+| `pnpm infra:up` / `pnpm infra:down`          | Start/stop Compose services, retaining volumes                                           |
+| `pnpm test:integration` / `pnpm infra:check` | Real database, Redis, S3, and captured-email checks                                      |
+| `pnpm auth:fixture prepare` / `start`        | Prepare and start the isolated MongoDB/Mailpit authentication preview                    |
+| `pnpm test:auth:integration`                 | Real account/session/token tests against the isolated fixture                            |
+| `pnpm test:auth:transactions`                | Controlled real MongoDB credential races and registration rollback                       |
+| `pnpm test:auth:e2e`                         | API-backed account browser flows, responsive and accessibility checks                    |
+| `pnpm test:auth:compose`                     | Run auth verification against running Compose services in an isolated test database      |
+| `pnpm test:tenants:integration`              | Real MongoDB tenant isolation, role/access, rollback, concurrency, and pagination checks |
+| `pnpm test:tenants:e2e`                      | Real organization/workspace browser flows, switching, settings, keyboard, and axe checks |
 
 Install the test browser with `pnpm exec playwright install chromium`. On Linux CI, use `--with-deps chromium`.
 
@@ -117,6 +127,8 @@ Production builds omit the lab route and lab JavaScript. For deliberate producti
 - [Phase 1 implementation and verification](docs/PHASE1_REPORT.md)
 - [Phase 2 scope](docs/PHASE2_PLAN.md)
 - [Phase 2 implementation and verification](docs/PHASE2_REPORT.md)
+- [Phase 3 scope](docs/PHASE3_PLAN.md)
+- [Phase 3 implementation and verification](docs/PHASE3_REPORT.md)
 - [Testing and Windows setup](docs/TESTING.md)
 
 Current execution results and remaining blockers are recorded in the phase progress document. Source code is hosted in the private repository linked above. The application has not been deployed.

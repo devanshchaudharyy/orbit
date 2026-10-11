@@ -8,6 +8,8 @@ import { TenantService } from './modules/tenants/service.js';
 import { TeamRepository } from './modules/teams/repository.js';
 import { createInvitationMailer } from './modules/teams/mail.js';
 import { TeamService } from './modules/teams/service.js';
+import { ProjectRepository } from './modules/projects/repository.js';
+import { ProjectService } from './modules/projects/service.js';
 
 const env = parseEnvironment(process.env);
 const logger = createLogger(env.LOG_LEVEL);
@@ -17,7 +19,8 @@ if (!dependencies.mongo || !dependencies.connectMongo)
 const auth = createAuthRuntime(env, dependencies.mongo, dependencies.connectMongo);
 const tenants = new TenantService(new MongoTenantRepository(dependencies.mongo));
 const teams = new TeamService(new TeamRepository(tenants.repository), createInvitationMailer(env));
-const server = createApp(dependencies, logger, auth, tenants, teams).listen(
+const projects = new ProjectService(new ProjectRepository(tenants.repository));
+const server = createApp(dependencies, logger, auth, tenants, teams, projects).listen(
   env.PORT,
   env.HOST,
   () => logger.info({ port: env.PORT }, 'ORBIT API listening'),

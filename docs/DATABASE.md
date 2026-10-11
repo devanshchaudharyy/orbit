@@ -1,5 +1,19 @@
 # Database
 
+## Phase 5 implemented project work
+
+| Collection       | Stored relationships and indexes                                                                                                                                                                                                                                                                                                              |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `projects`       | organizationId/workspaceId, ownerId, up to 50 memberIds, name/description/status/priority/cover, up to 30 embedded labels, archived/deletedAt, version/writeRevision and timestamps. Indexes: `{organizationId,workspaceId,deletedAt,archived,_id}` and `{organizationId,workspaceId,memberIds,_id}`                                          |
+| `tasks`          | organization/workspace/project parents, immutable nullable parentId, nullable ownerId, up to 10 assigneeIds/labelIds, title/description/status/priority, nullable UTC calendar dueDate, up to 20 checklist items, version/deletedAt/timestamps. Indexes: scoped project+deletedAt+_id, project+parentId+deletedAt, project+assigneeIds+status |
+| `project_events` | organization/workspace/project parents, actorId/name snapshot, action, targetName, bounded detail and UTC creation time. Scoped project+descending _id index. Append-only through public APIs                                                                                                                                                 |
+
+All reads/writes verify matching parents and current authority before using these indexes. Mutations run in MongoDB transactions, write current actor/target organization and workspace membership fences, and increment project writeRevision. A project settings version changes only with settings/labels/lifecycle; task versions change with task edits and cascade cleanup. Transaction retries recheck membership, project grants and assignment eligibility. Business mutation and activity either both commit or both roll back; templates include their tasks/events in the same transaction.
+
+Project deletion and parent-task deletion atomically soft-delete their active descendants. Deleted data/history remains stored without a public restore/purge endpoint; retention policy is future work. Archive is reversible and blocks content writes. Revoking an organization/workspace/project grant denies current access immediately; task owner/assignment IDs may remain historical references. Changing/removing a project label cleans active task label references and increments affected task versions. Progress counts only active tasks/subtasks and done status, not demonstration values.
+
+Subtasks are limited to one level. Lists contain at most 50 records and canonical ObjectId cursors; activity is newest-first, other pages ascending. All API DTOs normalize IDs/timestamps and omit deleted/internal fence fields. Activity preserves names at mutation time without exposing credentials or permanently replacing the future organization audit log. A fresh-connection persistence check is executed; container restart is separate deferred acceptance.
+
 ## Phase 0 state
 
 No business collections, Mongoose models, tenant records, or seed users are created. The health adapter only connects and pings. The infrastructure CLI uses `orbit_test.phase0_smoke` for isolated real transaction tests, creates a TTL index on `expiresAt`, and removes its own run IDs. It does not drop collections or databases.
@@ -62,7 +76,7 @@ The repository reuses existing tenant models and auth user records; it exposes o
 | Organizations, Workspaces             | Core Phase 3 records above; future billing, lifecycle, archive/deletion policies                                    |
 | Memberships                           | Explicit Phase 3 authority records above; lifecycle and role management extend them in Phase 4                      |
 | Invitations                           | Phase 4 implementation above; future delivery outbox and audit retention policy                                     |
-| Projects, Tasks                       | Organization/workspace/project parents; compound tenant + status/due-date indexes; bounded cursor pagination        |
+| Projects, Tasks                       | Implemented Phase 5 records above; future planning, custom-field and retention enhancements                         |
 | Comments, Events, Milestones, Sprints | Verified project/task parents; tenant + parent + creation-time indexes                                              |
 | Notifications                         | Tenant and recipient ownership; recipient/read-state/time index                                                     |
 | Documents, Attachments                | Verified project parent; version relationship; private object key; tenant + parent lookup                           |

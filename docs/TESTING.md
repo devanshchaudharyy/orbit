@@ -1,5 +1,21 @@
 # Testing and local infrastructure
 
+## Phase 5 projects and tasks
+
+With the existing isolated fixture running, execute:
+
+```powershell
+pnpm auth:fixture status
+pnpm test:projects:integration
+pnpm test:projects:e2e
+```
+
+The integration runner restricts MongoDB to loopback and an `orbit_test*` database. It tests real HTTP/session/CSRF and transactional permissions, stale/concurrent edits, subtask parents, grants/assignments, combined filters, all paginated endpoints, activity failure rollback, retry-time revocation, fresh connections and deletion cascades. Browser checks cover actual API/database flows, direct refresh, guest access, unavailable-service retry, two tabs, keyboard overlays, both themes, 375/768/1440px, overflow, console/runtime state and axe. Synthetic fixtures are cleaned by their exact user/tenant IDs, not by clearing business collections.
+
+The Compose harness runs these suites after the existing auth/tenant/team integration and browser checks. Production verification also checks protected project-directory/project/task deep links and their sign-in return destinations. CI preserves browser evidence and stops its services. [The Phase 5 report](PHASE5_REPORT.md) records exact executed results separately from local Docker/WSL and container-restart acceptance, which remain deferred.
+
+Manual path: finish verification/profile → create organization/workspace → Projects → create project/team → label/task/assignees/checklist/subtask → status/filter/refresh/history → archive/restore → confirmation deletion. In two tabs, keep an editor open while saving in the other; confirm conflict reload preserves the newer result. Verify explicit guest/project/workspace grants using separate accounts, never synthetic client-only permissions.
+
 ## Windows prerequisites
 
 Node 24.18.0 and pnpm 11.25.0 are the pinned development runtime. Docker Desktop and WSL were unavailable during Phase 0 implementation.

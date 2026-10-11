@@ -9,7 +9,7 @@ const mongoUri =
   process.env.ORBIT_AUTH_MONGO_URI ??
   'mongodb://127.0.0.1:27018/orbit_test_phase2?replicaSet=orbit-test&directConnection=true';
 const requireApi = createRequire(new URL('../../apps/api/package.json', import.meta.url));
-const { MongoClient } = requireApi('mongoose').mongo;
+const { MongoClient, ObjectId } = requireApi('mongoose').mongo;
 const { hash, argon2id } = requireApi('argon2');
 const password = `Tenant browser ${randomUUID()}`;
 const emails: string[] = [];
@@ -194,7 +194,9 @@ test('real creation, persistence, switching, refresh and responsive workspace sc
   await page.goto('/app');
   await audit(page, 'organizations');
   await database(async (db) => {
-    const organization = await db.collection('organizations').findOne({ name: 'Northstar Studio' });
+    const organization = await db
+      .collection('organizations')
+      .findOne({ _id: new ObjectId(orgA.split('/').at(-1)!) });
     expect(organization).toBeTruthy();
     expect(
       await db.collection('workspaces').countDocuments({ organizationId: organization._id }),

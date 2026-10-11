@@ -1,5 +1,13 @@
 # ORBIT Design Language
 
+## Phase 5 project experience
+
+The project directory uses layered semantic cards, original orbital SVG cover treatments, actual completion counts and progress bars. Project detail balances tasks/filters with labels and persisted activity; task detail gives context/checklist and people/labels separate readable surfaces. The layout collapses cleanly to a single column on mobile. No controls point to unimplemented views or features.
+
+Accessible native selects/date controls, explicit labels, paginated teammate choices, Radix dialogs/sheets and confirmation copy use existing design tokens. Long overlays scroll within the viewport, retain Tab/Shift+Tab focus and restore the initiating control on Escape; navigation clears local editor state. Query/loading/empty/no-match/error/retry/archived/success/conflict states represent actual API results. Reduced motion removes movement; theme colors retain readable contrast.
+
+The directory, project/task screens, archive state and creation/edit overlays were audited in both themes at 375/768/1440px, with 54 WCAG A/AA axe scans and no violations. [Screenshots](SCREENSHOTS.md) and [verification report](PHASE5_REPORT.md) record browser/API/database evidence. Earlier phase sections below describe the design's evolution.
+
 A shared interface language for focused work: quiet layered surfaces, violet actions, restrained cyan highlights, and purposeful motion. The original ORBIT SVG mark and orbital illustration are code-native vector artwork. Inter Variable is self-hosted.
 
 ## Tokens

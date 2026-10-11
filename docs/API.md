@@ -1,5 +1,34 @@
 # API
 
+## Phase 5 projects and tasks
+
+All endpoints use shared envelopes, no-store, verified/onboarded live cookie sessions and current organization/workspace/project authorization. Mutations require JSON, exact Origin and CSRF; a persistent 100/minute actor budget and existing global limits apply. Paths below start at `/api/v1/organizations/:organizationId/workspaces/:workspaceId/projects`.
+
+| Method / suffix                      | Input and behavior                                                                                                                                   |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /`                              | `{cursor?,q?,status?,archived?:'true'\|'false'}`; projects, nextCursor, canCreate; defaults current projects                                         |
+| `POST /`                             | `{name,description,status,priority,cover,ownerId,memberIds,template?:'blank'\|'launch'}`; 201 project DTO; workspace managers only                   |
+| `GET /people`                        | `{cursor?}`; current verified workspace choices with name/role/canAssign and nextCursor; managers only                                               |
+| `GET /:projectId`                    | Authorized project DTO with actual active task/done counts and current permission hints                                                              |
+| `PATCH /:projectId`                  | Creation fields except template, plus version; owner/team replacement; ownership transfer requires workspace manager                                 |
+| `POST /:projectId/archive`           | `{version,archived:boolean}`; archive/restore; project managers/owner                                                                                |
+| `DELETE /:projectId`                 | `{version}`; atomic project/task/subtask soft deletion                                                                                               |
+| `GET /:projectId/people`             | `{cursor?}`; workspace choices and project assignment eligibility; authorized non-guests                                                             |
+| `GET /:projectId/tasks`              | `{cursor?,q?,status?,priority?,assignee?,label?,overdue?:'true'\|'false',parent?:'root'\|id}`; bounded task DTOs; defaults all active tasks/subtasks |
+| `POST /:projectId/tasks`             | Task fields below, optional parentId (null default); 201 task DTO                                                                                    |
+| `GET /:projectId/tasks/:taskId`      | Task whose organization/workspace/project parents match                                                                                              |
+| `PATCH /:projectId/tasks/:taskId`    | Task fields plus version; parent cannot change                                                                                                       |
+| `DELETE /:projectId/tasks/:taskId`   | `{version}`; atomically soft-delete task and direct subtasks                                                                                         |
+| `POST /:projectId/labels`            | `{name,color,version}`; 201 updated project, unique case-insensitive label                                                                           |
+| `DELETE /:projectId/labels/:labelId` | `{version}`; remove definition/references and version affected tasks atomically                                                                      |
+| `GET /:projectId/activity`           | `{cursor?}`; newest-first append-only events and nextCursor                                                                                          |
+
+Project names/task titles: trimmed 2–100 characters; descriptions: trimmed up to 4000. Project status: planned/active/paused/completed; task status: todo/in-progress/blocked/done. Priority: none/low/normal/high/urgent. Covers: orbit/aurora/horizon. Project team: up to 50 unique current eligible workspace user IDs; guests need explicit grants. Labels: up to 30, name 1–30, color violet/cyan/green/amber/rose.
+
+Task fields: `{title,description,status,priority,dueDate,ownerId,assigneeIds,labelIds,checklist}`. Due date is null or an actual `YYYY-MM-DD` UTC calendar day from 1900–9999; overdue starts after that day ends unless done. Owner is null or a current non-guest project user. Assignees/labels are unique arrays with at most ten entries; labels belong to this project. Checklist: up to twenty strict `{text,done}` objects, text trimmed 1–200 characters. Subtasks have immutable parentId, require an active top-level parent in the same project, and cannot contain further subtasks.
+
+Strict bodies/query objects reject malformed IDs/enums/filter shapes with `VALIDATION_ERROR`/400. Missing/foreign resources or explicit access use `RESOURCE_NOT_FOUND`/404; role denial uses `PROJECT_FORBIDDEN`/403. Domain eligibility/duplicate-label/bounds use `PROJECT_INPUT_INVALID`/422; stale versions use `VERSION_CONFLICT`/409; archived writes use `PROJECT_ARCHIVED`/409. Unexpected persistence failures become `PROJECT_UNAVAILABLE`/503; authentication failures can occur first. Browsers do not automatically retry mutations; transaction retries recheck authority. Historical assignment references grant no access. DTOs expose neither raw persistence fields nor deleted records.
+
 Base path: `/api/v1`. Vite proxies this path to `127.0.0.1:4000` in development and local preview. The browser never reads backend credentials.
 
 ## Contracts
@@ -85,7 +114,7 @@ Organization DTOs expose id/name/description/version/role/UTC timestamps. Worksp
 
 Missing and foreign resources both return `RESOURCE_NOT_FOUND` / 404, including a valid workspace ID under the wrong organization. Existing members without administration rights receive `TENANT_FORBIDDEN` / 403. A stale settings version receives `VERSION_CONFLICT` / 409; reload the latest values before retrying. An unverified/incomplete account receives `EMAIL_NOT_VERIFIED` / `ONBOARDING_REQUIRED` / 403. Persistence failures produce sanitized `TENANT_UNAVAILABLE` / 503; failure of the shared auth connection can produce `AUTH_UNAVAILABLE` / 503 first. Raw connection errors are never disclosed.
 
-These are the Phase 3 resource routes. Phase 4 extends memberships below. Resource deletion/archive, projects, and tasks remain future work. Switching uses the normal authorized resource GETs; no client-selected identifier grants access.
+These are the Phase 3 resource routes. Phases 4 and 5 extend memberships and project/task work. Organization/workspace deletion/archive remain future work. Switching uses authorized GETs; no client-selected identifier grants access.
 
 ## Phase 4 teams and invitations
 

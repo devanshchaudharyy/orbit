@@ -1,5 +1,17 @@
 # Architecture
 
+## Phase 5 project boundary
+
+`projects` separates strict shared contracts, HTTP controller/routes, service entry points, Mongoose models and scoped persistence. The persistent Express service and cookie-session protections remain unchanged. No new dependency, provider, worker or deployment is introduced. The sections below retain earlier phase decisions as historical context.
+
+Every request requires verified/onboarded identity, organization membership and explicit workspace membership. Workspace owners/admins/project managers manage projects; an eligible project owner manages their own project. Non-admin members require a project grant for task work; guests require a project grant and are read-only. Only workspace managers can transfer project ownership. No role bypasses workspace membership. Grant/assignment targets require current membership and project eligibility.
+
+Transactional mutations fence current actor and target memberships plus project writeRevision. Versioned project/task editors reject stale writes; automatic database retries re-evaluate authorization. Templates, deletion cascades, label cleanup and activity recording commit atomically. Current parent relationships constrain queries; historical assignments/events never confer access. Bounded cursor APIs and literal typed filters support real progress and later views without fake analytics.
+
+The browser lazily loads project directory/detail/task routes. TanStack Query keys include actor, organization, workspace, project and task; identity changes clear prior tenant data. URL filters survive refresh, while resource route keys reset local overlays/editor state. Form versions remain paired with loaded values across background refetches; conflicts require explicit reload. Radix dialogs/sheets handle contained/restored focus and scroll long forms. Errors and unavailable dependencies remain truthful.
+
+Phase 6 introduces richer views, drag-and-drop and preferences. Planning, realtime, files, analytics, AI and billing remain in their respective phases. Original vector project covers avoid introducing file storage before Phase 9. Activity is scoped project history, not the later global audit system.
+
 ## Implemented in Phase 0
 
 ```mermaid

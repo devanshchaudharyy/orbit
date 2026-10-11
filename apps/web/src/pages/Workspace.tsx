@@ -101,9 +101,12 @@ export default function WorkspacePage() {
             <div>
               <strong>The foundation is in place.</strong>
               <p>
-                Invite teammates from Team & access. Projects and tasks are coming; this workspace
-                contains no demonstration records.
+                Invite teammates from Team & access, then give your next idea a place to take shape.
+                Your projects and tasks contain only the work you create.
               </p>
+              <Link to={`${wsPath(org.id, ws.id)}/projects`}>
+                Open projects <ArrowRight size={14} />
+              </Link>
             </div>
           </div>
         </>

@@ -213,7 +213,7 @@ export function safeReturnTo(value: string | null): string {
   if (value === '/account' || value === '/app' || value === '/invitations/accept') return value;
   if (
     value &&
-    /^\/app\/organizations\/[a-f0-9]{24}(?:\/(?:settings|team)|\/workspaces\/[a-f0-9]{24}(?:\/settings)?)?$/.test(
+    /^\/app\/organizations\/[a-f0-9]{24}(?:\/(?:settings|team)|\/workspaces\/[a-f0-9]{24}(?:\/settings|\/projects(?:\/[a-f0-9]{24}(?:\/tasks\/[a-f0-9]{24})?)?)?)?$/.test(
       value,
     )
   )

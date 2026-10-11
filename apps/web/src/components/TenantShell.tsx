@@ -51,7 +51,7 @@ export function TenantState({
         <LockKeyhole size={28} />
       </div>
       <h1>A small interruption.</h1>
-      <p>
+      <p role={error ? 'alert' : undefined}>
         {error ? authErrorMessage(error) : 'This space is unavailable or you do not have access.'}
       </p>
       {retry ? <Button onClick={retry}>Try again</Button> : null}
@@ -117,6 +117,15 @@ export function TenantShell({
         </Link>
       ) : null}
       <nav aria-label="Organization navigation" className="tenant-navigation">
+        {organization && workspace ? (
+          <NavLink
+            to={`${wsPath(organization.id, workspace.id)}/projects`}
+            onClick={() => setMobileOpen(false)}
+          >
+            <Grid2X2 size={17} />
+            Projects
+          </NavLink>
+        ) : null}
         {organization ? (
           <NavLink to={`${orgPath(organization.id)}/team`} onClick={() => setMobileOpen(false)}>
             <UsersRound size={17} />

@@ -79,7 +79,7 @@ function AccessFields({
       <FormField
         id="team-role"
         label="Organization role"
-        hint="Project managers cannot administer the organization. Guest project grants become available when projects launch."
+        hint="Project managers manage projects within explicitly granted workspaces. Guests also need a project grant and receive read-only access."
       >
         <select
           id="team-role"
@@ -403,7 +403,8 @@ export default function TeamPage() {
               <strong>Belonging is explicit.</strong>
               <p>
                 Organization roles govern administration. Workspace grants govern which spaces a
-                person can open. Project privileges become available when projects launch.
+                person can open. Project grants govern task access; guests have read-only access to
+                explicitly shared projects.
               </p>
             </div>
             <Badge>{roleLabel(org.role)}</Badge>

@@ -91,6 +91,9 @@ try {
     '/app',
     `/app/organizations/${'a'.repeat(24)}/team`,
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/settings`,
+    `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects`,
+    `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}`,
+    `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}/tasks/${'d'.repeat(24)}`,
   ]) {
     await page.goto(`http://127.0.0.1:4173${path}`);
     await page.getByRole('heading', { name: 'Welcome back.', exact: true }).waitFor();

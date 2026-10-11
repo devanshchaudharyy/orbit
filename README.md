@@ -2,9 +2,9 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 4 adds real email invitations, membership lifecycle, roles, explicit workspace grants, and password-protected ownership transfer to organizations/workspaces, secure accounts, the marketing website, and the ORBIT Design Language lab. Marketing sample content demonstrates the intended product. Projects, collaboration, AI, and billing remain in later phases.
+Phase 5 adds persistent projects, tasks/subtasks, multiple assignments, due dates, checklists, labels, filtering and activity history to secure accounts, organizations/workspaces and team permissions. Projects support status/priority, original cover artwork, explicit teams, templates and archive/restore/deletion. Marketing sample content demonstrates the intended product. Advanced work views, collaboration, files, analytics, AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Current delivery covers Phases 0–4 and runs locally.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Current delivery covers Phases 0–5 and runs locally.
 
 ## Screenshots
 
@@ -46,11 +46,17 @@ See [the screenshot gallery](docs/SCREENSHOTS.md) for all themes, viewport sizes
 
 ![ORBIT invitation acceptance connected to the real email and API flow](docs/screenshots/invitation-accept-light-1440.png)
 
-## Verification through Phase 4
+### Projects and tasks
 
-Passed locally: **96 unit/component/API tests**, **64 real integration/transaction checks** (25 team + 21 tenant + 15 account + 3 account transaction), **45 browser scenarios**, and **130 theme/viewport and overlay accessibility scans** with zero axe violations. Lint, formatting, strict TypeScript, production builds, and **9 production route/build checks** passed. Exact commands and evidence are recorded in [the Phase 4 report](docs/PHASE4_REPORT.md).
+![ORBIT project with real tasks, labels and activity history](docs/screenshots/project-populated-dark-1440.png)
 
-The [Phase 4 GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38070127777) passed all checks, including the pinned Compose infrastructure and account/tenant/team integration and browser suites. The isolated local authentication fixture was verified with MongoDB **8.3.4** and Mailpit **1.27.10**. Local Docker/WSL setup and container-restart durability remain deferred; remote results are recorded independently in the phase report.
+![ORBIT project directory with real completion progress](docs/screenshots/projects-populated-light-1440.png)
+
+## Verification through Phase 5
+
+Final local verification through Phase 5: **107 unit/component/API tests**, **92 real integration/transaction checks**, **50 browser scenarios**, **184 accessibility scans** with zero axe violations, and **12 production route/build checks** passed. These include 28 project integration checks, five project browser scenarios and 54 project theme/viewport/overlay scans. Exact commands and regression results are recorded in [the Phase 5 report](docs/PHASE5_REPORT.md).
+
+The isolated local fixture uses MongoDB **8.3.4** and Mailpit **1.27.10**. Local Docker/WSL setup and container-restart durability remain deferred. GitHub verifies the pinned Compose environment independently; consult the phase report for the actual remote result.
 
 ## Start locally
 

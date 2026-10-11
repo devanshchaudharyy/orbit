@@ -1,6 +1,6 @@
 # Phase progress
 
-Current delivery: Phase 4 teams, invitations, membership lifecycle, permissions, and safe ownership transfer. Final results are recorded in the Phase 4 section below. Docker infrastructure acceptance remains deferred locally; earlier sections are historical records.
+Current delivery: Phase 5 projects, tasks/subtasks, assignments, labels, filtering and activity history. Results are recorded in the Phase 5 section below. Docker infrastructure acceptance remains deferred locally; earlier sections are historical records.
 
 ## Phase 0 — foundation implemented; infrastructure verification blocked
 
@@ -147,4 +147,18 @@ Final executed results and evidence are in the Phase 4 report. The [corrective G
 
 ### Preparation for Phase 5
 
-Verified tenant parents, current membership, explicit workspace grants, hierarchy rules, optimistic versions and write fences are ready for project/task/subtask/assignment/filter/label/activity work. Define project privileges and guest grants against these boundaries before adding endpoints. Phase 5 is not implemented. Stop after Phase 4.
+Verified tenant parents, current membership, explicit workspace grants, hierarchy rules, optimistic versions and write fences prepared Phase 5. The user subsequently authorized it; results follow.
+
+## Phase 5 — projects and tasks
+
+Date: 11 October 2026 (Asia/Kolkata). [Plan](PHASE5_PLAN.md), [verification report](PHASE5_REPORT.md), [screenshots](SCREENSHOTS.md).
+
+Implemented persistent project creation/settings, owners/team/guest grants, status/priority, original vector covers, blank/launch templates, archive/restore and atomic soft deletion. Tasks/subtasks include descriptions, status, priority, due dates, owner, multiple assignees, checklists and project labels. Combined server filters persist in the URL; actual active task counts drive progress. Transactional append-only history records mutations and status changes.
+
+Explicit organization/workspace membership precedes project access. Workspace owners/admins/project managers manage projects; eligible project owners manage their own project. Other members need explicit grants for task work; explicitly granted guests are read-only. Assignments/grants require current eligible members. Versions prevent stale overwrites and transaction retries recheck authority. Deletion and label cleanup preserve multi-record invariants and history.
+
+Browser routes, queries, forms and original responsive layouts are integrated with actual API/MongoDB persistence. Final local verification passed 107 unit/component/API tests, 92 real integration/transaction checks, 50 browser scenarios, 184 axe scans with zero violations and 12 production checks. Project-specific coverage includes 28 integration checks, five browser scenarios and 54 axe scans. Exact commands, publication and CI results are recorded in the report. Local Docker/WSL and restart acceptance remain deferred; no deployment or provider provisioning.
+
+### Preparation for Phase 6
+
+Scoped project/task contracts, statuses, assignments, labels, stable IDs, URL filters, bounded cursors, optimistic versions and transaction fences prepare consistent advanced views. Kanban/list/table/calendar, drag-and-drop, saved filters and preferences are not implemented. Stop after Phase 5.

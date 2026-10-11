@@ -1,6 +1,6 @@
 # ORBIT screenshot gallery
 
-All captures come from the running local application through Phase 4. Marketing and lab content is explicitly illustrative. Account, workspace and team captures use synthetic verification users and real local API/MongoDB/Mailpit workflows. These images contain no production credentials or business records.
+All captures come from the running local application through Phase 5. Marketing and lab content is explicitly illustrative. Account, workspace and team captures use synthetic verification users and real local API/MongoDB/Mailpit workflows. These images contain no production credentials or business records.
 
 Each theme was verified at 375px, 768px, and 1440px. The full set remains versioned under `docs/screenshots/`; the README shows selected views.
 
@@ -107,3 +107,21 @@ See [phase progress](PHASE_PROGRESS.md) and [the Phase 3 verification report](PH
 | Access sheet / 1440px       | [Screenshot](screenshots/team-access-sheet-dark-1440.png)  | [Screenshot](screenshots/team-access-sheet-light-1440.png)  |
 
 The invitation pages consume actual SMTP links and require a deliberate protected API action. The access sheet retains a member version for stale-edit protection. All 48 captures were audited in the real browser; see [the Phase 4 report](PHASE4_REPORT.md) for commands, results, fixes and limitations.
+
+## Projects and tasks — Phase 5
+
+Real API/database records under synthetic test users, cleaned after each browser scenario. Both themes and all three widths passed overflow and axe checks; overlays also passed keyboard containment, Escape and focus restoration.
+
+| State                 | Dark 375 / 768 / 1440                                                                                                                                                   | Light 375 / 768 / 1440                                                                                                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| projects-empty        | [375](screenshots/projects-empty-dark-375.png) / [768](screenshots/projects-empty-dark-768.png) / [1440](screenshots/projects-empty-dark-1440.png)                      | [375](screenshots/projects-empty-light-375.png) / [768](screenshots/projects-empty-light-768.png) / [1440](screenshots/projects-empty-light-1440.png)                      |
+| projects-populated    | [375](screenshots/projects-populated-dark-375.png) / [768](screenshots/projects-populated-dark-768.png) / [1440](screenshots/projects-populated-dark-1440.png)          | [375](screenshots/projects-populated-light-375.png) / [768](screenshots/projects-populated-light-768.png) / [1440](screenshots/projects-populated-light-1440.png)          |
+| project-create-dialog | [375](screenshots/project-create-dialog-dark-375.png) / [768](screenshots/project-create-dialog-dark-768.png) / [1440](screenshots/project-create-dialog-dark-1440.png) | [375](screenshots/project-create-dialog-light-375.png) / [768](screenshots/project-create-dialog-light-768.png) / [1440](screenshots/project-create-dialog-light-1440.png) |
+| project-empty         | [375](screenshots/project-empty-dark-375.png) / [768](screenshots/project-empty-dark-768.png) / [1440](screenshots/project-empty-dark-1440.png)                         | [375](screenshots/project-empty-light-375.png) / [768](screenshots/project-empty-light-768.png) / [1440](screenshots/project-empty-light-1440.png)                         |
+| project-populated     | [375](screenshots/project-populated-dark-375.png) / [768](screenshots/project-populated-dark-768.png) / [1440](screenshots/project-populated-dark-1440.png)             | [375](screenshots/project-populated-light-375.png) / [768](screenshots/project-populated-light-768.png) / [1440](screenshots/project-populated-light-1440.png)             |
+| project-filtered      | [375](screenshots/project-filtered-dark-375.png) / [768](screenshots/project-filtered-dark-768.png) / [1440](screenshots/project-filtered-dark-1440.png)                | [375](screenshots/project-filtered-light-375.png) / [768](screenshots/project-filtered-light-768.png) / [1440](screenshots/project-filtered-light-1440.png)                |
+| project-archived      | [375](screenshots/project-archived-dark-375.png) / [768](screenshots/project-archived-dark-768.png) / [1440](screenshots/project-archived-dark-1440.png)                | [375](screenshots/project-archived-light-375.png) / [768](screenshots/project-archived-light-768.png) / [1440](screenshots/project-archived-light-1440.png)                |
+| task-detail           | [375](screenshots/task-detail-dark-375.png) / [768](screenshots/task-detail-dark-768.png) / [1440](screenshots/task-detail-dark-1440.png)                               | [375](screenshots/task-detail-light-375.png) / [768](screenshots/task-detail-light-768.png) / [1440](screenshots/task-detail-light-1440.png)                               |
+| task-edit-sheet       | [375](screenshots/task-edit-sheet-dark-375.png) / [768](screenshots/task-edit-sheet-dark-768.png) / [1440](screenshots/task-edit-sheet-dark-1440.png)                   | [375](screenshots/task-edit-sheet-light-375.png) / [768](screenshots/task-edit-sheet-light-768.png) / [1440](screenshots/task-edit-sheet-light-1440.png)                   |
+
+All 54 captures are retained. [Phase 5 verification report](PHASE5_REPORT.md) records commands, actual results, fixes and limits.

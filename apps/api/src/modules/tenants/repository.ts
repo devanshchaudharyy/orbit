@@ -98,7 +98,7 @@ export class MongoTenantRepository {
     if (!org) throw missingTenant();
     return { org, member };
   }
-  private async workspaceAccess(
+  async workspaceAccess(
     userId: string,
     organizationId: string,
     workspaceId: string,

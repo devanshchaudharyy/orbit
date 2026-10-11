@@ -75,13 +75,19 @@ async function setup(page: Page) {
   await page.getByRole('button', { name: 'Create organization', exact: true }).click();
   await page.getByLabel('Organization name', { exact: true }).fill('Northstar Studio');
   await page.getByRole('button', { name: 'Create organization', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Northstar Studio', exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/app\/organizations\/[a-f0-9]{24}$/);
+  await expect(
+    page.getByRole('heading', { name: 'Northstar Studio', exact: true, level: 1 }),
+  ).toBeVisible();
   const org = new URL(page.url()).pathname.split('/').at(-1)!;
   orgIds.push(org);
   await page.getByRole('button', { name: 'Create workspace', exact: true }).click();
   await page.getByLabel('Workspace name', { exact: true }).fill('Product studio');
   await page.getByRole('button', { name: 'Create workspace', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Product studio', exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/workspaces\/[a-f0-9]{24}$/);
+  await expect(
+    page.getByRole('heading', { name: 'Product studio', exact: true, level: 1 }),
+  ).toBeVisible();
   const wsPath = new URL(page.url()).pathname;
   const ws = wsPath.split('/').at(-1)!;
   await database(async (db) => {
@@ -116,7 +122,8 @@ async function project(page: Page, name = 'Website launch', template = 'blank') 
   await page.getByLabel('Tess MorrisGuest', { exact: true }).check();
   await page.getByLabel('Start from', { exact: true }).selectOption(template);
   await page.getByRole('button', { name: 'Create project', exact: true }).click();
-  await expect(page.getByRole('heading', { name, exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/projects\/[a-f0-9]{24}$/);
+  await expect(page.getByRole('heading', { name, exact: true, level: 1 })).toBeVisible();
   return new URL(page.url()).pathname;
 }
 async function task(page: Page, title = 'Design the release experience') {
@@ -132,7 +139,8 @@ async function task(page: Page, title = 'Design the release experience') {
   await page.getByRole('button', { name: 'Add checklist item', exact: true }).click();
   await page.getByLabel('Checklist item 1', { exact: true }).fill('Review accessible states');
   await page.getByRole('button', { name: 'Create task', exact: true }).click();
-  await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/tasks\/[a-f0-9]{24}$/);
+  await expect(page.getByRole('heading', { name: title, exact: true, level: 1 })).toBeVisible();
   return new URL(page.url()).pathname;
 }
 async function settle(page: Page) {

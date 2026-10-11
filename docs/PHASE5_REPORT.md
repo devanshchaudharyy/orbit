@@ -57,7 +57,11 @@ Preview: [local application](http://127.0.0.1:5174/app). Complete personal verif
 
 ## GitHub and final regression evidence
 
-Pending the final executed checks and authorized commit/push. A running workflow is not counted as passing. Record the exact code SHA and completed remote outcome before handoff.
+Implementation commit `4b58bc62e622cf8791279b47345e3ce0b1737fed` was pushed to private [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit); local and GitHub `main` matched. The [initial Phase 5 workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38114359074) completed successfully, including frozen installation, formatting, lint, strict types, unit tests, production builds/checks, pinned Compose startup, four infrastructure checks, foundation browser checks and the full Compose account/tenant/team/project suite. Evidence upload and service cleanup also passed.
+
+The completed log reported one project browser scenario as flaky (four passed directly, one passed on retry). Downloaded browser evidence identified a test route-capture race: after creation the helper matched the project's directory-card heading before detail navigation completed, then signed the member into that directory URL and incorrectly expected a detail-only Create task button. The application rendered the directory correctly. Helpers now wait for canonical organization/workspace/project/task detail URLs and level-one headings before capturing identifiers. This is an explicit observable-state wait, not a delay or relaxed permission assertion.
+
+After that correction, `pnpm exec playwright test -c playwright.projects.config.ts --grep 'members need explicit' --repeat-each=3 --retries=0` passed **three consecutive retry-free repetitions**. The full `pnpm test:projects:e2e` then passed **all five scenarios** and the 54 axe scans again. Lint and formatting passed. These additional repetitions are not added to the 50 distinct-scenario total. The corrective remote result will be recorded after execution; an active workflow is not counted as passed.
 
 ## Limits, recovery and next phase
 

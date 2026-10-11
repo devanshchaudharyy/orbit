@@ -117,6 +117,10 @@ After registration, email verification, and personal onboarding, choose **Open m
 | `pnpm test:auth:compose`                     | Run auth verification against running Compose services in an isolated test database      |
 | `pnpm test:tenants:integration`              | Real MongoDB tenant isolation, role/access, rollback, concurrency, and pagination checks |
 | `pnpm test:tenants:e2e`                      | Real organization/workspace browser flows, switching, settings, keyboard, and axe checks |
+| `pnpm test:teams:integration`                | Real MongoDB team roles, invitations, lifecycle, membership and transaction checks       |
+| `pnpm test:teams:e2e`                        | Team permissions, invitation acceptance, keyboard, themes and responsive browser checks  |
+| `pnpm test:projects:integration`             | Real MongoDB project/task permissions, transactions, filters, rollback and pagination    |
+| `pnpm test:projects:e2e`                     | Real project/task CRUD, grants, conflicts, filters, lifecycle and accessibility checks   |
 
 Install the test browser with `pnpm exec playwright install chromium`. On Linux CI, use `--with-deps chromium`.
 

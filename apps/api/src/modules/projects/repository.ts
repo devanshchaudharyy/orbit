@@ -1,4 +1,4 @@
-import { Types, type ClientSession } from 'mongoose';
+import { Types, type ClientSession, type PipelineStage } from 'mongoose';
 import type {
   Project,
   ProjectInput,
@@ -9,6 +9,7 @@ import type {
   ProjectFilter,
   TaskFilter,
   LabelInput,
+  TaskMove,
 } from '@orbit/contracts';
 import type { StoredUser } from '../auth/models.js';
 import { AuthError } from '../auth/errors.js';
@@ -70,7 +71,7 @@ export class ProjectRepository {
   private workspace(actor: string, scope: ProjectScope, session?: ClientSession) {
     return this.tenants.workspaceAccess(actor, scope.organizationId, scope.workspaceId, session);
   }
-  private async access(
+  async access(
     actor: string,
     scope: ProjectScope,
     projectId: string,
@@ -468,34 +469,153 @@ export class ProjectRepository {
   }
   async tasks(actor: string, scope: ProjectScope, projectId: string, input: TaskFilter) {
     await this.access(actor, scope, projectId);
-    const rows = await this.models.tasks
-      .find({
-        ...scope,
-        projectId,
-        deletedAt: null,
-        ...(input.cursor ? { _id: { $gt: input.cursor } } : {}),
-        ...(input.q ? { title: { $regex: literal(input.q), $options: 'i' } } : {}),
-        ...(input.status ? { status: input.status } : {}),
-        ...(input.priority ? { priority: input.priority } : {}),
-        ...(input.assignee ? { assigneeIds: input.assignee } : {}),
-        ...(input.label ? { labelIds: input.label } : {}),
-        ...(input.parent ? { parentId: input.parent === 'root' ? null : input.parent } : {}),
-        ...(input.overdue === 'true'
+    const match = {
+      organizationId: new Types.ObjectId(scope.organizationId),
+      workspaceId: new Types.ObjectId(scope.workspaceId),
+      projectId: new Types.ObjectId(projectId),
+      deletedAt: null,
+      ...(input.q ? { title: { $regex: literal(input.q), $options: 'i' } } : {}),
+      ...(input.status ? { status: input.status } : {}),
+      ...(input.priority ? { priority: input.priority } : {}),
+      ...(input.assignee ? { assigneeIds: new Types.ObjectId(input.assignee) } : {}),
+      ...(input.label ? { labelIds: new Types.ObjectId(input.label) } : {}),
+      ...(input.parent
+        ? { parentId: input.parent === 'root' ? null : new Types.ObjectId(input.parent) }
+        : {}),
+      ...(input.undated === 'true'
+        ? { dueDate: null }
+        : input.dueFrom || input.dueTo || input.undated === 'false' || input.overdue === 'true'
           ? {
-              dueDate: { $ne: null, $lt: new Date().toISOString().slice(0, 10) },
-              status: input.status
-                ? { $eq: input.status, $ne: 'done' as const }
-                : { $ne: 'done' as const },
+              dueDate: {
+                $ne: null,
+                ...(input.dueFrom ? { $gte: input.dueFrom } : {}),
+                ...(input.dueTo ? { $lte: input.dueTo } : {}),
+                ...(input.overdue === 'true' ? { $lt: new Date().toISOString().slice(0, 10) } : {}),
+              },
             }
           : {}),
-      })
-      .sort({ _id: 1 })
-      .limit(51)
-      .lean();
+      ...(input.overdue === 'true'
+        ? { status: input.status ? { $eq: input.status, $ne: 'done' } : { $ne: 'done' } }
+        : {}),
+    };
+    const sort = input.sort ?? 'oldest';
+    const direction = sort === 'newest' ? -1 : 1;
+    const sortValue =
+      sort === 'title'
+        ? { $toLower: '$title' }
+        : sort === 'due-date'
+          ? { $ifNull: ['$dueDate', '9999-12-32'] }
+          : sort === 'priority' || sort === 'status'
+            ? {
+                $switch: {
+                  branches: (sort === 'priority'
+                    ? ['urgent', 'high', 'normal', 'low', 'none']
+                    : ['todo', 'in-progress', 'blocked', 'done']
+                  ).map((value, index) => ({ case: { $eq: [`$${sort}`, value] }, then: index })),
+                  default: 99,
+                },
+              }
+            : '$_id';
+    let after: PipelineStage.Match[] = [];
+    if (input.cursor) {
+      const [anchor] = await this.models.tasks.aggregate<{
+        _id: Types.ObjectId;
+        sortValue: unknown;
+      }>([
+        { $match: { ...match, _id: new Types.ObjectId(input.cursor) } },
+        { $addFields: { sortValue } },
+        { $project: { _id: 1, sortValue: 1 } },
+      ]);
+      if (!anchor)
+        throw new AuthError(
+          409,
+          'TASK_PAGE_CHANGED',
+          'Tasks changed while paging. Reload the results.',
+        );
+      const compare = direction === 1 ? '$gt' : '$lt';
+      after = [
+        {
+          $match: {
+            $expr: {
+              $or: [
+                { [compare]: ['$sortValue', { $literal: anchor.sortValue }] },
+                {
+                  $and: [
+                    { $eq: ['$sortValue', { $literal: anchor.sortValue }] },
+                    { [compare]: ['$_id', anchor._id] },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      ];
+    }
+    const [page] = await this.models.tasks.aggregate<{
+      rows: StoredTask[];
+      total: { count: number }[];
+    }>([
+      { $match: match },
+      { $addFields: { sortValue } },
+      {
+        $facet: {
+          rows: [...after, { $sort: { sortValue: direction, _id: direction } }, { $limit: 51 }],
+          total: [{ $count: 'count' }],
+        },
+      },
+    ]);
+    const rows = page?.rows ?? [];
     return {
       tasks: rows.slice(0, 50).map(taskDto),
       nextCursor: rows.length > 50 ? String(rows[49]!._id) : null,
+      total: page?.total[0]?.count ?? 0,
     };
+  }
+  async moveTask(
+    actor: string,
+    scope: ProjectScope,
+    projectId: string,
+    taskId: string,
+    input: TaskMove,
+  ) {
+    return this.tenants.connection.transaction(async (session) => {
+      await this.access(actor, scope, projectId, session, 'task');
+      const old = await this.models.tasks
+        .findOne({ ...scope, projectId, _id: taskId, deletedAt: null })
+        .session(session)
+        .lean();
+      if (!old) throw missingTenant();
+      if (old.version !== input.version) throw stale();
+      const fields = {
+        ...(input.status !== undefined ? { status: input.status } : {}),
+        ...(input.dueDate !== undefined ? { dueDate: input.dueDate } : {}),
+      };
+      if (
+        (input.status === undefined || input.status === old.status) &&
+        (input.dueDate === undefined || input.dueDate === old.dueDate)
+      )
+        return taskDto(old);
+      const updated = await this.models.tasks
+        .findOneAndUpdate(
+          { ...scope, projectId, _id: taskId, version: input.version },
+          { $set: fields, $inc: { version: 1 } },
+          { session, returnDocument: 'after' },
+        )
+        .lean();
+      if (!updated) throw stale();
+      const detail = [
+        input.status !== undefined && old.status !== input.status
+          ? `${old.status} → ${input.status}`
+          : '',
+        input.dueDate !== undefined && old.dueDate !== input.dueDate
+          ? `Due ${old.dueDate ?? 'undated'} → ${input.dueDate ?? 'undated'}`
+          : '',
+      ]
+        .filter(Boolean)
+        .join('; ');
+      await this.event(actor, scope, projectId, 'moved task', old.title, detail, session);
+      return taskDto(updated);
+    });
   }
   async task(actor: string, scope: ProjectScope, projectId: string, taskId: string) {
     await this.access(actor, scope, projectId);

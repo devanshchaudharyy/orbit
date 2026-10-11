@@ -138,6 +138,31 @@ Membership edits use a separate version from the authority fence. Stale writes r
 
 Team mutations are limited to 60/minute per actor, invitations to 20/hour, transfer attempts to five/15 minutes; the existing global request/session budgets also apply. No automatic browser retry of mutations. Revocation/demotion/removal is checked transactionally; issuer role changes and ownership transfer revoke affected pending invitations. Existing membership cannot be altered by accepting a new link.
 
+## Phase 6 work views
+
+All new paths are relative to `/api/v1/organizations/:organizationId/workspaces/:workspaceId/projects/:projectId`. Verified identity, current organization/workspace membership and project access are rechecked. Existing envelopes, request IDs and no-store policy apply. Writes require Origin, JSON and session-bound CSRF; personal view mutations have a persistent 100/minute actor budget.
+
+| Method/path                       | Input / response                                                                                                       |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `GET /tasks`                      | Existing filters plus sort, inclusive dueFrom/dueTo, undated=true/false and canonical cursor; {tasks,nextCursor,total} |
+| `POST /tasks/:taskId/move`        | Strict {version,status?,dueDate?}, at least one supplied field; task DTO. dueDate:null clears the date                 |
+| `GET /view-preferences`           | Owned preferences; absent records yield defaults with version zero without writing                                     |
+| `PATCH /view-preferences`         | Strict {view,sort,group,density,weekStart,columns,showSubtasks,version}; updated DTO                                   |
+| `GET /saved-filters`              | {filters}; at most twenty owned filter DTOs                                                                            |
+| `POST /saved-filters`             | Strict {name,criteria}; HTTP 201 filter DTO                                                                            |
+| `PATCH /saved-filters/:filterId`  | Strict {name,criteria,version}; owned updated DTO                                                                      |
+| `DELETE /saved-filters/:filterId` | Strict {version}; message                                                                                              |
+
+Views: list/kanban/table/calendar. Sorts: oldest/newest/title/priority/due-date/status. Group: none/status/priority. Density: comfortable/compact. Week start: monday/sunday. Table columns: unique status/priority/dueDate/assignees/labels. Defaults: list, oldest, no grouping, comfortable, Monday, all columns, subtasks visible.
+
+Saved names are trimmed, 2–60 characters and case-insensitively unique per actor/project. Criteria is strict {view,sort,group,filters}; filters accept only q/status/priority/assignee/label/overdue/parent. Calendar month and visual settings are separate. Injected ownership/tenant/query fields are rejected. Other users' filter IDs are inaccessible.
+
+Pages contain at most fifty matches and a whole-collection total at query time. Sorts use an ID tie break; null dates sort last. UTC date bounds are inclusive; undated cannot combine with date bounds or overdue=true. Overdue excludes done tasks. A cursor missing from the current scoped/filter collection returns TASK_PAGE_CHANGED / 409. Paging is a live collection, not an immutable snapshot during concurrent edits.
+
+Task moves require write access and reject archived projects. No-op moves do not increment versions or append activity. Authorized guests and archived projects allow personal settings. Deleted resources or revoked grants return 404 for retained settings. Stale versions return VERSION_CONFLICT / 409; duplicate names/filter bounds return FILTER_NAME_USED / FILTER_LIMIT / 422. View storage failures return sanitized VIEW_UNAVAILABLE / 503. Browser mutations have no automatic retry.
+
+[Current verification and recovery](PHASE6_REPORT.md).
+
 ## Logging
 
 Requests log their ID, method, status, and duration. Bodies, query strings, authorization headers, cookies, and connection URIs are not logged by request middleware. Known sensitive structured fields are redacted by the logger. Dependency failures use generic development diagnostics, not raw connection exceptions. Log level is environment-controlled.

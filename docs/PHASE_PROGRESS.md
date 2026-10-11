@@ -163,4 +163,16 @@ The [corrective Phase 5 GitHub workflow](https://github.com/devanshchaudharyy/or
 
 ### Preparation for Phase 6
 
-Scoped project/task contracts, statuses, assignments, labels, stable IDs, URL filters, bounded cursors, optimistic versions and transaction fences prepare consistent advanced views. Kanban/list/table/calendar, drag-and-drop, saved filters and preferences are not implemented. Stop after Phase 5.
+Scoped project/task contracts, statuses, assignments, labels, stable IDs, URL filters, bounded cursors, optimistic versions and transaction fences prepared Phase 6. The user subsequently authorized it; current progress follows.
+
+## Phase 6 — work views and preferences
+
+Date: 11 October 2026. [Plan](PHASE6_PLAN.md), [current report](PHASE6_REPORT.md).
+
+Implemented shared list/Kanban/table/calendar task views, sorting/grouping, inclusive UTC month filtering and an undated collection. Moves update only status/date with original task versions and transactional activity. All views retain current organization/workspace/project authorization. Guests manage their own saved settings while remaining read-only for work.
+
+Personal per-project defaults persist view, sorting, grouping, density, week start, table columns and subtask visibility. Up to twenty private named filters persist validated query choices; versions reject concurrent settings/filter edits. Explicit URL choices override defaults. Loaded and actual matching counts are visible with bounded pagination. Pointer handles and equivalent Move dialogs support status/date changes; manual within-column ranking is outside this phase.
+
+Local verification passed: **121 unit/component/API tests**, **116 real integration/transaction checks**, **55 browser scenarios**, **238 accessibility scans with zero violations**, and **12 production route/build checks**, plus strict types, lint and production builds. This includes 24 new view database checks and five new view browser scenarios with 54 theme/viewport/overlay scans. All final browser suites passed without retries. The gallery retains **54 new screenshots**, **237 PNGs** across phases. Test-discovered empty-filter persistence, form labeling and removed-task focus restoration issues have fixes and regression coverage. The earlier execution-approval usage limit is resolved.
+
+Implementation and local verification are complete. Private GitHub publication and its exact CI result are recorded in the report after the final publication checks. Docker/WSL and Windows container restart acceptance remain deferred; exact recovery commands are documented. Remote Compose CI is separate evidence. No paid service or deployment was introduced. Stop after Phase 6; Phase 7 has not started.

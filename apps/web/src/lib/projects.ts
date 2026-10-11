@@ -21,6 +21,7 @@ export function useProjectData(
   project?: string,
   task?: string,
   filters = '',
+  loadTasks = true,
 ) {
   const auth = useAuth();
   const client = useQueryClient();
@@ -77,7 +78,7 @@ export function useProjectData(
         'organizations',
       ),
     getNextPageParam: (page) => page.nextCursor ?? undefined,
-    enabled: enabled && validId(project) && !task,
+    enabled: enabled && validId(project) && !task && loadTasks,
     retry,
     refetchOnWindowFocus: true,
   });

@@ -35,12 +35,11 @@ import {
   TaskEditor,
   ProjectActionForm,
   projectStatuses,
-  taskStatuses,
-  priorities,
   type ProjectAction,
   type PersonChoice,
 } from '../components/ProjectForms';
 import '../projects.css';
+import { ProjectWorkViews } from '../components/ProjectWorkViews';
 
 const titleFor = (action: ProjectAction) =>
   action.kind === 'create-project'
@@ -193,7 +192,14 @@ export default function ProjectsPage({
   const [search, setSearch] = useSearchParams();
   const filters = new URLSearchParams(search);
   filters.delete('cursor');
-  const data = useProjectData(orgId, wsId, projectId, taskId, filters.toString());
+  const data = useProjectData(
+    orgId,
+    wsId,
+    projectId,
+    taskId,
+    filters.toString(),
+    mode !== 'project',
+  );
   const navigate = useNavigate();
   const [action, setAction] = useState<ProjectAction | null>(null);
   const [success, setSuccess] = useState('');
@@ -511,96 +517,14 @@ export default function ProjectsPage({
                   </div>
                   <div className="project-work-grid">
                     <section className="project-work">
-                      <div className="tenant-section-heading">
-                        <h2>Tasks</h2>
-                        <span>One clear step at a time</span>
-                      </div>
-                      <div className="project-filters task-filters">
-                        <label className="project-filter project-search">
-                          <span>Search tasks</span>
-                          <Input
-                            placeholder="Find a task…"
-                            maxLength={100}
-                            value={search.get('q') ?? ''}
-                            onChange={(e) => changeFilter('q', e.target.value)}
-                          />
-                        </label>
-                        <FilterSelect
-                          name="Status"
-                          values={taskStatuses}
-                          value={search.get('status') ?? ''}
-                          change={(value) => changeFilter('status', value)}
-                        />
-                        <FilterSelect
-                          name="Priority"
-                          values={priorities}
-                          value={search.get('priority') ?? ''}
-                          change={(value) => changeFilter('priority', value)}
-                        />
-                        <FilterSelect
-                          name="Assignee"
-                          options={people.filter((person) => person.canAssign)}
-                          value={search.get('assignee') ?? ''}
-                          change={(value) => changeFilter('assignee', value)}
-                        />
-                        <FilterSelect
-                          name="Label"
-                          options={project.labels}
-                          value={search.get('label') ?? ''}
-                          change={(value) => changeFilter('label', value)}
-                        />
-                        <label className="project-filter-check">
-                          <input
-                            type="checkbox"
-                            checked={search.get('overdue') === 'true'}
-                            onChange={(e) =>
-                              changeFilter('overdue', e.target.checked ? 'true' : '')
-                            }
-                          />
-                          Overdue only (UTC)
-                        </label>
-                        {search.size ? (
-                          <Button variant="ghost" size="small" onClick={() => setSearch({})}>
-                            Reset filters
-                          </Button>
-                        ) : null}
-                      </div>
-                      {data.tasks.isPending ? (
-                        <TenantState loading />
-                      ) : data.tasks.isError ? (
-                        <TenantState
-                          error={data.tasks.error}
-                          retry={() => void data.tasks.refetch()}
-                        />
-                      ) : data.tasks.data?.pages.some((page) => page.tasks.length) ? (
-                        <TaskRows
-                          tasks={data.tasks.data.pages.flatMap((page) => page.tasks)}
-                          project={project}
-                          people={people}
-                          path={detailPath}
-                        />
-                      ) : (
-                        <Empty
-                          title={
-                            search.size
-                              ? 'No tasks match these filters.'
-                              : 'A little room for your first step.'
-                          }
-                        >
-                          {search.size
-                            ? 'Adjust or reset your filters to see more work.'
-                            : 'Add a task with a clear outcome. Subtasks, labels and collaborators can follow.'}
-                        </Empty>
-                      )}
-                      {data.tasks.hasNextPage ? (
-                        <Button
-                          variant="secondary"
-                          disabled={data.tasks.isFetchingNextPage}
-                          onClick={() => void data.tasks.fetchNextPage()}
-                        >
-                          Load more tasks
-                        </Button>
-                      ) : null}
+                      <ProjectWorkViews
+                        key={project.id}
+                        org={orgId!}
+                        ws={wsId!}
+                        project={project}
+                        path={detailPath}
+                        people={people}
+                      />
                     </section>
                     <aside className="project-context">
                       <section>

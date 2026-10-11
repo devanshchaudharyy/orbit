@@ -32,7 +32,9 @@
     "test:teams:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/teams.ts",
     "test:teams:e2e": "playwright test -c playwright.teams.config.ts",
     "test:projects:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/projects.ts",
-    "test:projects:e2e": "playwright test -c playwright.projects.config.ts"
+    "test:projects:e2e": "playwright test -c playwright.projects.config.ts",
+    "test:views:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/views.ts",
+    "test:views:e2e": "playwright test -c playwright.views.config.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

@@ -90,6 +90,14 @@ Invitation credentials appear only in email fragments, are scrubbed from the add
 
 Team and invitation pages are lazy-loaded and query caches stay scoped to the actor/organization. Independent roster, grant-choice and pending-invitation reads run concurrently after the organization is authorized. Overlay forms retain their observed member version across background updates; conflict reload closes the stale form and fetches current data. Members see an access explanation and leave action without fetching the private roster.
 
+## Phase 6 shared views
+
+One query-backed project work component and shared list/board/table/calendar renderers share strict filters, backend sorting, current authorization and actual totals. Calendar adds a UTC month or undated scope; partial loading is explicit.
+
+The views module has separate controller/service/repository/model boundaries and owns personal settings. It reuses ProjectRepository.access and transactional membership/project fences. Clients cannot supply actor/tenant ownership. Original versions accompany writes; conflicts require reload. Task movement and history commit together.
+
+Query keys include actor and every resource parent. Project changes remount local state. Explicit URL choices override persisted defaults; saving preferences is explicit. Pointer handles and equivalent Move dialogs call the same partial endpoint. Order follows server sorting. Realtime, timeline, manual ranks and workers remain later work. [Verification evidence](PHASE6_REPORT.md).
+
 ## Deployment boundaries (unchanged)
 
 Phase 0 is local-only. The eventual frontend can use static hosting; the API needs a persistent Node runtime supporting future realtime connections. Production uses Atlas, managed Redis, private S3-compatible storage, and a transactional email service. Garage/Mailpit and the single-node replica set are local development choices. Hosting/provider provisioning and deployment belong to Phase 14.

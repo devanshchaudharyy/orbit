@@ -12,6 +12,7 @@ import {
   versionInputSchema,
   archiveInputSchema,
   tenantListInputSchema,
+  taskMoveSchema,
 } from '@orbit/contracts';
 import { AuthController } from '../auth/controller.js';
 import type { AuthService } from '../auth/service.js';
@@ -82,6 +83,9 @@ export function projectController(
       projects.tasks(actor, scope(req), id(req), taskFilterSchema.parse(req.query)),
     ),
     task: handle((req, actor) => projects.task(actor, scope(req), id(req), task(req))),
+    moveTask: handle((req, actor) =>
+      projects.moveTask(actor, scope(req), id(req), task(req), taskMoveSchema.parse(req.body)),
+    ),
     createTask: handle(
       (req, actor) =>
         projects.saveTask(actor, scope(req), id(req), taskInputSchema.parse(req.body)),

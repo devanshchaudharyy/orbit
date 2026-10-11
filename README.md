@@ -2,9 +2,9 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 5 adds persistent projects, tasks/subtasks, multiple assignments, due dates, checklists, labels, filtering and activity history to secure accounts, organizations/workspaces and team permissions. Projects support status/priority, original cover artwork, explicit teams, templates and archive/restore/deletion. Marketing sample content demonstrates the intended product. Advanced work views, collaboration, files, analytics, AI and billing remain in later phases.
+Phase 6 adds shared list, Kanban, table and calendar views, status/date moves, private saved filters and persistent personal view preferences to the existing project/task system. See [the Phase 6 verification report](docs/PHASE6_REPORT.md). Marketing sample content demonstrates the intended product. Timeline, collaboration, files, analytics, AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Current delivery covers Phases 0–5 and runs locally.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phase 6 implementation and local verification are complete. Publication and the resulting CI evidence are recorded in the phase report.
 
 ## Screenshots
 
@@ -52,11 +52,19 @@ See [the screenshot gallery](docs/SCREENSHOTS.md) for all themes, viewport sizes
 
 ![ORBIT project directory with real completion progress](docs/screenshots/projects-populated-light-1440.png)
 
-## Verification through Phase 5
+## Work views and preferences
 
-Final local verification through Phase 5: **107 unit/component/API tests**, **92 real integration/transaction checks**, **50 browser scenarios**, **184 accessibility scans** with zero axe violations, and **12 production route/build checks** passed. These include 28 project integration checks, five project browser scenarios and 54 project theme/viewport/overlay scans. Exact commands and regression results are recorded in [the Phase 5 report](docs/PHASE5_REPORT.md).
+![ORBIT Kanban with real task records](docs/screenshots/work-kanban-dark-1440.png)
 
-The isolated local fixture uses MongoDB **8.3.4** and Mailpit **1.27.10**. The [completed Phase 5 GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38115337823) independently passed the pinned Compose infrastructure and full browser/integration suites. Local Docker/WSL setup and container-restart durability remain deferred; exact evidence and limits are in the phase report.
+![ORBIT calendar in light appearance](docs/screenshots/work-calendar-light-1440.png)
+
+All views share current project permissions, filters, server sorting and bounded pages with truthful matching/loaded counts. Move tasks between statuses/dates using handles or keyboard-accessible dialogs. Save private named filters and persist personal view/density/week-start/column/subtask defaults across sessions. Calendar days use UTC; within-column order follows sorting.
+
+## Phase 6 verification
+
+Final local verification through Phase 6: **121 unit/component/API tests**, **116 real integration/transaction checks**, **55 browser scenarios**, **238 accessibility scans** with zero axe violations, and **12 production route/build checks** passed. These include 24 view integration checks, five view browser scenarios and 54 new theme/viewport/overlay scans. All final browser suites passed directly. Exact commands, screenshots and limits are recorded in [the Phase 6 report](docs/PHASE6_REPORT.md).
+
+The isolated local fixture uses MongoDB **8.3.4** and Mailpit **1.27.10**. The resulting Phase 6 GitHub workflow is recorded separately after publication. Local Docker/WSL setup and container-restart durability remain deferred; exact recovery commands and evidence are in the phase report.
 
 ## Start locally
 
@@ -145,6 +153,10 @@ Production builds omit the lab route and lab JavaScript. For deliberate producti
 - [Phase 2 implementation and verification](docs/PHASE2_REPORT.md)
 - [Phase 3 scope](docs/PHASE3_PLAN.md)
 - [Phase 3 implementation and verification](docs/PHASE3_REPORT.md)
+- [Phase 4 implementation and verification](docs/PHASE4_REPORT.md)
+- [Phase 5 implementation and verification](docs/PHASE5_REPORT.md)
+- [Phase 6 scope](docs/PHASE6_PLAN.md)
+- [Phase 6 implementation and verification](docs/PHASE6_REPORT.md)
 - [Testing and Windows setup](docs/TESTING.md)
 
 Current execution results and remaining blockers are recorded in the phase progress document. Source code is hosted in the private repository linked above. The application has not been deployed.

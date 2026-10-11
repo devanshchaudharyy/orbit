@@ -94,6 +94,7 @@ export function createProjectModels(connection: Connection) {
   task.index({ organizationId: 1, workspaceId: 1, projectId: 1, deletedAt: 1, _id: 1 });
   task.index({ projectId: 1, parentId: 1, deletedAt: 1 });
   task.index({ projectId: 1, assigneeIds: 1, status: 1 });
+  task.index({ organizationId: 1, workspaceId: 1, projectId: 1, deletedAt: 1, dueDate: 1, _id: 1 });
   const event = new Schema<StoredEvent>(
     {
       ...parents,

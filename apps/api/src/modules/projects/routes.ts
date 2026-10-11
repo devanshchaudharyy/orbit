@@ -19,6 +19,7 @@ export function projectRoutes(auth: AuthService, tenants: TenantService, project
   router.post(`${base}/:projectId/tasks`, c.createTask);
   router.get(`${base}/:projectId/tasks/:taskId`, c.task);
   router.patch(`${base}/:projectId/tasks/:taskId`, c.updateTask);
+  router.post(`${base}/:projectId/tasks/:taskId/move`, c.moveTask);
   router.delete(`${base}/:projectId/tasks/:taskId`, c.deleteTask);
   router.post(`${base}/:projectId/labels`, c.label);
   router.delete(`${base}/:projectId/labels/:labelId`, c.removeLabel);

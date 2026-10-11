@@ -161,6 +161,16 @@ pnpm --filter @orbit/web preview
 
 After that check, rebuild normally to restore the lab-disabled artifact.
 
+## Phase 6 work views
+
+`pnpm test:views:integration` uses only the isolated loopback test database, creates unique users/tenants and cleans their IDs. It covers private scope, concurrent versions, filter limits, task moves/no-op/rollback, grants/archives/deletion, UTC dates, sort pages/totals, subtasks and fresh-connection persistence.
+
+`pnpm test:views:e2e` targets API4001/frontend5174 with the owned account fixture and a separate Playwright config. All five scenarios passed: actual moves/settings, conflicts, guests/revocation, unavailable writes and >50 tasks. Nine page/dialog families passed 54 axe scans/captures across two themes and 375/768/1440 widths, keyboard focus and overflow assertions. Focus is also checked after a successful move removes its original control.
+
+Default browser tests exclude views.spec.ts; Compose verification appends view integration/browser suites to previous regressions. Reproduce results with the [exact commands](PHASE6_REPORT.md). Tenant integration clears only the defined loopback test request buckets before each check so prior suites cannot consume its request budget; production limits stay unchanged. Historical Phase 5 results do not verify Phase 6.
+
+Manual flow: complete sign-in/onboarding, open an authorized project, add tasks and switch all views. Move status/date using pointer and keyboard controls, clear a date, filter/sort/group, save/apply/edit/delete filters and verify defaults in a fresh session. Check guests, archive, grants, stale writes, refresh, reduced motion and mobile scrolling.
+
 ## Manual UI checklist
 
 Open the lab at desktop/mobile sizes; switch each theme; reload; navigate via sidebar and keyboard palette; copy tokens; submit invalid/valid form values; change priority and switch/checkbox state; open/close every overlay; check Tab/Shift+Tab/Escape; select/clear table rows; switch state tabs; refresh health and inspect the actual response. Emulate reduced motion and verify moving effects stop. All interactions are component examples unless labeled as real API status.

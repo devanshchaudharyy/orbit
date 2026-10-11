@@ -16,6 +16,7 @@ import { hashPassword } from '../../apps/api/src/modules/auth/crypto.js';
 import { MongoTenantRepository } from '../../apps/api/src/modules/tenants/repository.js';
 import { TenantService } from '../../apps/api/src/modules/tenants/service.js';
 import { AuthError } from '../../apps/api/src/modules/auth/errors.js';
+import { clearTestLoopbackLimits } from '../../scripts/auth-test-support.mjs';
 
 const requireApi = createRequire(new URL('../../apps/api/package.json', import.meta.url));
 const mongoose = requireApi('mongoose');
@@ -57,6 +58,7 @@ const run = randomUUID();
 const password = `Tenant fixture ${run}`;
 const results: string[] = [];
 async function check(name: string, operation: () => Promise<void>) {
+  await clearTestLoopbackLimits(connection.db);
   await operation();
   results.push(name);
   console.log(`PASS ${name}`);

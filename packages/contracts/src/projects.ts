@@ -83,8 +83,21 @@ export const taskFilterSchema = z
     label: resourceIdSchema.optional(),
     overdue: z.enum(['true', 'false']).optional(),
     parent: z.union([z.literal('root'), resourceIdSchema]).optional(),
+    sort: z.enum(['oldest', 'newest', 'title', 'priority', 'due-date', 'status']).optional(),
+    dueFrom: calendarDateSchema.optional(),
+    dueTo: calendarDateSchema.optional(),
+    undated: z.enum(['true', 'false']).optional(),
   })
-  .strict();
+  .strict()
+  .refine(
+    (input) => !input.dueFrom || !input.dueTo || input.dueFrom <= input.dueTo,
+    'Use an ordered date range.',
+  )
+  .refine(
+    (input) =>
+      input.undated !== 'true' || (!input.dueFrom && !input.dueTo && input.overdue !== 'true'),
+    'Undated tasks cannot have a date range or overdue filter.',
+  );
 export const labelSchema = z.object({
   id: resourceIdSchema,
   name: z.string(),
@@ -131,6 +144,7 @@ export const projectListSchema = z.object({
 export const taskListSchema = z.object({
   tasks: z.array(taskSchema),
   nextCursor: resourceIdSchema.nullable(),
+  total: z.int().min(0),
 });
 export const peopleSchema = z.object({
   people: z.array(personSchema),

@@ -7,6 +7,7 @@ import type {
   ProjectFilter,
   TaskFilter,
   LabelInput,
+  TaskMove,
 } from '@orbit/contracts';
 
 export class ProjectService {
@@ -32,6 +33,8 @@ export class ProjectService {
     this.repository.tasks(actor, scope, id, input);
   task = (actor: string, scope: ProjectScope, id: string, task: string) =>
     this.repository.task(actor, scope, id, task);
+  moveTask = (actor: string, scope: ProjectScope, id: string, task: string, input: TaskMove) =>
+    this.repository.moveTask(actor, scope, id, task, input);
   saveTask = (
     actor: string,
     scope: ProjectScope,

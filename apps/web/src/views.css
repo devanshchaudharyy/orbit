@@ -1,0 +1,604 @@
+.project-work,
+.work-views {
+  min-width: 0;
+}
+.work-view-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.work-view-heading h2 {
+  font-size: 24px;
+  letter-spacing: -0.7px;
+  margin: 8px 0 0;
+}
+.work-view-heading .tenant-eyebrow {
+  font-size: 9px;
+}
+.work-view-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  border-radius: var(--radius-lg);
+  width: fit-content;
+  max-width: 100%;
+}
+.work-view-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 17px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.work-view-tabs button[aria-selected='true'] {
+  color: var(--primary-foreground);
+  background: var(--primary);
+  box-shadow: var(--shadow);
+}
+.work-view-tabs button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+.work-saved-bar {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+.work-saved-bar > svg {
+  color: var(--primary);
+  margin-bottom: 11px;
+}
+.work-saved-bar .project-filter {
+  min-width: 165px;
+  max-width: 260px;
+}
+.work-view-summary {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 0;
+  font-size: 11px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.work-view-summary strong {
+  color: var(--foreground);
+}
+.work-pagination-note {
+  font-size: 12px;
+  line-height: 1.7;
+  background: var(--surface-raised);
+  border-left: 2px solid var(--primary);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--foreground);
+}
+.work-drag-help {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+  margin: 15px 0 20px;
+}
+.work-list .project-task-list > li {
+  display: flex;
+  align-items: center;
+  padding-right: 10px;
+}
+.work-list .project-task-link {
+  flex: 1;
+  min-width: 0;
+}
+.work-group-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  margin: 24px 0 12px;
+}
+.work-group-heading span {
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.work-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  color: var(--muted);
+  background: transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.work-icon-button:hover {
+  color: var(--foreground);
+  background: var(--surface-raised);
+  border-color: var(--border);
+}
+.work-icon-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.work-drag-handle {
+  cursor: grab;
+  touch-action: none;
+}
+.work-drag-handle:active {
+  cursor: grabbing;
+}
+.work-table-region,
+.work-board-region,
+.work-calendar-region {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) var(--surface-raised);
+}
+.work-table {
+  border-collapse: collapse;
+  min-width: 700px;
+  width: 100%;
+  font-size: 12px;
+}
+.work-table caption {
+  text-align: left;
+  padding: 15px 18px;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--surface-raised);
+  border-bottom: 1px solid var(--border);
+}
+.work-table th,
+.work-table td {
+  padding: 17px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.work-table thead th {
+  color: var(--muted);
+  background: var(--surface-raised);
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.work-table tbody th {
+  min-width: 200px;
+  font-weight: 600;
+}
+.work-table tbody th a {
+  color: var(--foreground);
+  text-decoration: none;
+}
+.work-table tbody th a:hover {
+  color: var(--primary);
+}
+.work-table tbody th small {
+  display: block;
+  font-size: 9px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-top: 4px;
+}
+.work-table tbody td {
+  min-width: 110px;
+}
+.work-table tbody tr:hover {
+  background: var(--surface-raised);
+}
+.work-sort-button {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.work-table thead th[aria-sort='ascending'] {
+  color: var(--primary);
+}
+.work-status {
+  display: inline-flex;
+  white-space: nowrap;
+  padding: 5px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-size: 10px;
+}
+.status-in-progress {
+  color: var(--primary);
+}
+.status-done {
+  color: var(--foreground);
+  background: var(--surface-raised);
+}
+.work-board-region {
+  border: 0;
+  border-radius: 0;
+  padding-bottom: 12px;
+}
+.work-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(225px, 1fr));
+  gap: 12px;
+  min-width: 940px;
+}
+.work-board-column {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  min-height: 350px;
+}
+.work-board-column h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 3px 16px;
+  font-size: 12px;
+  letter-spacing: -0.1px;
+}
+.work-column-count {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+}
+.work-column-body {
+  display: grid;
+  gap: 10px;
+}
+.work-task-card {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  min-width: 0;
+  box-shadow: var(--shadow);
+}
+.work-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -5px -5px 8px 0;
+}
+.work-priority {
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.priority-urgent,
+.priority-high {
+  color: var(--primary);
+}
+.work-card-title {
+  display: block;
+  color: var(--foreground);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.55;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.work-card-title:hover {
+  color: var(--primary);
+}
+.work-task-card > p {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 9px 0;
+  overflow-wrap: anywhere;
+}
+.work-task-card .project-labels {
+  margin-top: 12px;
+}
+.work-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: space-between;
+  margin: 14px -5px -5px 0;
+}
+.work-card-foot > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  color: var(--muted);
+}
+.work-drop-hint {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  color: var(--muted);
+  text-align: center;
+  font-size: 11px;
+  padding: 28px 8px;
+}
+.is-drop-target {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  background: var(--surface-raised);
+}
+.is-dragging {
+  opacity: 0.5;
+}
+.work-drag-overlay {
+  max-width: 240px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+  color: var(--foreground);
+  border: 1px solid var(--primary);
+  box-shadow: var(--shadow);
+  font-size: 13px;
+}
+.work-calendar-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.work-calendar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.work-calendar-title strong {
+  font-size: 13px;
+  min-width: 115px;
+  text-align: center;
+}
+.work-calendar-controls .project-filter {
+  flex: 0;
+  min-width: 155px;
+}
+.work-calendar-toggle {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+.work-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(120px, 1fr));
+  min-width: 840px;
+}
+.calendar-weekday {
+  text-align: center;
+  padding: 13px 8px;
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--surface-raised);
+  border-bottom: 1px solid var(--border);
+}
+.work-calendar-cell {
+  padding: 10px 7px;
+  min-height: 125px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.work-calendar-cell:nth-child(7n) {
+  border-right: 0;
+}
+.calendar-day {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.calendar-day > span {
+  color: var(--primary);
+  font-size: 8px;
+}
+.today .calendar-day time {
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 4px;
+  min-width: 23px;
+  text-align: center;
+}
+.outside-month {
+  background: var(--surface-raised);
+}
+.calendar-task {
+  margin: 7px 0;
+  padding: 8px;
+  box-shadow: none;
+}
+.calendar-task .work-card-title {
+  font-size: 10px;
+}
+.calendar-task .work-card-top {
+  margin: -4px -4px 4px 0;
+}
+.calendar-task .work-card-foot {
+  margin: 8px -4px -4px 0;
+}
+.calendar-task .work-priority {
+  font-size: 8px;
+  letter-spacing: 0.3px;
+}
+.calendar-task .project-label {
+  font-size: 8px;
+}
+.calendar-task .work-icon-button {
+  width: 24px;
+  height: 24px;
+}
+.work-undated-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+.work-undated-drop {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  margin: 18px 0;
+  color: var(--muted);
+}
+.work-undated-drop > svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.work-undated-drop strong {
+  font-size: 12px;
+  color: var(--foreground);
+}
+.work-undated-drop p {
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 6px 0 0;
+}
+.work-dialog-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 22px;
+}
+.work-dialog-form > label {
+  display: grid;
+  gap: 9px;
+  font-size: 12px;
+}
+.work-dialog-form .work-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.work-form-hint {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin: 0;
+}
+.work-dialog-form fieldset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: var(--radius-md);
+}
+.work-dialog-form legend {
+  font-size: 12px;
+  padding: 0 5px;
+}
+.work-checkbox {
+  font-size: 12px;
+}
+.work-checkbox input {
+  accent-color: var(--primary);
+}
+.density-compact .project-task-link {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.density-compact .work-table th,
+.density-compact .work-table td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.density-compact .work-task-card {
+  padding: 10px;
+}
+.work-view-dialog .auth-status {
+  margin: 14px 0;
+}
+.work-dialog-form > div,
+.work-views .project-checkbox {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.work-dialog-form > div {
+  flex-direction: column;
+  align-items: stretch;
+}
+.work-views .project-checkbox {
+  font-size: 12px;
+}
+@media (max-width: 768px) {
+  .work-view-tabs {
+    width: 100%;
+  }
+  .work-view-tabs button {
+    flex: 1;
+    padding: 11px 9px;
+    gap: 5px;
+    font-size: 11px;
+  }
+  .work-undated-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .work-saved-bar .project-filter {
+    max-width: none;
+  }
+  .work-calendar-toggle {
+    margin-left: 0;
+  }
+}
+@media (max-width: 480px) {
+  .work-view-tabs button {
+    padding: 10px 7px;
+    font-size: 10px;
+  }
+  .work-view-tabs button svg {
+    width: 13px;
+  }
+  .work-view-summary {
+    font-size: 10px;
+  }
+  .work-undated-list {
+    grid-template-columns: 1fr;
+  }
+  .work-calendar-controls .project-filter {
+    flex: 1;
+  }
+  .work-saved-bar > svg {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .work-views *,
+  .work-drag-overlay {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

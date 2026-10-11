@@ -69,6 +69,14 @@ Creation uses accessible Radix dialogs with validation, contained/restored focus
 
 Real captures and axe/layout checks cover the empty and populated organization entry, organization overview, workspace overview, organization settings, and workspace settings in both themes at 375/768/1440px. Phase 4 adds team navigation below; projects/tasks remain planned.
 
+## Phase 6 work perspectives
+
+List, Kanban, table and calendar extend semantic surfaces and violet selection. Native filters, actual loaded/total counts and incomplete-collection messages describe real records. Lists/tables offer grouping; calendars identify UTC days and separate undated scheduling targets.
+
+Named tabs support Arrow keys/Home/End. Wide board/table/calendar regions have labels, keyboard focus and contained scrolling. Move buttons support keyboard/touch alternatives to pointer handles. Versioned Radix dialogs retain original snapshots and restore focus. Pending, error, conflict/reload and successful API outcomes are explicit. Drag overlays disable drop animation; styles honor reduced motion. Order follows server sorting.
+
+Private preferences control density, week start, columns and subtasks. Saved filters require explicit save/apply. Nine page/dialog families passed both themes at 375/768/1440 with 54 axe scans, overflow and focus checks. Explicit select labels avoid option text becoming part of a control's name. Focus restoration waits for the refreshed collection and uses the selected tab if the original task control is removed. [Verification report](PHASE6_REPORT.md).
+
 ## Phase 4 team experience
 
 Team & access uses the same semantic surfaces, violet invitation accents, quiet role badges and original initials. The roster and pending invitations show actual server records; empty invitations explain the next useful action. Members see their role and access boundaries without the administrator roster. Workspace checkboxes make grants explicit; organization roles never visually promise access to all spaces.

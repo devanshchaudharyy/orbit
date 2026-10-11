@@ -87,6 +87,18 @@ Use MongoDB ObjectIds internally and string representations in JSON. Represent t
 
 Critical ownership transfer, invitation acceptance, and other multi-record invariants use transactions. Queries always include a server-verified tenant scope and verified parent resource relationship. Soft deletion applies to recoverable business resources; security tokens/session invalidation need explicit lifecycle rules. Cursor pagination and concurrency/version rules will be defined in each module’s phase before its endpoints are implemented.
 
+## Phase 6 personal views
+
+`work_preferences` stores userId, organizationId, workspaceId, projectId, view/sort/group/density/weekStart/columns/showSubtasks, version and timestamps. The unique compound index is {userId,organizationId,workspaceId,projectId}. Absence yields defaults/version zero; first explicit save creates version one.
+
+`saved_task_filters` stores the same verified parents, name, lowercase nameKey, strict criteria, version and timestamps. Its unique index adds nameKey, enforcing case-insensitive names per actor/project. Creates are bounded to twenty with a transactional project fence. Reads include authenticated actor and every parent. Criteria never grants authority.
+
+Personal writes recheck current membership/project grants in transactions and retain original versions. They coordinate with revocation through existing membership/project fences and create no project activity. Soft-deleted projects retain inaccessible settings; future permanent purges must clean scoped settings alongside projects/users.
+
+Task calendar queries add {organizationId,workspaceId,projectId,deletedAt,dueDate,_id}. Aggregation casts verified parents, shares common filters, returns counts and uses deterministic sorting/cursors. Computed title/priority/status sorts do not promise index-only execution. Move transactions update only status/date and version, plus one activity record; rollback protects both. No-op moves change neither.
+
+All 24 real-database checks passed, including empty-filter round trips, concurrency, rollback and fresh-connection persistence. [Verification report](PHASE6_REPORT.md).
+
 ## Retention and restart checks
 
 `pnpm infra:down` preserves named volumes. The CLI verifies records survive new client connections. To verify container-restart durability once Docker is available, run the documented manual sentinel check in TESTING.md. Reconnection persistence is not a claim that container-restart durability has been executed on this machine.

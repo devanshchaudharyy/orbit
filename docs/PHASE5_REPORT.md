@@ -1,6 +1,6 @@
 # Phase 5 implementation and verification
 
-Date: 11 October 2026, Asia/Kolkata. Scope: projects, tasks/subtasks, assignments, filtering, labels and activity history. [Plan](PHASE5_PLAN.md). Implementation and project-specific verification are complete; final regression/publication results follow below. Local Docker/WSL installation remains deferred at the user's request.
+Date: 11 October 2026, Asia/Kolkata. Scope: projects, tasks/subtasks, assignments, filtering, labels and activity history. [Plan](PHASE5_PLAN.md). Implementation, local regression verification and GitHub verification are complete. Exact results and publication evidence follow below. Local Docker/WSL installation remains deferred at the user's request.
 
 ## Delivered behavior
 
@@ -61,7 +61,11 @@ Implementation commit `4b58bc62e622cf8791279b47345e3ce0b1737fed` was pushed to p
 
 The completed log reported one project browser scenario as flaky (four passed directly, one passed on retry). Downloaded browser evidence identified a test route-capture race: after creation the helper matched the project's directory-card heading before detail navigation completed, then signed the member into that directory URL and incorrectly expected a detail-only Create task button. The application rendered the directory correctly. Helpers now wait for canonical organization/workspace/project/task detail URLs and level-one headings before capturing identifiers. This is an explicit observable-state wait, not a delay or relaxed permission assertion.
 
-After that correction, `pnpm exec playwright test -c playwright.projects.config.ts --grep 'members need explicit' --repeat-each=3 --retries=0` passed **three consecutive retry-free repetitions**. The full `pnpm test:projects:e2e` then passed **all five scenarios** and the 54 axe scans again. Lint and formatting passed. These additional repetitions are not added to the 50 distinct-scenario total. The corrective remote result will be recorded after execution; an active workflow is not counted as passed.
+After that correction, `pnpm exec playwright test -c playwright.projects.config.ts --grep 'members need explicit' --repeat-each=3 --retries=0` passed **three consecutive retry-free repetitions**. The full `pnpm test:projects:e2e` then passed **all five scenarios** and the 54 axe scans again. Lint and formatting passed. These additional repetitions are not added to the 50 distinct-scenario total.
+
+The [corrective Phase 5 workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38115337823) **completed successfully** for `740bfb08405c49290739a3deeae419384d59c5f0`. Its completed log confirms 107 tests in 18 files, all four infrastructure checks, 12 production checks, 25 foundation browser scenarios, nine account scenarios, six tenant scenarios, five team scenarios and **five project scenarios passed directly**. No flaky outcome was reported. The Compose harness also completed all 92 account/tenant/team/project integration and transaction checks. Frozen installation, formatting, lint, strict types, builds, evidence upload and service cleanup passed. This remote verification uses the pinned Compose environment and remains separate from the deferred Windows restart sentinel.
+
+The final documentation-only evidence update is committed with `[skip ci]`; application code and browser tests remain at the verified commit above. Development configuration, fixture executables/databases, downloaded CI evidence and local test reports remain ignored. The publication audit checked 352 files, 183 screenshots, five generated secret values and local links with no issues. Final local API liveness and the `/app` preview both returned HTTP 200; liveness included a request ID.
 
 ## Limits, recovery and next phase
 

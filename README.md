@@ -56,7 +56,7 @@ See [the screenshot gallery](docs/SCREENSHOTS.md) for all themes, viewport sizes
 
 Final local verification through Phase 5: **107 unit/component/API tests**, **92 real integration/transaction checks**, **50 browser scenarios**, **184 accessibility scans** with zero axe violations, and **12 production route/build checks** passed. These include 28 project integration checks, five project browser scenarios and 54 project theme/viewport/overlay scans. Exact commands and regression results are recorded in [the Phase 5 report](docs/PHASE5_REPORT.md).
 
-The isolated local fixture uses MongoDB **8.3.4** and Mailpit **1.27.10**. Local Docker/WSL setup and container-restart durability remain deferred. GitHub verifies the pinned Compose environment independently; consult the phase report for the actual remote result.
+The isolated local fixture uses MongoDB **8.3.4** and Mailpit **1.27.10**. The [completed Phase 5 GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38115337823) independently passed the pinned Compose infrastructure and full browser/integration suites. Local Docker/WSL setup and container-restart durability remain deferred; exact evidence and limits are in the phase report.
 
 ## Start locally
 

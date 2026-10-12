@@ -166,3 +166,29 @@ Task moves require write access and reject archived projects. No-op moves do not
 ## Logging
 
 Requests log their ID, method, status, and duration. Bodies, query strings, authorization headers, cookies, and connection URIs are not logged by request middleware. Known sensitive structured fields are redacted by the logger. Dependency failures use generic development diagnostics, not raw connection exceptions. Log level is environment-controlled.
+
+## Phase 7 delivery planning
+
+All routes below are relative to `/api/v1/organizations/:organizationId/workspaces/:workspaceId/projects/:projectId/planning`. They use the existing success/error request-ID envelopes and current verified, onboarded identity plus explicit organization/workspace/project access. Guests can read; current non-guest collaborators can edit task plans. Managers and project owners manage milestones, sprints and capacity. Archived projects are readable and reject writes; deleted or inaccessible projects return 404. Mutations require JSON, allowed Origin and session-bound CSRF, with an actor budget of 100 per minute.
+
+| Method | Suffix                  | Input / behavior                                                                                                |
+| ------ | ----------------------- | --------------------------------------------------------------------------------------------------------------- |
+| GET    | `/`                     | Snapshot; `from`, `to`, `cursor`, `q`, `status`, `priority`, `assignee`, `label`, `sort`, `sprint`, `milestone` |
+| POST   | `/milestones`           | `{name, description, dueDate, status}`; 201                                                                     |
+| PATCH  | `/milestones/:id`       | Same fields plus original `version`                                                                             |
+| DELETE | `/milestones/:id`       | `{version}`; detach linked plans transactionally                                                                |
+| POST   | `/sprints`              | `{name, goal, startDate, endDate}`; 201, initially planned                                                      |
+| PATCH  | `/sprints/:id`          | Same fields plus original `version`; completed history immutable                                                |
+| POST   | `/sprints/:id/start`    | `{version}`; freeze commitment, one active sprint per project                                                   |
+| POST   | `/sprints/:id/complete` | `{version, carryTo: null \| plannedSprintId}`; freeze delivery, explicitly carry unfinished work                |
+| DELETE | `/sprints/:id`          | `{version}`; planned only, detach linked plans                                                                  |
+| PATCH  | `/tasks/:taskId`        | `{version, taskVersion, startDate, dueDate, estimateHours, milestoneId, sprintId, dependencyIds}`               |
+| PATCH  | `/capacities/:userId`   | `{version, weeklyHours}`; current eligible collaborator                                                         |
+
+Nullable planning fields are explicit; missing metadata/capacity has version 0. Names are 2–100 characters, descriptions/goals at most 2,000, entered effort 0–1,000 hours and weekly capacity 0–168 hours. Dates are validated UTC calendar dates; start must not follow due/end. Dependencies are at most twenty unique active same-project task IDs, with no self-reference or cycles. Completed sprint assignments cannot be rewritten by the task planning editor. Existing task edit/move endpoints also preserve the start/due ordering invariant.
+
+The default window is today through 27 days later, inclusive. Explicit windows are at most 90 days. Task rows paginate at 100 with the six existing task sorts and ID tie breaks; `totalMatches` and workload cover all matching rows, while project/milestone/sprint totals describe all active project tasks. Milestones and sprints each have a transactional limit of 50; planning snapshots explicitly reject projects above 5,000 active tasks. Cursors describe live data; removed or filtered-out anchors return 409 `TASK_PAGE_CHANGED`.
+
+`tasks` include existing task DTOs, planning metadata, unresolved prerequisites and advisory date conflicts. Deleted prerequisites retain their IDs with the non-sensitive label `Removed prerequisite`. No dates or statuses are automatically changed to resolve dependencies. `workloads` expose entered estimates prorated across calendar days and assignees; capacity is entered weekly hours × weekdays / 5. Unknown estimates, unscheduled and unassigned work remain explicit. `totals` count actual active tasks; completed sprint `delivery` and starting `commitment` remain frozen.
+
+Malformed/strict schema input returns 400. Invalid business relationships and limits return 422, stale versions, dependency cycles or invalid lifecycle transitions 409, insufficient write authority 403, and unavailable persistence 503 `PLANNING_UNAVAILABLE`. The browser preserves original drafts on errors, offers explicit conflict reload, and never automatically retries writes.

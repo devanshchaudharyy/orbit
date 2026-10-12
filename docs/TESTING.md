@@ -176,3 +176,42 @@ Manual flow: complete sign-in/onboarding, open an authorized project, add tasks 
 Open the lab at desktop/mobile sizes; switch each theme; reload; navigate via sidebar and keyboard palette; copy tokens; submit invalid/valid form values; change priority and switch/checkbox state; open/close every overlay; check Tab/Shift+Tab/Escape; select/clear table rows; switch state tabs; refresh health and inspect the actual response. Emulate reduced motion and verify moving effects stop. All interactions are component examples unless labeled as real API status.
 
 CI runs formatting, lint, typechecks, tests, builds, Compose-backed integration checks, and Chromium/axe checks, then preserves browser artifacts and stops services. The private GitHub repository is published; distinguish a running or failed remote workflow from independent local verification. Consult the phase report for the remote status observed at handoff.
+
+## Phase 7 delivery planning verification
+
+Run against the owned loopback MongoDB replica-set/API/Mailpit fixture, sequentially with the earlier suites:
+
+```powershell
+pnpm auth:fixture status
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm build
+node scripts/check-production.mjs
+pnpm test:planning:integration
+pnpm test:planning:e2e
+pnpm test:projects:integration
+pnpm test:views:integration
+pnpm test:auth:integration
+pnpm test:auth:transactions
+pnpm test:tenants:integration
+pnpm test:teams:integration
+pnpm test:e2e
+pnpm test:auth:e2e
+pnpm test:tenants:e2e
+pnpm test:teams:e2e
+pnpm test:projects:e2e
+pnpm test:views:e2e
+pnpm format:check
+git diff --check
+```
+
+The planning integration driver creates unique synthetic users/tenants and cleans only its own IDs. It asserts actual API envelopes and database records: authority/CSRF, strict schemas, graph cycles and opposite-edge races, optimistic versions, cross-module date ordering, rollback/activity, entered/null capacity, filtered forecast across pages, sprint commitment/delivery/carryover, lifecycle races, fifty-resource concurrency limits, deleted prerequisites, 100-row pagination, 5,000-task bounds, fresh-connection persistence, archives/revocation/deletion.
+
+The dedicated planning browser config contains six scenarios. The main scenario creates actual schedules, dependencies, explicit milestone delivery, capacity and a sprint, then moves tasks and completes delivery through the UI. Eleven page/dialog families are audited in dark/light at 375/768/1440px: 66 axe scans and captures, with overflow, keyboard containment/restoration, direct refresh, reduced motion and console/runtime assertions. Other scenarios cover conflicts preserving drafts, cycles, trigger disappearance, guest/revoked grants, archives, unavailable service feedback/retry and 105 filtered records across pages. Failed attempts are diagnostics and never counted as additional passing scenarios.
+
+Default Playwright excludes the planning suite; `pnpm test:auth:compose` appends planning integration/browser verification after previous application suites. [Phase 7 report](PHASE7_REPORT.md) records observed final results and publication status. Historical Phase 6 totals do not verify this implementation.
+
+Manual review: open an authorized project and choose **Delivery planning**. Create milestones/sprints; use **Plan** to enter dates, effort, links and prerequisites; compare textual blockers to the Gantt; filter workload and enter capacity; start one sprint, move statuses with handles or equivalent dialogs, then complete with explicit carryover. Refresh the delivery tab and verify the frozen snapshot. Check stale edits in two sessions, read-only guests, archive behavior and mobile contained scrolling. No synthetic project is seeded into your account.
+
+Local Docker/WSL and Windows restart acceptance remain deferred. Recovery after installing prerequisites and resolving ports: `pnpm setup`, `pnpm infra:up`, `pnpm infra:check`, `pnpm test:auth:compose`, then the manual container-restart sentinel described above. Preserve named volumes.

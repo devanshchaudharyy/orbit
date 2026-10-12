@@ -2,9 +2,9 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 6 adds shared list, Kanban, table and calendar views, status/date moves, private saved filters and persistent personal view preferences to the existing project/task system. See [the Phase 6 verification report](docs/PHASE6_REPORT.md). Marketing sample content demonstrates the intended product. Timeline, collaboration, files, analytics, AI and billing remain in later phases.
+Phase 7 adds milestones, sprint lifecycle/boards, timeline/Gantt, task dependencies, workload planning and delivery history to the existing authorized project/task system. See [the Phase 7 verification report](docs/PHASE7_REPORT.md). Marketing sample content demonstrates the intended product. Realtime collaboration, files, analytics, AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–6 are implemented and published, with local verification and the completed Phase 6 CI evidence recorded in the phase report. Windows Docker/WSL and restart acceptance remain deferred.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Windows Docker/WSL and restart acceptance remain deferred; fixture verification and remote Compose evidence are recorded separately in each phase report.
 
 ## Screenshots
 
@@ -65,6 +65,18 @@ All views share current project permissions, filters, server sorting and bounded
 Final local verification through Phase 6: **121 unit/component/API tests**, **116 real integration/transaction checks**, **55 browser scenarios**, **238 accessibility scans** with zero axe violations, and **12 production route/build checks** passed. These include 24 view integration checks, five view browser scenarios and 54 new theme/viewport/overlay scans. All final browser suites passed directly. Exact commands, screenshots and limits are recorded in [the Phase 6 report](docs/PHASE6_REPORT.md).
 
 The isolated local fixture uses MongoDB **8.3.4** and Mailpit **1.27.10**. The [completed Phase 6 GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38150192862) independently passed pinned Compose infrastructure, the full integration/browser suites, and all checks/builds, with no flaky browser result reported. Local Docker/WSL setup and container-restart durability remain deferred; exact recovery commands and evidence are in the phase report.
+
+## Delivery planning
+
+![ORBIT timeline with actual schedules and dependencies](docs/screenshots/plan-timeline-dark-1440.png)
+
+![ORBIT entered capacity and workload forecasts](docs/screenshots/plan-workload-light-1440.png)
+
+Open an authorized project and choose **Delivery planning**. Plan dates, entered effort, prerequisites and milestone/sprint assignments. Dependencies report blockers and date conflicts without silently rescheduling. Start one sprint, move tasks using handles or keyboard dialogs, then complete with explicit carryover and a frozen delivery snapshot. Milestones separate explicit delivery status from actual progress. Workload follows filters across all pages and distinguishes unknown effort, unscheduled work and unspecified capacity.
+
+Managers/project owners manage milestones, sprints and capacity; current non-guest collaborators plan tasks. Guests read authorized planning and archives reject writes. All mutations check original versions and current membership transactionally. No test project is seeded into your account. [Phase 7 results and limitations](docs/PHASE7_REPORT.md), [66 planning screenshots](docs/SCREENSHOTS.md).
+
+Phase 7 local verification passed **136 unit/component/API tests**, **148 real integration/transaction checks**, **61 browser scenarios**, **304 accessibility scans with zero violations**, and **12 production checks**, plus strict types, lint, formatting and builds. All final browser suites passed directly. The retained gallery contains **303 PNGs**. Exact commands, fixes, current publication/CI evidence and deferred Windows acceptance are in [the report](docs/PHASE7_REPORT.md).
 
 ## Start locally
 
@@ -129,6 +141,10 @@ After registration, email verification, and personal onboarding, choose **Open m
 | `pnpm test:teams:e2e`                        | Team permissions, invitation acceptance, keyboard, themes and responsive browser checks  |
 | `pnpm test:projects:integration`             | Real MongoDB project/task permissions, transactions, filters, rollback and pagination    |
 | `pnpm test:projects:e2e`                     | Real project/task CRUD, grants, conflicts, filters, lifecycle and accessibility checks   |
+| `pnpm test:views:integration`                | Private preferences/filters, versioned task moves, UTC dates and sorted pagination       |
+| `pnpm test:views:e2e`                        | List/Kanban/table/calendar, settings, moves and accessibility                            |
+| `pnpm test:planning:integration`             | Real transactions, dependencies/cycles, sprints/carryover, capacity, bounds and access   |
+| `pnpm test:planning:e2e`                     | Actual planning flows, conflicts, failures, keyboard, themes and responsive axe checks   |
 
 Install the test browser with `pnpm exec playwright install chromium`. On Linux CI, use `--with-deps chromium`.
 
@@ -157,6 +173,8 @@ Production builds omit the lab route and lab JavaScript. For deliberate producti
 - [Phase 5 implementation and verification](docs/PHASE5_REPORT.md)
 - [Phase 6 scope](docs/PHASE6_PLAN.md)
 - [Phase 6 implementation and verification](docs/PHASE6_REPORT.md)
+- [Phase 7 scope](docs/PHASE7_PLAN.md)
+- [Phase 7 implementation and verification](docs/PHASE7_REPORT.md)
 - [Testing and Windows setup](docs/TESTING.md)
 
 Current execution results and remaining blockers are recorded in the phase progress document. Source code is hosted in the private repository linked above. The application has not been deployed.

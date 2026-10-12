@@ -86,3 +86,11 @@ An invitation dialog and access sheet use Radix focus trapping, Escape, and expl
 The acceptance page reuses the account layout and handles anonymous, unverified, incomplete-profile, ready, malformed, wrong-recipient and unavailable invitation states. Sign-in/registration/profile completion preserve the invitation's tab-memory credential; refresh asks the user to reopen their email. Forms use strict shared Zod schemas; new team forms keep controlled local values while TanStack Query owns remote records.
 
 Both themes are captured at 375/768/1440px for six page states and two overlay families. Keyboard trapping/restoration, reduced-motion preference, horizontal overflow, console/runtime state, and WCAG A/AA axe checks accompany browser → API → MongoDB → SMTP verification. Theme-transition animations settle before contrast measurements.
+
+## Phase 7 planning surfaces
+
+Delivery planning reuses semantic light/dark tokens, type, spacing, original task components and Radix dialogs. Five keyboard-addressable tabs expose timeline/Gantt, milestones, sprints, workload and delivery. Schedule bars use actual dates with a contained, labeled horizontal scroll region; decorative SVG connectors have equivalent textual prerequisites and advisory conflict feedback. Unscheduled/out-of-window tasks remain available below the chart.
+
+Milestone cards separate explicit delivery status from linked progress. Sprint cards show lifecycle, frozen commitment and delivery, alongside the existing Kanban board. Workload cards distinguish forecast, entered/unspecified capacity, unknown effort, unscheduled work and unassigned work. No invented performance or burndown visuals are shown. Task filters/window controls appear only where they affect the displayed calculation.
+
+Validated milestone, sprint, task-plan, capacity and completion dialogs retain original versions and drafts on errors. Prefilled textarea labels use stable explicit associations. Error feedback receives focus; success is announced once. Dialog containment, Escape, trigger restoration and active-tab fallback are verified. Page overflow is prohibited; chart/board scrolling stays contained. Reduced-motion preferences remove transitions.

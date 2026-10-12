@@ -10,7 +10,7 @@ Transactional mutations fence current actor and target memberships plus project 
 
 The browser lazily loads project directory/detail/task routes. TanStack Query keys include actor, organization, workspace, project and task; identity changes clear prior tenant data. URL filters survive refresh, while resource route keys reset local overlays/editor state. Form versions remain paired with loaded values across background refetches; conflicts require explicit reload. Radix dialogs/sheets handle contained/restored focus and scroll long forms. Errors and unavailable dependencies remain truthful.
 
-Phase 6 introduces richer views, drag-and-drop and preferences. Planning, realtime, files, analytics, AI and billing remain in their respective phases. Original vector project covers avoid introducing file storage before Phase 9. Activity is scoped project history, not the later global audit system.
+Phase 6 implements richer views, drag-and-drop and preferences; Phase 7 implements delivery planning below. Realtime, files, analytics, AI and billing remain in later phases. Original vector project covers avoid introducing file storage before Phase 9. Activity is scoped project history, separate from the later global audit system.
 
 ## Implemented in Phase 0
 
@@ -101,3 +101,15 @@ Query keys include actor and every resource parent. Project changes remount loca
 ## Deployment boundaries (unchanged)
 
 Phase 0 is local-only. The eventual frontend can use static hosting; the API needs a persistent Node runtime supporting future realtime connections. Production uses Atlas, managed Redis, private S3-compatible storage, and a transactional email service. Garage/Mailpit and the single-node replica set are local development choices. Hosting/provider provisioning and deployment belong to Phase 14.
+
+## Phase 7 delivery planning boundaries
+
+`planning` is an implemented feature module with separate routes, controller validation, service and transactional repository. Shared contracts define dates, lifecycle inputs, snapshots and workload helpers. It reuses current project access, activity events and write fences. Planning metadata lives beside tasks; due-date edits coordinate both task and plan versions, preserving task content. Existing task edit/move operations guard against inverting a stored planned start/due range.
+
+The dependency graph uses finish-to-start relationships within one active project. Self/duplicate/cyclic edges are rejected, including concurrent opposite-edge races. Blockers and date conflicts are advisory: completion and scheduling remain deliberate user actions. Deleted prerequisites remain identifiable without leaking deleted content. The browser draws original HTML/CSS bars and SVG connectors for loaded rows, alongside accessible textual relationships; loading more expands the visible graph.
+
+Milestones track explicit delivery separately from linked-task progress. Sprints freeze commitment on start and actual delivery on completion, with one active sprint and explicit unfinished-task carryover. Historical delivery never changes when task content/status later changes. Workload forecasts follow task filters across all pages, exclude done work and prorate only entered estimates across assignees/calendar days. Entered capacity scales by weekdays; unknown, unscheduled and unassigned work remains explicit. Overall delivery/milestone/sprint summaries remain project-wide and the UI hides task filters in those views.
+
+The project page exposes five URL-addressable planning tabs. Private query keys include parent scope; original dialog snapshots reject stale writes, retain failed drafts and offer explicit reload. Pointer sprint moves use the existing partial task move endpoint; keyboard/touch dialogs are equivalent. Focus returns to the initiating control or active tab when the control disappears. UTC windows are bounded to 90 days, task pages to 100, milestone/sprint counts to 50 each and active planning graphs to 5,000; limits return explicit errors.
+
+No new dependency, infrastructure adapter or provider was added. Phase 8 realtime/comments/notifications and subsequent files, analytics, AI, automation and billing remain unimplemented.

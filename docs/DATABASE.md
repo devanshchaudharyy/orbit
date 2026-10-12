@@ -70,18 +70,18 @@ The repository reuses existing tenant models and auth user records; it exposes o
 
 ## Remaining planned relationships — not implemented (continued)
 
-| Collection family                     | Relationships and anticipated indexes                                                                               |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Users, Sessions                       | Implemented identity collections above; future tenant relationships extend them without accepting client membership |
-| Organizations, Workspaces             | Core Phase 3 records above; future billing, lifecycle, archive/deletion policies                                    |
-| Memberships                           | Explicit Phase 3 authority records above; lifecycle and role management extend them in Phase 4                      |
-| Invitations                           | Phase 4 implementation above; future delivery outbox and audit retention policy                                     |
-| Projects, Tasks                       | Implemented Phase 5 records above; future planning, custom-field and retention enhancements                         |
-| Comments, Events, Milestones, Sprints | Verified project/task parents; tenant + parent + creation-time indexes                                              |
-| Notifications                         | Tenant and recipient ownership; recipient/read-state/time index                                                     |
-| Documents, Attachments                | Verified project parent; version relationship; private object key; tenant + parent lookup                           |
-| Subscriptions, AIUsage, AuditLogs     | Organization ownership; provider-event idempotency; bounded usage windows and audit pagination                      |
-| Automations                           | Authorized workspace scope, validated triggers/actions, idempotent execution tracking                               |
+| Collection family                 | Relationships and anticipated indexes                                                                               |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Users, Sessions                   | Implemented identity collections above; future tenant relationships extend them without accepting client membership |
+| Organizations, Workspaces         | Core Phase 3 records above; future billing, lifecycle, archive/deletion policies                                    |
+| Memberships                       | Explicit Phase 3 authority records above; lifecycle and role management extend them in Phase 4                      |
+| Invitations                       | Phase 4 implementation above; future delivery outbox and audit retention policy                                     |
+| Projects, Tasks                   | Implemented Phase 5 records; Phase 7 planning below; future custom-field and retention enhancements                 |
+| Comments, realtime Events         | Verified project/task parents; tenant + parent + creation-time indexes                                              |
+| Notifications                     | Tenant and recipient ownership; recipient/read-state/time index                                                     |
+| Documents, Attachments            | Verified project parent; version relationship; private object key; tenant + parent lookup                           |
+| Subscriptions, AIUsage, AuditLogs | Organization ownership; provider-event idempotency; bounded usage windows and audit pagination                      |
+| Automations                       | Authorized workspace scope, validated triggers/actions, idempotent execution tracking                               |
 
 Use MongoDB ObjectIds internally and string representations in JSON. Represent timestamps as UTC ISO-8601 strings over the API. Never serialize raw Mongoose documents with private fields. Index definitions are finalized alongside the phase that introduces each collection; this table is an architecture direction, not a migration already applied.
 
@@ -102,3 +102,22 @@ All 24 real-database checks passed, including empty-filter round trips, concurre
 ## Retention and restart checks
 
 `pnpm infra:down` preserves named volumes. The CLI verifies records survive new client connections. To verify container-restart durability once Docker is available, run the documented manual sentinel check in TESTING.md. Reconnection persistence is not a claim that container-restart durability has been executed on this machine.
+
+## Phase 7 planning collections
+
+Implemented collections use organization/workspace/project parent IDs and existing project access checks; none replace task content.
+
+| Collection           | Stored records and indexes                                                                                                                                                    |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `project_milestones` | Name, normalized name key, description, target UTC date, explicit delivery status, version and timestamps; unique project/name key                                            |
+| `project_sprints`    | Name/key, goal, start/end UTC dates, planned/active/completed state, version, start/completion timestamps, immutable commitment/delivery totals; unique project/name key      |
+| `task_plans`         | Task ID, nullable start/estimate/milestone/sprint, prerequisite task IDs, version/timestamps; unique parent/project/task, project/sprint and project/milestone lookup indexes |
+| `project_capacities` | Current collaborator ID, nullable entered weekly hours, version/timestamps; unique parent/project/user                                                                        |
+
+Metadata absent from MongoDB maps to version 0 and nullable fields. No 40-hour default, effort, velocity or actual-time data is invented. Model DTOs preserve all task descriptions, checklists, labels and assignments.
+
+Project/membership write fences serialize planning changes with existing task and authority mutations. Transactions recheck current authority and original versions, persist planning plus any due-date change and activity together, validate the project dependency graph, and roll back the entire operation on failure. This prevents opposite-edge cycle races, concurrent active sprint starts, resource-count limit races and stale capacity creation. Dependency targets must be active tasks in the same project. Soft-deleted prerequisite IDs remain visible as missing without exposing deleted titles.
+
+Sprint start freezes committed total/done/entered hours/unestimated count. Completion freezes current delivery before moving unfinished plans to explicit backlog or a planned sprint. Completed tasks retain historical sprint links; subsequent task status edits do not rewrite the snapshot. Milestone status is explicit and does not mark tasks done. Deleting a milestone or planned sprint detaches linked plans, increments metadata versions and preserves task content/activity. Completed sprints cannot be edited/deleted. Project soft deletion retains planning records behind inaccessible parent scope, consistent with existing task/history retention.
+
+Read snapshots bound the active project graph at 5,000 tasks, compute actual summaries and full filtered workload, and paginate DTO rows at 100. Fresh-connection tests verify persisted plans/capacity/history. Windows container restart durability remains a separate deferred acceptance check.

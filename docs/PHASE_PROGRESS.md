@@ -1,6 +1,6 @@
 # Phase progress
 
-Current delivery: Phase 5 projects, tasks/subtasks, assignments, labels, filtering and activity history. Results are recorded in the Phase 5 section below. Docker infrastructure acceptance remains deferred locally; earlier sections are historical records.
+Current delivery: Phase 7 milestones, sprints, timeline/Gantt, dependencies, workload and delivery tracking. Results are recorded in the Phase 7 section below. Docker infrastructure acceptance remains deferred locally; earlier sections are historical records.
 
 ## Phase 0 — foundation implemented; infrastructure verification blocked
 
@@ -175,4 +175,14 @@ Personal per-project defaults persist view, sorting, grouping, density, week sta
 
 Local verification passed: **121 unit/component/API tests**, **116 real integration/transaction checks**, **55 browser scenarios**, **238 accessibility scans with zero violations**, and **12 production route/build checks**, plus strict types, lint and production builds. This includes 24 new view database checks and five new view browser scenarios with 54 theme/viewport/overlay scans. All final browser suites passed without retries. The gallery retains **54 new screenshots**, **237 PNGs** across phases. Test-discovered empty-filter persistence, form labeling and removed-task focus restoration issues have fixes and regression coverage. The earlier execution-approval usage limit is resolved.
 
-Phase 6 is complete and published to the existing private repository. The [GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38150192862) completed successfully for **`8d089da35e3caab20c78110943b30eca2a3514bc`**, including pinned Compose infrastructure, all checks/builds, 116 application integration/transaction checks and 55 browser scenarios passed directly, with no flaky result reported. Exact publication/CI evidence is in the report. The final evidence commit changes documentation only. Docker/WSL and Windows container restart acceptance remain deferred; exact recovery commands are documented. No paid service or deployment was introduced. Stop after Phase 6; Phase 7 has not started.
+Phase 6 is complete and published to the existing private repository. The [GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38150192862) completed successfully for **`8d089da35e3caab20c78110943b30eca2a3514bc`**, including pinned Compose infrastructure, all checks/builds, 116 application integration/transaction checks and 55 browser scenarios passed directly, with no flaky result reported. Exact publication/CI evidence is in the report. The final evidence commit changes documentation only. Docker/WSL and Windows container restart acceptance remain deferred; exact recovery commands are documented. No paid service or deployment was introduced. The user subsequently authorized Phase 7; its results follow.
+
+## Phase 7 — delivery planning
+
+Date: 12 October 2026. [Plan](PHASE7_PLAN.md), [verification report](PHASE7_REPORT.md), [screenshots](SCREENSHOTS.md).
+
+Implemented milestones with explicit delivery and actual linked-task progress; planned/active/completed sprints with one active sprint, frozen commitment/delivery and explicit unfinished-task carryover; original timeline/Gantt with same-project finish-to-start dependencies; entered-estimate workload and capacity; project-wide delivery tracking. Five URL-addressable tabs reuse current task filters, status moves, semantic themes and accessible dialogs. No new dependency or provider was introduced.
+
+Strict contracts, scoped backend module, four indexed planning collections, transactional activity and graph/lifecycle/membership fences protect current authority and original versions. Guests are read-only, archives reject writes and revoked/deleted parents deny access. Existing task edits/moves preserve planned start/due ordering. Forecast follows all filtered pages, while global delivery summaries remain project-wide. Unknown effort/capacity, unassigned and unscheduled work remain visible.
+
+Final local verification passed **136 unit/component/API tests**, **148 real integration/transaction checks**, **61 browser scenarios**, **304 axe scans with zero violations**, and **12 production checks**, plus types, lint and builds. All final browser suites passed directly. Planning adds 32 real database checks, six browser scenarios and 66 audited screenshots; the retained gallery totals 303 PNGs. Exact commands, fixes, formatting/publication audits and current CI evidence are recorded in the report. Local Docker/WSL and Windows container-restart acceptance remain deferred; full Compose CI evidence is reported separately. Phase 8 has not started. No deployment, paid provisioning or user-account business-data seed.

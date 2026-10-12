@@ -16,6 +16,9 @@ import { projectRoutes } from './modules/projects/routes.js';
 import { WorkViewRepository } from './modules/views/repository.js';
 import { WorkViewService } from './modules/views/service.js';
 import { workViewRoutes } from './modules/views/routes.js';
+import { PlanningRepository } from './modules/planning/repository.js';
+import { PlanningService } from './modules/planning/service.js';
+import { planningRoutes } from './modules/planning/routes.js';
 
 export function createApp(
   dependencies: Dependencies,
@@ -51,6 +54,8 @@ export function createApp(
   if (auth) app.use('/api/v1/auth', authRoutes(auth));
   if (auth && tenants && projects) {
     const views = new WorkViewService(new WorkViewRepository(projects.repository));
+    const planning = new PlanningService(new PlanningRepository(projects.repository));
+    app.use('/api/v1/organizations', planningRoutes(auth, tenants, planning));
     app.use('/api/v1/organizations', workViewRoutes(auth, tenants, views));
     app.use('/api/v1/organizations', projectRoutes(auth, tenants, projects));
   }

@@ -28,7 +28,7 @@ const stale = () =>
   );
 const invalid = (message: string) => new AuthError(422, 'PROJECT_INPUT_INVALID', message);
 const literal = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const taskDto = (task: StoredTask): Task => ({
+export const taskDto = (task: StoredTask): Task => ({
   id: String(task._id),
   organizationId: String(task.organizationId),
   workspaceId: String(task.workspaceId),
@@ -145,7 +145,7 @@ export class ProjectRepository {
       doneCount: counts.find((item) => item._id === 'done')?.count ?? 0,
     };
   }
-  private async event(
+  async event(
     actor: string,
     scope: ProjectScope,
     projectId: string,
@@ -571,6 +571,22 @@ export class ProjectRepository {
       total: page?.total[0]?.count ?? 0,
     };
   }
+  private async validatePlanDates(
+    projectId: string,
+    taskId: string,
+    dueDate: string | null,
+    session: ClientSession,
+  ) {
+    if (!dueDate) return;
+    const plan = await this.tenants.connection
+      .collection('task_plans')
+      .findOne(
+        { projectId: new Types.ObjectId(projectId), taskId: new Types.ObjectId(taskId) },
+        { session },
+      );
+    if (typeof plan?.startDate === 'string' && plan.startDate > dueDate)
+      throw invalid('Due date must be on or after the planned start. Update the task plan first.');
+  }
   async moveTask(
     actor: string,
     scope: ProjectScope,
@@ -586,6 +602,8 @@ export class ProjectRepository {
         .lean();
       if (!old) throw missingTenant();
       if (old.version !== input.version) throw stale();
+      if (input.dueDate !== undefined)
+        await this.validatePlanDates(projectId, taskId, input.dueDate, session);
       const fields = {
         ...(input.status !== undefined ? { status: input.status } : {}),
         ...(input.dueDate !== undefined ? { dueDate: input.dueDate } : {}),
@@ -664,6 +682,7 @@ export class ProjectRepository {
           .lean();
         if (!old) throw missingTenant();
         if (old.version !== input.version) throw stale();
+        await this.validatePlanDates(projectId, taskId, input.dueDate, session);
         const { version, ...fields } = input;
         const updated = await this.models.tasks
           .findOneAndUpdate(

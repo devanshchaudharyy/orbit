@@ -40,6 +40,7 @@ import {
 } from '../components/ProjectForms';
 import '../projects.css';
 import { ProjectWorkViews } from '../components/ProjectWorkViews';
+import { ProjectPlanning } from '../components/ProjectPlanning';
 
 const titleFor = (action: ProjectAction) =>
   action.kind === 'create-project'
@@ -515,16 +516,43 @@ export default function ProjectsPage({
                       </strong>
                     </div>
                   </div>
-                  <div className="project-work-grid">
+                  <nav className="plan-project-navigation" aria-label="Project sections">
+                    <Link
+                      to={detailPath}
+                      aria-current={search.get('section') !== 'planning' ? 'page' : undefined}
+                    >
+                      Work views
+                    </Link>
+                    <Link
+                      to={`${detailPath}?section=planning`}
+                      aria-current={search.get('section') === 'planning' ? 'page' : undefined}
+                    >
+                      Delivery planning
+                    </Link>
+                  </nav>
+                  <div
+                    className={`project-work-grid${search.get('section') === 'planning' ? ' is-planning' : ''}`}
+                  >
                     <section className="project-work">
-                      <ProjectWorkViews
-                        key={project.id}
-                        org={orgId!}
-                        ws={wsId!}
-                        project={project}
-                        path={detailPath}
-                        people={people}
-                      />
+                      {search.get('section') === 'planning' ? (
+                        <ProjectPlanning
+                          key={project.id}
+                          org={orgId!}
+                          ws={wsId!}
+                          project={project}
+                          path={detailPath}
+                          people={people}
+                        />
+                      ) : (
+                        <ProjectWorkViews
+                          key={project.id}
+                          org={orgId!}
+                          ws={wsId!}
+                          project={project}
+                          path={detailPath}
+                          people={people}
+                        />
+                      )}
                     </section>
                     <aside className="project-context">
                       <section>

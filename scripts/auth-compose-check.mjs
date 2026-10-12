@@ -197,6 +197,20 @@ try {
       root,
     ),
   );
+  await finished(
+    start(
+      process.execPath,
+      [apiRequire.resolve('tsx/cli'), resolve(root, 'tests/integration/planning.ts')],
+      root,
+    ),
+  );
+  await finished(
+    start(
+      process.execPath,
+      [rootRequire.resolve('@playwright/test/cli'), 'test', '-c', 'playwright.planning.config.ts'],
+      root,
+    ),
+  );
 } catch (error) {
   console.error(error.message);
   process.exitCode ??= 1;

@@ -4,7 +4,7 @@
 
 Phase 6 adds shared list, Kanban, table and calendar views, status/date moves, private saved filters and persistent personal view preferences to the existing project/task system. See [the Phase 6 verification report](docs/PHASE6_REPORT.md). Marketing sample content demonstrates the intended product. Timeline, collaboration, files, analytics, AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phase 6 implementation and local verification are complete. Publication and the resulting CI evidence are recorded in the phase report.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–6 are implemented and published, with local verification and the completed Phase 6 CI evidence recorded in the phase report. Windows Docker/WSL and restart acceptance remain deferred.
 
 ## Screenshots
 
@@ -64,7 +64,7 @@ All views share current project permissions, filters, server sorting and bounded
 
 Final local verification through Phase 6: **121 unit/component/API tests**, **116 real integration/transaction checks**, **55 browser scenarios**, **238 accessibility scans** with zero axe violations, and **12 production route/build checks** passed. These include 24 view integration checks, five view browser scenarios and 54 new theme/viewport/overlay scans. All final browser suites passed directly. Exact commands, screenshots and limits are recorded in [the Phase 6 report](docs/PHASE6_REPORT.md).
 
-The isolated local fixture uses MongoDB **8.3.4** and Mailpit **1.27.10**. The resulting Phase 6 GitHub workflow is recorded separately after publication. Local Docker/WSL setup and container-restart durability remain deferred; exact recovery commands and evidence are in the phase report.
+The isolated local fixture uses MongoDB **8.3.4** and Mailpit **1.27.10**. The [completed Phase 6 GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38150192862) independently passed pinned Compose infrastructure, the full integration/browser suites, and all checks/builds, with no flaky browser result reported. Local Docker/WSL setup and container-restart durability remain deferred; exact recovery commands and evidence are in the phase report.
 
 ## Start locally
 

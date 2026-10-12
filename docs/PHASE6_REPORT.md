@@ -1,6 +1,6 @@
 # Phase 6 — work views and personal preferences
 
-Date: 11 October 2026. Scope: list, Kanban, table, calendar, status/date moves, private saved filters and preferences. [Plan](PHASE6_PLAN.md). Implementation and local verification are complete; publication evidence follows. Stop after Phase 6.
+Date: 11 October 2026. Scope: list, Kanban, table, calendar, status/date moves, private saved filters and preferences. [Plan](PHASE6_PLAN.md). Implementation, local verification, private publication and remote CI are complete. Stop after Phase 6.
 
 ## Implemented behavior
 
@@ -57,15 +57,21 @@ Verification corrected implicit select labels, MongoDB minimizing empty filter c
 
 ## Screenshots and publication
 
-The [gallery](SCREENSHOTS.md) retains **54 new Phase 6 screenshots**, bringing the retained gallery to **237 PNGs**. Historical captures remain distinguishable. Desktop list/board, mobile calendar and mobile preference-dialog captures were visually inspected in addition to the automated matrix. README includes real Kanban/calendar screenshots.
+The [gallery](SCREENSHOTS.md) retains **54 new Phase 6 screenshots**, bringing the retained gallery to **237 PNGs**. Historical captures remain distinguishable. Desktop list/board, mobile calendar, mobile preference-dialog and tablet light-table captures were visually inspected in addition to the automated matrix. README includes real Kanban/calendar screenshots.
 
-Private repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit). Publication and the resulting GitHub workflow are recorded after final local checks. Prior phase CI is historical evidence, not verification of these changes. The new isolated Playwright config and Compose harness include Phase 6 checks alongside previous regressions.
+Private repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit). Code, tests, README, documentation and screenshots were committed with `git commit -m "feat: add Phase 6 work views and personal preferences"` and pushed using `git push origin main`. The verified application commit is **`8d089da35e3caab20c78110943b30eca2a3514bc`**.
+
+The [Phase 6 GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38150192862) **completed successfully** for that commit. Frozen installation, generated local configuration, formatting, lint, strict types, 121 tests in 20 files, builds, 12 production checks, evidence upload and service cleanup passed. The completed log confirms all four infrastructure checks: MongoDB transaction commit/rollback and reconnect persistence, Redis round-trip/reconnect persistence, private S3 upload/download/deletion and SMTP capture. These use pinned Compose MongoDB **8.0.17**, Redis **8.2.2-alpine**, Garage **2.4.1** and Mailpit **1.27.10**.
+
+The Compose harness passed all **116 application integration/transaction checks** and account/tenant/team/project/view browser suites. Together with the foundation suite, the completed remote log reports **25 + 9 + 6 + 5 + 5 + 5 = 55 browser scenarios passed directly**, with no flaky outcome reported. Successful matrix assertions cover the 238 axe scans. New view results include all 24 database checks and all five browser scenarios. The isolated Playwright config and Compose harness keep the Phase 6 suites separate from earlier regressions.
+
+The final evidence update changes documentation only and uses `[skip ci]`; application code/tests remain at the verified commit above. The publication audit checked 425 staged files, 237 PNGs, five generated credential values, excluded local artifacts and local links without issues. Development configuration, fixture executables/databases, local reports and downloaded diagnostics remain ignored. Final local `/app` and API liveness returned HTTP 200, with a request ID in the API envelope.
 
 ## Preview, limits and recovery
 
 [ORBIT app](http://127.0.0.1:5174/app): sign in, finish email verification/personal onboarding, create/open an authorized organization/workspace/project and choose a view. No synthetic records are seeded into user accounts. [Captured local email](http://127.0.0.1:18025/) supports the owned fixture.
 
-Docker/WSL installation remains deferred by the user. Local Redis/Garage and container-restart durability are unverified. Mongo-backed views function while aggregate readiness is HTTP 503 without Redis. Fresh-connection persistence is not a restart check. Remote pinned Compose verification is recorded separately when CI completes. After installing the documented Windows prerequisites and resolving occupied ports:
+Docker/WSL installation remains deferred by the user. Windows Redis/Garage and container-restart durability are unverified. Mongo-backed views function while aggregate readiness is HTTP 503 without Redis. Fresh-connection persistence is not a restart check. The completed remote Compose workflow is separate from the unexecuted Windows restart sentinel. After installing the documented Windows prerequisites and resolving occupied ports:
 
 ```powershell
 pnpm setup

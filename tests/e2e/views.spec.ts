@@ -84,6 +84,8 @@ test('four real views, pointer moves, saved filters, server preferences and acce
   const moved = await readTask(page, data.path, task.id);
   expect(moved.assigneeIds).toEqual(task.assigneeIds);
   expect(moved.checklist).toEqual(task.checklist);
+  await expect(page.locator('.auth-notice-success')).toHaveText(`${task.title} moved.`);
+  await expect(page.locator('[data-drop-status="in-progress"]')).toContainText(task.title);
   await page.locator(`#drag-${task.id}`).scrollIntoViewIfNeeded();
   const handle = await page.locator(`#drag-${task.id}`).boundingBox();
   expect(handle).not.toBeNull();
@@ -102,6 +104,8 @@ test('four real views, pointer moves, saved filters, server preferences and acce
   await expect
     .poll(async () => (await readTask(page, data.path, task.id)).dueDate)
     .toBe('2026-10-02');
+  await expect(page.locator('.auth-notice-success')).toHaveText(`${task.title} moved.`);
+  await expect(page.locator('[data-drop-date="2026-10-02"]')).toContainText(task.title);
   await audit(page, 'work-move-dialog', `Move ${task.title}`);
   await openMove(page, task);
   await page.getByLabel('Due date (UTC calendar day)', { exact: true }).clear();

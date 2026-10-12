@@ -159,7 +159,7 @@ export function ProjectWorkViews({
     saveFocus.current = null;
   }, [pending, action, collection.isFetching, collection.dataUpdatedAt, options.view, tabId]);
   const change = (key: string, value: string) => {
-    const next = new URLSearchParams(search);
+    const next = new URLSearchParams(window.location.search);
     next.delete('cursor');
     if (value) next.set(key, value);
     else next.delete(key);
@@ -167,8 +167,9 @@ export function ProjectWorkViews({
   };
   const reset = () => {
     const next = new URLSearchParams();
+    const current = new URLSearchParams(window.location.search);
     for (const key of ['view', 'sort', 'group', 'month', 'schedule'])
-      if (search.has(key)) next.set(key, search.get(key)!);
+      if (current.has(key)) next.set(key, current.get(key)!);
     setSearch(next, { replace: true });
   };
   const open = (next: Action, trigger: HTMLElement) => {
@@ -480,7 +481,7 @@ export function ProjectWorkViews({
             type="checkbox"
             checked={search.get('overdue') === 'true'}
             onChange={(event) => {
-              const next = new URLSearchParams(search);
+              const next = new URLSearchParams(window.location.search);
               if (event.target.checked) {
                 next.set('overdue', 'true');
                 next.delete('schedule');
@@ -594,7 +595,7 @@ export function ProjectWorkViews({
               variant={undated ? 'secondary' : 'ghost'}
               aria-pressed={undated}
               onClick={() => {
-                const next = new URLSearchParams(search);
+                const next = new URLSearchParams(window.location.search);
                 next.set('schedule', 'undated');
                 next.delete('overdue');
                 setSearch(next, { replace: true });

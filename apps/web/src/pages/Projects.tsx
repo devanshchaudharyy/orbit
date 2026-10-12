@@ -216,7 +216,7 @@ export default function ProjectsPage({
     setSuccess('');
   };
   const changeFilter = (key: string, value: string) => {
-    const next = new URLSearchParams(search);
+    const next = new URLSearchParams(window.location.search);
     next.delete('cursor');
     if (value) next.set(key, value);
     else next.delete(key);

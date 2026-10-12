@@ -288,6 +288,8 @@ test('real project/task/subtask/assignment/label/filter/history flows across the
   await audit(page, 'project-populated');
   await page.getByLabel('Status', { exact: true }).selectOption('done');
   await page.getByLabel('Label', { exact: true }).selectOption({ label: 'Design' });
+  await expect(page).toHaveURL(/[?&]status=done(?:&|$)/);
+  await expect(page).toHaveURL(/[?&]label=[a-f0-9]{24}(?:&|$)/);
   await expect(page.getByRole('link').filter({ hasText: 'Review mobile navigation' })).toHaveCount(
     0,
   );

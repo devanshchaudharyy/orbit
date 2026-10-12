@@ -470,10 +470,8 @@ export class PlanningRepository {
         if (row.status !== 'planned') throw state('Only a planned sprint can start.');
         if (await this.models.sprints.exists({ ...filter, status: 'active' }).session(session))
           throw state('Complete the active sprint before starting another.');
-        const [tasks, plans] = await Promise.all([
-          this.tasks(scope, projectId, session),
-          this.models.plans.find(filter).session(session).lean(),
-        ]);
+        const tasks = await this.tasks(scope, projectId, session);
+        const plans = await this.models.plans.find(filter).session(session).lean();
         await this.models.sprints.updateOne(
           { ...filter, _id: id, version },
           {
@@ -496,10 +494,8 @@ export class PlanningRepository {
             .lean();
           if (!target) throw invalid('Choose a current planned sprint or backlog.');
         }
-        const [tasks, plans] = await Promise.all([
-          this.tasks(scope, projectId, session),
-          this.models.plans.find(filter).session(session).lean(),
-        ]);
+        const tasks = await this.tasks(scope, projectId, session);
+        const plans = await this.models.plans.find(filter).session(session).lean();
         const totals = this.totals(tasks, plans, 'sprintId', id);
         const unfinished = tasks.filter((t) => t.status !== 'done').map((t) => t._id);
         await this.models.plans.updateMany(

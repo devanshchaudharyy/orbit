@@ -4,7 +4,7 @@
 
 Phase 7 adds milestones, sprint lifecycle/boards, timeline/Gantt, task dependencies, workload planning and delivery history to the existing authorized project/task system. See [the Phase 7 verification report](docs/PHASE7_REPORT.md). Marketing sample content demonstrates the intended product. Realtime collaboration, files, analytics, AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Windows Docker/WSL and restart acceptance remain deferred; fixture verification and remote Compose evidence are recorded separately in each phase report.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–7 are implemented and published. Windows Docker/WSL and restart acceptance remain deferred; fixture verification and remote Compose evidence are recorded separately in each phase report.
 
 ## Screenshots
 

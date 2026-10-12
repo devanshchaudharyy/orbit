@@ -78,6 +78,8 @@ Managers/project owners manage milestones, sprints and capacity; current non-gue
 
 Phase 7 local verification passed **136 unit/component/API tests**, **148 real integration/transaction checks**, **61 browser scenarios**, **304 accessibility scans with zero violations**, and **12 production checks**, plus strict types, lint, formatting and builds. All final browser suites passed directly. The retained gallery contains **303 PNGs**. Exact commands, fixes, current publication/CI evidence and deferred Windows acceptance are in [the report](docs/PHASE7_REPORT.md).
 
+Phase 7 is complete and published. The [GitHub verification workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38271056842) passed for `f1656dd8bf338d79c401869d23b41deee69c5453`, including the full pinned Compose setup and all application suites through planning. Windows Docker/WSL and container-restart acceptance remain deferred; Phase 8 has not started.
+
 ## Start locally
 
 Prerequisites: Node **24.18.0**, pnpm **11.25.0**, and Git. Docker Desktop with Linux containers is required for the infrastructure checks. The UI and health API run without Docker, with readiness reporting HTTP 503.

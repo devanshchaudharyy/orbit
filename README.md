@@ -4,7 +4,7 @@
 
 Phase 8 adds real-time project/task/planning updates, task comments, project discussions, explicit mentions, private notifications and live presence to the existing authorized workspace. See [the Phase 8 verification report](docs/PHASE8_REPORT.md). Marketing sample content demonstrates the intended product. Files, analytics, AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–7 are published; Phase 8 verification/publication is in progress. Windows Docker/WSL and restart acceptance remain deferred; fixture verification and remote Compose evidence are recorded separately in each phase report.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–8 are published, and Phase 8 verification is complete. Windows Docker/WSL and restart acceptance remain deferred; fixture verification and remote Compose evidence are recorded separately in each phase report.
 
 ## Screenshots
 
@@ -90,6 +90,8 @@ Open an authorized project and choose **Collaboration** for its shared discussio
 
 The live panel reports actual connection state and distinct viewers. Saved task/planning/history/discussion changes refresh across sessions; unsent drafts and open edit versions remain intact. Reconnect recovers missed work from MongoDB. Guests and archives are read-only; current membership/session revocation disconnects live access. Notifications are in-app only, and this phase supports a single API process. [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md), [verification](docs/PHASE8_REPORT.md).
 
+Phase 8 local verification passed **148 unit/component/API tests**, **178 real integration/transaction/socket checks**, **69 browser scenarios**, **364 axe scans with zero violations**, and **15 production checks**, plus strict types, lint, formatting and builds. All final browser suites passed directly. The gallery includes 60 collaboration captures across dark/light at 375/768/1440px. The [completed GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38420224406) passed for application commit `11ac996adba48bd5f9992cab3315e7c581176b34`, independently verifying all checks/builds, four pinned Compose infrastructure checks, 178 application integration checks, 69 browser scenarios and 15 production checks. No failed or flaky browser result was reported. Phase 9 has not started.
+
 ## Start locally
 
 Prerequisites: Node **24.18.0**, pnpm **11.25.0**, and Git. Docker Desktop with Linux containers is required for the infrastructure checks. The UI and health API run without Docker, with readiness reporting HTTP 503.
@@ -129,34 +131,36 @@ After registration, email verification, and personal onboarding, choose **Open m
 
 ## Commands
 
-| Command                                      | Purpose                                                                                  |
-| -------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `pnpm run setup`                             | Generate ignored local credentials and Garage configuration; preserve existing values    |
-| `pnpm dev`                                   | Build contracts and start both applications                                              |
-| `pnpm build`                                 | Build contracts/API and a lab-disabled production frontend                               |
-| `pnpm typecheck`                             | Check every TypeScript package                                                           |
-| `pnpm lint`                                  | ESLint with zero warnings allowed                                                        |
-| `pnpm format:check`                          | Verify formatting without editing                                                        |
-| `pnpm format`                                | Apply repository formatting                                                              |
-| `pnpm test`                                  | Vitest, React Testing Library, and Supertest checks                                      |
-| `pnpm test:e2e`                              | Chromium interactions, responsive checks, axe audits, screenshots                        |
-| `pnpm infra:up` / `pnpm infra:down`          | Start/stop Compose services, retaining volumes                                           |
-| `pnpm test:integration` / `pnpm infra:check` | Real database, Redis, S3, and captured-email checks                                      |
-| `pnpm auth:fixture prepare` / `start`        | Prepare and start the isolated MongoDB/Mailpit authentication preview                    |
-| `pnpm test:auth:integration`                 | Real account/session/token tests against the isolated fixture                            |
-| `pnpm test:auth:transactions`                | Controlled real MongoDB credential races and registration rollback                       |
-| `pnpm test:auth:e2e`                         | API-backed account browser flows, responsive and accessibility checks                    |
-| `pnpm test:auth:compose`                     | Run auth verification against running Compose services in an isolated test database      |
-| `pnpm test:tenants:integration`              | Real MongoDB tenant isolation, role/access, rollback, concurrency, and pagination checks |
-| `pnpm test:tenants:e2e`                      | Real organization/workspace browser flows, switching, settings, keyboard, and axe checks |
-| `pnpm test:teams:integration`                | Real MongoDB team roles, invitations, lifecycle, membership and transaction checks       |
-| `pnpm test:teams:e2e`                        | Team permissions, invitation acceptance, keyboard, themes and responsive browser checks  |
-| `pnpm test:projects:integration`             | Real MongoDB project/task permissions, transactions, filters, rollback and pagination    |
-| `pnpm test:projects:e2e`                     | Real project/task CRUD, grants, conflicts, filters, lifecycle and accessibility checks   |
-| `pnpm test:views:integration`                | Private preferences/filters, versioned task moves, UTC dates and sorted pagination       |
-| `pnpm test:views:e2e`                        | List/Kanban/table/calendar, settings, moves and accessibility                            |
-| `pnpm test:planning:integration`             | Real transactions, dependencies/cycles, sprints/carryover, capacity, bounds and access   |
-| `pnpm test:planning:e2e`                     | Actual planning flows, conflicts, failures, keyboard, themes and responsive axe checks   |
+| Command                                      | Purpose                                                                                       |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `pnpm run setup`                             | Generate ignored local credentials and Garage configuration; preserve existing values         |
+| `pnpm dev`                                   | Build contracts and start both applications                                                   |
+| `pnpm build`                                 | Build contracts/API and a lab-disabled production frontend                                    |
+| `pnpm typecheck`                             | Check every TypeScript package                                                                |
+| `pnpm lint`                                  | ESLint with zero warnings allowed                                                             |
+| `pnpm format:check`                          | Verify formatting without editing                                                             |
+| `pnpm format`                                | Apply repository formatting                                                                   |
+| `pnpm test`                                  | Vitest, React Testing Library, and Supertest checks                                           |
+| `pnpm test:e2e`                              | Chromium interactions, responsive checks, axe audits, screenshots                             |
+| `pnpm infra:up` / `pnpm infra:down`          | Start/stop Compose services, retaining volumes                                                |
+| `pnpm test:integration` / `pnpm infra:check` | Real database, Redis, S3, and captured-email checks                                           |
+| `pnpm auth:fixture prepare` / `start`        | Prepare and start the isolated MongoDB/Mailpit authentication preview                         |
+| `pnpm test:auth:integration`                 | Real account/session/token tests against the isolated fixture                                 |
+| `pnpm test:auth:transactions`                | Controlled real MongoDB credential races and registration rollback                            |
+| `pnpm test:auth:e2e`                         | API-backed account browser flows, responsive and accessibility checks                         |
+| `pnpm test:auth:compose`                     | Run auth verification against running Compose services in an isolated test database           |
+| `pnpm test:tenants:integration`              | Real MongoDB tenant isolation, role/access, rollback, concurrency, and pagination checks      |
+| `pnpm test:tenants:e2e`                      | Real organization/workspace browser flows, switching, settings, keyboard, and axe checks      |
+| `pnpm test:teams:integration`                | Real MongoDB team roles, invitations, lifecycle, membership and transaction checks            |
+| `pnpm test:teams:e2e`                        | Team permissions, invitation acceptance, keyboard, themes and responsive browser checks       |
+| `pnpm test:projects:integration`             | Real MongoDB project/task permissions, transactions, filters, rollback and pagination         |
+| `pnpm test:projects:e2e`                     | Real project/task CRUD, grants, conflicts, filters, lifecycle and accessibility checks        |
+| `pnpm test:views:integration`                | Private preferences/filters, versioned task moves, UTC dates and sorted pagination            |
+| `pnpm test:views:e2e`                        | List/Kanban/table/calendar, settings, moves and accessibility                                 |
+| `pnpm test:planning:integration`             | Real transactions, dependencies/cycles, sprints/carryover, capacity, bounds and access        |
+| `pnpm test:planning:e2e`                     | Actual planning flows, conflicts, failures, keyboard, themes and responsive axe checks        |
+| `pnpm test:collaboration:integration`        | Real comment/notification transactions, private scope, socket guards, presence and recovery   |
+| `pnpm test:collaboration:e2e`                | Cross-session live work, comments/inbox, preserved drafts, keyboard and responsive axe checks |
 
 Install the test browser with `pnpm exec playwright install chromium`. On Linux CI, use `--with-deps chromium`.
 

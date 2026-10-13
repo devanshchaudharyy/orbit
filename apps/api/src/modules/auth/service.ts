@@ -55,7 +55,7 @@ export class AuthService {
 
   async prepare(ip: string) {
     await this.repository.ready();
-    await this.repository.rateLimit('requests', ip, 120, 60_000);
+    await this.repository.rateLimit('requests', ip, 600, 60_000);
   }
 
   newSession(userId: Types.ObjectId | null): { rawToken: string; session: StoredSession } {
@@ -84,11 +84,16 @@ export class AuthService {
     };
   }
 
-  async context(rawToken: string | undefined, createAnonymous = false): Promise<AuthContext> {
+  async context(
+    rawToken: string | undefined,
+    createAnonymous = false,
+    touch = true,
+  ): Promise<AuthContext> {
     if (rawToken && /^[a-f0-9]{64}$/.test(rawToken)) {
       const session = await this.repository.sessionByHash(
         digest(rawToken),
         this.configuration.SESSION_IDLE_MINUTES * 60_000,
+        touch,
       );
       if (session) {
         const user = session.userId

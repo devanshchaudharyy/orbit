@@ -129,6 +129,7 @@ export function ProjectPlanning({
   const rows = planner.collection.data?.pages.flatMap((p) => p.tasks) ?? [];
   const [action, setAction] = useState<Action | null>(null);
   const [pending, setPending] = useState(false);
+  const [reloadedAt, setReloadedAt] = useState<number | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [notice, setNotice] = useState('');
   const [announcement, setAnnouncement] = useState('');
@@ -140,6 +141,14 @@ export function ProjectPlanning({
   const detailed = view === 'timeline' || view === 'sprints' || view === 'workload';
   const [from, setFrom] = useState(query.get('from')!);
   const [to, setTo] = useState(query.get('to')!);
+  useLayoutEffect(() => {
+    if (reloadedAt === null || planner.collection.dataUpdatedAt < reloadedAt) return;
+    restore.current = { target: trigger.current };
+    setAction(null);
+    setError(null);
+    setPending(false);
+    setReloadedAt(null);
+  }, [reloadedAt, planner.collection.dataUpdatedAt]);
   useLayoutEffect(() => {
     if (!restore.current || pending || action || planner.collection.isFetching) return;
     const target = restore.current.target;
@@ -235,10 +244,15 @@ export function ProjectPlanning({
     else void save(`/tasks/${action.task.id}/move`, value, 'POST', 'Task moved.', taskSchema);
   };
   const reload = async () => {
-    setAction(null);
-    setError(null);
-    await planner.refresh();
-    restore.current = { target: trigger.current };
+    setPending(true);
+    try {
+      const result = await planner.collection.refetch({ cancelRefetch: true });
+      if (result.error) throw result.error;
+      setReloadedAt(result.dataUpdatedAt);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught : new Error('Planning could not be reloaded.'));
+      setPending(false);
+    }
   };
   const tabsKey = (event: KeyboardEvent<HTMLDivElement>) => {
     const index = planningViews.indexOf(view);
@@ -484,7 +498,7 @@ export function ProjectPlanning({
         <StatusNotice>
           <span>{error.message}</span>
           {error instanceof AuthServiceError && error.status === 409 ? (
-            <Button variant="secondary" onClick={() => void reload()}>
+            <Button variant="secondary" disabled={pending} onClick={() => void reload()}>
               Reload latest planning
             </Button>
           ) : null}
@@ -714,7 +728,7 @@ export function ProjectPlanning({
             <StatusNotice>
               <span>{error.message}</span>
               {error instanceof AuthServiceError && error.status === 409 ? (
-                <Button variant="secondary" onClick={() => void reload()}>
+                <Button variant="secondary" disabled={pending} onClick={() => void reload()}>
                   Reload latest planning
                 </Button>
               ) : null}

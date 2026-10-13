@@ -65,7 +65,7 @@ async function signIn(page: Page, email: string, returnTo = '/app') {
   await page.getByLabel('Email address', { exact: true }).fill(email);
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page).toHaveURL(new RegExp(`${returnTo}$`));
+  await expect(page).toHaveURL((url) => `${url.pathname}${url.search}${url.hash}` === returnTo);
 }
 async function setup(page: Page) {
   const owner = await account('Morgan Reed');
@@ -226,6 +226,8 @@ test.afterEach(async () => {
       'project_sprints',
       'task_plans',
       'project_capacities',
+      'collaboration_messages',
+      'collaboration_notifications',
       'team_invitations',
       'workspace_memberships',
       'organization_memberships',

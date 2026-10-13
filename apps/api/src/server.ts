@@ -10,6 +10,10 @@ import { createInvitationMailer } from './modules/teams/mail.js';
 import { TeamService } from './modules/teams/service.js';
 import { ProjectRepository } from './modules/projects/repository.js';
 import { ProjectService } from './modules/projects/service.js';
+import { createServer } from 'node:http';
+import { CollaborationRepository } from './modules/collaboration/repository.js';
+import { CollaborationService } from './modules/collaboration/service.js';
+import { createRealtime } from './modules/collaboration/realtime.js';
 
 const env = parseEnvironment(process.env);
 const logger = createLogger(env.LOG_LEVEL);
@@ -20,11 +24,12 @@ const auth = createAuthRuntime(env, dependencies.mongo, dependencies.connectMong
 const tenants = new TenantService(new MongoTenantRepository(dependencies.mongo));
 const teams = new TeamService(new TeamRepository(tenants.repository), createInvitationMailer(env));
 const projects = new ProjectService(new ProjectRepository(tenants.repository));
-const server = createApp(dependencies, logger, auth, tenants, teams, projects).listen(
-  env.PORT,
-  env.HOST,
-  () => logger.info({ port: env.PORT }, 'ORBIT API listening'),
+const collaboration = new CollaborationService(new CollaborationRepository(projects.repository));
+const server = createServer(
+  createApp(dependencies, logger, auth, tenants, teams, projects, collaboration),
 );
+const live = createRealtime(server, auth, tenants, collaboration, logger);
+server.listen(env.PORT, env.HOST, () => logger.info({ port: env.PORT }, 'ORBIT API listening'));
 server.on('error', (error) => {
   logger.fatal({ code: (error as NodeJS.ErrnoException).code }, 'API failed to listen');
   process.exitCode = 1;
@@ -35,12 +40,10 @@ async function shutdown() {
   shuttingDown = true;
   logger.info('Shutting down API');
   const deadline = setTimeout(() => process.exit(1), 5000).unref();
-  server.close(async () => {
-    await dependencies.close();
-    clearTimeout(deadline);
-    process.exitCode = 0;
-  });
-  server.closeIdleConnections();
+  await live.close();
+  await dependencies.close();
+  clearTimeout(deadline);
+  process.exitCode = 0;
 }
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);

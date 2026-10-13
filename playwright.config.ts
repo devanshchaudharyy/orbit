@@ -9,6 +9,7 @@ export default defineConfig({
     '**/projects.spec.ts',
     '**/views.spec.ts',
     '**/planning.spec.ts',
+    '**/collaboration.spec.ts',
   ],
   outputDir: 'test-results/foundation',
   fullyParallel: false,

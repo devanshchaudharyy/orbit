@@ -19,6 +19,9 @@ import { workViewRoutes } from './modules/views/routes.js';
 import { PlanningRepository } from './modules/planning/repository.js';
 import { PlanningService } from './modules/planning/service.js';
 import { planningRoutes } from './modules/planning/routes.js';
+import { collaborationRoutes } from './modules/collaboration/routes.js';
+import { CollaborationRepository } from './modules/collaboration/repository.js';
+import { CollaborationService } from './modules/collaboration/service.js';
 
 export function createApp(
   dependencies: Dependencies,
@@ -27,6 +30,7 @@ export function createApp(
   tenants?: TenantService,
   teams?: TeamService,
   projects?: ProjectService,
+  collaboration?: CollaborationService,
 ) {
   const app = express();
   app.disable('x-powered-by');
@@ -53,6 +57,9 @@ export function createApp(
   app.use('/api/v1/health', healthRoutes(dependencies));
   if (auth) app.use('/api/v1/auth', authRoutes(auth));
   if (auth && tenants && projects) {
+    const collab =
+      collaboration ?? new CollaborationService(new CollaborationRepository(projects.repository));
+    app.use('/api/v1/organizations', collaborationRoutes(auth, tenants, collab));
     const views = new WorkViewService(new WorkViewRepository(projects.repository));
     const planning = new PlanningService(new PlanningRepository(projects.repository));
     app.use('/api/v1/organizations', planningRoutes(auth, tenants, planning));

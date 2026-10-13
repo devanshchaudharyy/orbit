@@ -210,13 +210,40 @@ export function authErrorMessage(error: unknown): string {
 }
 
 export function safeReturnTo(value: string | null): string {
-  if (value === '/account' || value === '/app' || value === '/invitations/accept') return value;
   if (
-    value &&
+    !value?.startsWith('/') ||
+    value.startsWith('//') ||
+    value.includes('\\') ||
+    value.length > 2000
+  )
+    return '/onboarding';
+  const target = new URL(value, 'https://orbit.invalid');
+  if (target.origin !== 'https://orbit.invalid') return '/onboarding';
+  const path = target.pathname;
+  if (value.split(/[?#]/)[0] !== path) return '/onboarding';
+  const projectRoute =
+    /^\/app\/organizations\/[a-f0-9]{24}\/workspaces\/[a-f0-9]{24}\/projects\/[a-f0-9]{24}$/;
+  if (target.search) {
+    const query = target.searchParams;
+    if (
+      !projectRoute.test(path) ||
+      query.get('section') !== 'collaboration' ||
+      [...query.keys()].some((key) => !['section', 'collaboration'].includes(key)) ||
+      query.getAll('section').length !== 1 ||
+      query.getAll('collaboration').length > 1 ||
+      (query.has('collaboration') && query.get('collaboration') !== 'inbox')
+    )
+      return '/onboarding';
+  }
+  if (target.hash && !/^#message-[a-f0-9]{24}$/.test(target.hash)) return '/onboarding';
+  const fragment = /^#message-[a-f0-9]{24}$/.test(target.hash) ? target.hash : '';
+  const result = `${path}${target.search}${fragment}`;
+  if (path === '/account' || path === '/app' || path === '/invitations/accept') return result;
+  if (
     /^\/app\/organizations\/[a-f0-9]{24}(?:\/(?:settings|team)|\/workspaces\/[a-f0-9]{24}(?:\/settings|\/projects(?:\/[a-f0-9]{24}(?:\/tasks\/[a-f0-9]{24})?)?)?)?$/.test(
-      value,
+      path,
     )
   )
-    return value;
+    return result;
   return '/onboarding';
 }

@@ -15,7 +15,7 @@ export interface AuthRepository {
   rateLimit(scope: string, identifier: string, limit: number, windowMs: number): Promise<void>;
   findUser(email: string): Promise<StoredUser | null>;
   userById(id: string): Promise<StoredUser | null>;
-  sessionByHash(hash: string, idleMs: number): Promise<StoredSession | null>;
+  sessionByHash(hash: string, idleMs: number, touch?: boolean): Promise<StoredSession | null>;
   createAnonymous(session: StoredSession): Promise<void>;
   register(
     user: NewUser,
@@ -94,7 +94,7 @@ export class MongoAuthRepository implements AuthRepository {
     return this.models.users.findById(id).lean();
   }
 
-  async sessionByHash(hash: string, idleMs: number) {
+  async sessionByHash(hash: string, idleMs: number, touch = true) {
     const now = new Date();
     const existing = await this.models.sessions
       .findOne({
@@ -104,6 +104,7 @@ export class MongoAuthRepository implements AuthRepository {
       })
       .lean();
     if (!existing) return null;
+    if (!touch) return existing;
     return this.models.sessions
       .findOneAndUpdate(
         { _id: existing._id, expiresAt: { $gt: now }, absoluteExpiresAt: { $gt: now } },

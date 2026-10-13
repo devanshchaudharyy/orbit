@@ -1,4 +1,4 @@
-import { useId, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useId, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import {
   Plus,
@@ -41,6 +41,9 @@ import {
 import '../projects.css';
 import { ProjectWorkViews } from '../components/ProjectWorkViews';
 import { ProjectPlanning } from '../components/ProjectPlanning';
+import { ProjectRealtime, LiveProjectStatus } from '../components/ProjectRealtime';
+import { ProjectCollaboration } from '../components/ProjectCollaboration';
+import { Conversation } from '../components/Conversation';
 
 const titleFor = (action: ProjectAction) =>
   action.kind === 'create-project'
@@ -203,6 +206,7 @@ export default function ProjectsPage({
   );
   const navigate = useNavigate();
   const [action, setAction] = useState<ProjectAction | null>(null);
+  const closeRevokedAction = useCallback(() => setAction(null), []);
   const [success, setSuccess] = useState('');
   const trigger = useRef<HTMLElement | null>(null);
   const project = data.detail.data;
@@ -436,7 +440,10 @@ export default function ProjectsPage({
               ) : null}
             </>
           ) : project ? (
-            <>
+            <ProjectRealtime
+              onRevoked={closeRevokedAction}
+              scope={{ organizationId: orgId!, workspaceId: wsId!, projectId: project.id }}
+            >
               <Link className="project-back" to={mode === 'task' ? detailPath : path}>
                 <ArrowLeft size={15} />
                 {mode === 'task' ? project.name : 'All projects'}
@@ -446,6 +453,7 @@ export default function ProjectsPage({
                   This project is archived. Its work and history are read-only.
                 </StatusNotice>
               ) : null}
+              <LiveProjectStatus />
               {mode === 'project' ? (
                 <>
                   <Cover kind={project.cover} />
@@ -519,7 +527,11 @@ export default function ProjectsPage({
                   <nav className="plan-project-navigation" aria-label="Project sections">
                     <Link
                       to={detailPath}
-                      aria-current={search.get('section') !== 'planning' ? 'page' : undefined}
+                      aria-current={
+                        !['planning', 'collaboration'].includes(search.get('section') ?? '')
+                          ? 'page'
+                          : undefined
+                      }
                     >
                       Work views
                     </Link>
@@ -529,12 +541,28 @@ export default function ProjectsPage({
                     >
                       Delivery planning
                     </Link>
+                    <Link
+                      to={`${detailPath}?section=collaboration`}
+                      aria-current={search.get('section') === 'collaboration' ? 'page' : undefined}
+                    >
+                      Collaboration
+                    </Link>
                   </nav>
                   <div
-                    className={`project-work-grid${search.get('section') === 'planning' ? ' is-planning' : ''}`}
+                    className={`project-work-grid${['planning', 'collaboration'].includes(search.get('section') ?? '') ? ' is-planning' : ''}`}
                   >
                     <section className="project-work">
-                      {search.get('section') === 'planning' ? (
+                      {search.get('section') === 'collaboration' ? (
+                        <ProjectCollaboration
+                          scope={{
+                            organizationId: orgId!,
+                            workspaceId: wsId!,
+                            projectId: project.id,
+                          }}
+                          path={detailPath}
+                          canWrite={project.canWriteTasks}
+                        />
+                      ) : search.get('section') === 'planning' ? (
                         <ProjectPlanning
                           key={project.id}
                           org={orgId!}
@@ -826,9 +854,14 @@ export default function ProjectsPage({
                       </Button>
                     </div>
                   ) : null}
+                  <Conversation
+                    scope={{ organizationId: orgId!, workspaceId: wsId!, projectId: project.id }}
+                    taskId={task.id}
+                    canWrite={project.canWriteTasks}
+                  />
                 </>
               ) : null}
-            </>
+            </ProjectRealtime>
           ) : null}
         </>
       )}

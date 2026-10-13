@@ -5,6 +5,7 @@ export * from './teams.js';
 export * from './projects.js';
 export * from './views.js';
 export * from './planning.js';
+export * from './collaboration.js';
 
 export const responseMetaSchema = z.object({ requestId: z.uuid() });
 export const healthSchema = z.object({ status: z.enum(['alive', 'ready', 'unavailable']) });

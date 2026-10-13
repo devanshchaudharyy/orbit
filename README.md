@@ -2,9 +2,9 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 7 adds milestones, sprint lifecycle/boards, timeline/Gantt, task dependencies, workload planning and delivery history to the existing authorized project/task system. See [the Phase 7 verification report](docs/PHASE7_REPORT.md). Marketing sample content demonstrates the intended product. Realtime collaboration, files, analytics, AI and billing remain in later phases.
+Phase 8 adds real-time project/task/planning updates, task comments, project discussions, explicit mentions, private notifications and live presence to the existing authorized workspace. See [the Phase 8 verification report](docs/PHASE8_REPORT.md). Marketing sample content demonstrates the intended product. Files, analytics, AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–7 are implemented and published. Windows Docker/WSL and restart acceptance remain deferred; fixture verification and remote Compose evidence are recorded separately in each phase report.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–7 are published; Phase 8 verification/publication is in progress. Windows Docker/WSL and restart acceptance remain deferred; fixture verification and remote Compose evidence are recorded separately in each phase report.
 
 ## Screenshots
 
@@ -78,7 +78,17 @@ Managers/project owners manage milestones, sprints and capacity; current non-gue
 
 Phase 7 local verification passed **136 unit/component/API tests**, **148 real integration/transaction checks**, **61 browser scenarios**, **304 accessibility scans with zero violations**, and **12 production checks**, plus strict types, lint, formatting and builds. All final browser suites passed directly. The retained gallery contains **303 PNGs**. Exact commands, fixes, current publication/CI evidence and deferred Windows acceptance are in [the report](docs/PHASE7_REPORT.md).
 
-Phase 7 is complete and published. The [GitHub verification workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38271056842) passed for `f1656dd8bf338d79c401869d23b41deee69c5453`, including the full pinned Compose setup and all application suites through planning. Windows Docker/WSL and container-restart acceptance remain deferred; Phase 8 has not started.
+Phase 7 is complete and published. The [GitHub verification workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38271056842) passed for `f1656dd8bf338d79c401869d23b41deee69c5453`, including the full pinned Compose setup and all application suites through planning. Windows Docker/WSL and container-restart acceptance remain deferred. Current collaboration verification follows in [the Phase 8 report](docs/PHASE8_REPORT.md).
+
+## Real-time collaboration
+
+![ORBIT project discussion with real-time presence and saved mentions](docs/screenshots/collaboration-discussion-dark-1440.png)
+
+![ORBIT private project notifications in light appearance](docs/screenshots/collaboration-inbox-light-1440.png)
+
+Open an authorized project and choose **Collaboration** for its shared discussion and private project inbox. Task/subtask details include saved comments. Explicit mentions create private notifications; task comments also notify current owners/assignees. Edit your messages, remove them with original-version checks, and mark inbox entries read/unread. Direct message links work beyond the first page.
+
+The live panel reports actual connection state and distinct viewers. Saved task/planning/history/discussion changes refresh across sessions; unsent drafts and open edit versions remain intact. Reconnect recovers missed work from MongoDB. Guests and archives are read-only; current membership/session revocation disconnects live access. Notifications are in-app only, and this phase supports a single API process. [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md), [verification](docs/PHASE8_REPORT.md).
 
 ## Start locally
 
@@ -177,6 +187,8 @@ Production builds omit the lab route and lab JavaScript. For deliberate producti
 - [Phase 6 implementation and verification](docs/PHASE6_REPORT.md)
 - [Phase 7 scope](docs/PHASE7_PLAN.md)
 - [Phase 7 implementation and verification](docs/PHASE7_REPORT.md)
+- [Phase 8 scope](docs/PHASE8_PLAN.md)
+- [Phase 8 implementation and verification](docs/PHASE8_REPORT.md)
 - [Testing and Windows setup](docs/TESTING.md)
 
 Current execution results and remaining blockers are recorded in the phase progress document. Source code is hosted in the private repository linked above. The application has not been deployed.

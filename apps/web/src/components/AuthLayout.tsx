@@ -281,7 +281,11 @@ export function AuthGate({
   if (!auth.user)
     return (
       <Navigate
-        to={`/auth/login?returnTo=${encodeURIComponent(safeReturnTo(location.pathname))}`}
+        to={`/auth/login?returnTo=${encodeURIComponent(
+          safeReturnTo(`${location.pathname}${location.search}${location.hash}`) === '/onboarding'
+            ? safeReturnTo(location.pathname)
+            : safeReturnTo(`${location.pathname}${location.search}${location.hash}`),
+        )}`}
         replace
       />
     );

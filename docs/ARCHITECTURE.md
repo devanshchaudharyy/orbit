@@ -112,4 +112,14 @@ Milestones track explicit delivery separately from linked-task progress. Sprints
 
 The project page exposes five URL-addressable planning tabs. Private query keys include parent scope; original dialog snapshots reject stale writes, retain failed drafts and offer explicit reload. Pointer sprint moves use the existing partial task move endpoint; keyboard/touch dialogs are equivalent. Focus returns to the initiating control or active tab when the control disappears. UTC windows are bounded to 90 days, task pages to 100, milestone/sprint counts to 50 each and active planning graphs to 5,000; limits return explicit errors.
 
-No new dependency, infrastructure adapter or provider was added. Phase 8 realtime/comments/notifications and subsequent files, analytics, AI, automation and billing remain unimplemented.
+No new dependency, infrastructure adapter or provider was added in Phase 7. Phase 8 implementation follows.
+
+## Phase 8 collaboration boundary
+
+The persistent Node HTTP server now hosts Socket.IO 4.8.4 at `/api/live`. The frontend uses a lazy Socket.IO client through the same-origin WebSocket proxy. Plain-text comments, discussions and recipient notifications have a separate collaboration module and strict contracts. Their writes reuse current membership/project transaction fences; message, notifications and activity commit together. Retry UUIDs deduplicate creates, original versions protect edits/removal, and current eligible recipients are checked transactionally. The private inbox is scoped to one project and actor, with active message/task checks.
+
+The socket handshake verifies exact Origin, the opaque cookie session, session-bound CSRF and verified onboarding. Every subscription independently checks canonical organization/workspace/project parents and current resource access. Clients cannot select room names. A socket subscribes to one authorized project; subscriptions never authorize a write. Outgoing presence and refresh delivery recheck identity/resource access. Five-second passive revalidation and database changes evict expired/revoked identities; passive checks do not prolong idle expiry.
+
+MongoDB change streams observe committed feature/authority changes and emit only scoped invalidations. REST remains the durable source of truth. Reconnect and recovered streams invalidate cached project work, planning, history and collaboration. Stream failures produce explicit degraded feedback; offline clients keep unsent drafts. Presence is ephemeral and deduplicates user IDs across tabs, with twenty displayed people and an actual total. Limits are 200 sockets per process, eight per actor, thirty connection/subscription attempts per minute and 8 KiB incoming socket payloads.
+
+This implementation supports one API process. Redis readiness remains independent; no multi-node Socket.IO adapter, worker, email notification delivery or file content is introduced. Multi-node fan-out and scaling require a later infrastructure decision. [Phase 8 verification](PHASE8_REPORT.md).

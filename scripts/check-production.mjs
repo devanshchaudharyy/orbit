@@ -94,12 +94,21 @@ try {
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects`,
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}`,
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}/tasks/${'d'.repeat(24)}`,
+    `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}?section=collaboration`,
+    `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}?section=collaboration&collaboration=inbox`,
   ]) {
     await page.goto(`http://127.0.0.1:4173${path}`);
     await page.getByRole('heading', { name: 'Welcome back.', exact: true }).waitFor();
     assert.equal(new URL(page.url()).searchParams.get('returnTo'), path);
     console.log(`PASS production protected direct route ${path} requires sign-in`);
   }
+  const filteredProject = `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}`;
+  await page.goto(`http://127.0.0.1:4173${filteredProject}?view=kanban`);
+  await page.getByRole('heading', { name: 'Welcome back.', exact: true }).waitFor();
+  assert.equal(new URL(page.url()).searchParams.get('returnTo'), filteredProject);
+  console.log(
+    'PASS production protected filtered project returns to its canonical project after sign-in',
+  );
   await page.goto('http://127.0.0.1:4173/invitations/accept');
   await page.getByRole('alert').filter({ hasText: 'Reopen the invitation link' }).waitFor();
   await page.reload();

@@ -211,6 +211,25 @@ try {
       root,
     ),
   );
+  await finished(
+    start(
+      process.execPath,
+      [apiRequire.resolve('tsx/cli'), resolve(root, 'tests/integration/collaboration.ts')],
+      root,
+    ),
+  );
+  await finished(
+    start(
+      process.execPath,
+      [
+        rootRequire.resolve('@playwright/test/cli'),
+        'test',
+        '-c',
+        'playwright.collaboration.config.ts',
+      ],
+      root,
+    ),
+  );
 } catch (error) {
   console.error(error.message);
   process.exitCode ??= 1;

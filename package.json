@@ -38,7 +38,10 @@
     "test:planning:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/planning.ts",
     "test:planning:e2e": "playwright test -c playwright.planning.config.ts",
     "test:collaboration:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/collaboration.ts",
-    "test:collaboration:e2e": "playwright test -c playwright.collaboration.config.ts"
+    "test:collaboration:e2e": "playwright test -c playwright.collaboration.config.ts",
+    "files:cleanup": "pnpm --filter @orbit/api exec tsx ../../scripts/files-cleanup.ts",
+    "test:documents:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/documents.ts",
+    "test:documents:e2e": "playwright test -c playwright.documents.config.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

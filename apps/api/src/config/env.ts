@@ -19,6 +19,19 @@ export const envSchema = z
       .regex(/^mongodb(?:\+srv)?:\/\/[^\s]+$/, 'Expected a MongoDB connection URI'),
     REDIS_URL: z.url().refine((value) => /^rediss?:\/\//.test(value), 'Expected a Redis URL'),
     DEPENDENCY_TIMEOUT_MS: z.coerce.number().int().min(100).max(10000).default(1500),
+    FILE_STORAGE_DRIVER: z.enum(['disk', 's3']).default('disk'),
+    FILE_STORAGE_DIRECTORY: z
+      .string()
+      .min(1)
+      .default(fileURLToPath(new URL('../../../../.local/files/', import.meta.url))),
+    S3_ENDPOINT: z.url().default('http://127.0.0.1:3900'),
+    S3_REGION: z.string().min(1).default('garage'),
+    S3_ACCESS_KEY: z.string().default(''),
+    S3_SECRET_KEY: z.string().default(''),
+    S3_BUCKET: z
+      .string()
+      .regex(/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]$/)
+      .default('orbit-local'),
     APP_ORIGIN: z
       .url()
       .default('http://127.0.0.1:5173')
@@ -48,6 +61,18 @@ export const envSchema = z
     SMTP_PASSWORD: z.string().max(1024).optional(),
   })
   .superRefine((value, context) => {
+    if (value.NODE_ENV === 'production' && value.FILE_STORAGE_DRIVER !== 's3')
+      context.addIssue({
+        code: 'custom',
+        path: ['FILE_STORAGE_DRIVER'],
+        message: 'Production requires private S3 storage',
+      });
+    if (value.FILE_STORAGE_DRIVER === 's3' && (!value.S3_ACCESS_KEY || !value.S3_SECRET_KEY))
+      context.addIssue({
+        code: 'custom',
+        path: ['S3_ACCESS_KEY'],
+        message: 'S3 credentials must be configured together',
+      });
     if (value.NODE_ENV === 'production' && !value.APP_ORIGIN.startsWith('https://'))
       context.addIssue({
         code: 'custom',

@@ -14,6 +14,9 @@ import { createServer } from 'node:http';
 import { CollaborationRepository } from './modules/collaboration/repository.js';
 import { CollaborationService } from './modules/collaboration/service.js';
 import { createRealtime } from './modules/collaboration/realtime.js';
+import { DocumentRepository } from './modules/documents/repository.js';
+import { DocumentService } from './modules/documents/service.js';
+import { createPrivateStorage } from './modules/documents/storage.js';
 
 const env = parseEnvironment(process.env);
 const logger = createLogger(env.LOG_LEVEL);
@@ -25,8 +28,12 @@ const tenants = new TenantService(new MongoTenantRepository(dependencies.mongo))
 const teams = new TeamService(new TeamRepository(tenants.repository), createInvitationMailer(env));
 const projects = new ProjectService(new ProjectRepository(tenants.repository));
 const collaboration = new CollaborationService(new CollaborationRepository(projects.repository));
+const documents = new DocumentService(
+  new DocumentRepository(projects.repository),
+  createPrivateStorage(env),
+);
 const server = createServer(
-  createApp(dependencies, logger, auth, tenants, teams, projects, collaboration),
+  createApp(dependencies, logger, auth, tenants, teams, projects, collaboration, documents),
 );
 const live = createRealtime(server, auth, tenants, collaboration, logger);
 server.listen(env.PORT, env.HOST, () => logger.info({ port: env.PORT }, 'ORBIT API listening'));

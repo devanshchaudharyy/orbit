@@ -225,13 +225,24 @@ export function safeReturnTo(value: string | null): string {
     /^\/app\/organizations\/[a-f0-9]{24}\/workspaces\/[a-f0-9]{24}\/projects\/[a-f0-9]{24}$/;
   if (target.search) {
     const query = target.searchParams;
+    const documentLink =
+      projectRoute.test(path) &&
+      query.get('section') === 'documents' &&
+      query.getAll('section').length === 1 &&
+      [...query.keys()].every((key) => ['section', 'document', 'library'].includes(key)) &&
+      query.getAll('document').length <= 1 &&
+      query.getAll('library').length <= 1 &&
+      (!query.has('document') || /^[a-f0-9]{24}$/.test(query.get('document') ?? '')) &&
+      (!query.has('library') || query.get('library') === 'files') &&
+      !(query.has('document') && query.has('library'));
     if (
-      !projectRoute.test(path) ||
-      query.get('section') !== 'collaboration' ||
-      [...query.keys()].some((key) => !['section', 'collaboration'].includes(key)) ||
-      query.getAll('section').length !== 1 ||
-      query.getAll('collaboration').length > 1 ||
-      (query.has('collaboration') && query.get('collaboration') !== 'inbox')
+      !documentLink &&
+      (!projectRoute.test(path) ||
+        query.get('section') !== 'collaboration' ||
+        [...query.keys()].some((key) => !['section', 'collaboration'].includes(key)) ||
+        query.getAll('section').length !== 1 ||
+        query.getAll('collaboration').length > 1 ||
+        (query.has('collaboration') && query.get('collaboration') !== 'inbox'))
     )
       return '/onboarding';
   }

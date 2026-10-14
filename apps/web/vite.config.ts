@@ -4,6 +4,7 @@ import tailwind from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [react(), tailwind()],
+  optimizeDeps: { include: ['@tiptap/react', '@tiptap/starter-kit', 'pdfjs-dist'] },
   server: {
     port: 5173,
     strictPort: true,

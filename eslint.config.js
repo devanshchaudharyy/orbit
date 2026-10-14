@@ -10,6 +10,8 @@ export default tseslint.config(
       '**/test-results/**',
       '**/playwright-report/**',
       'infra/.local/**',
+      '.local/**',
+      'apps/web/public/pdfjs/**',
     ],
   },
   ...tseslint.configs.recommended,

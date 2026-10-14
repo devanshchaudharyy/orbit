@@ -1,5 +1,13 @@
 # Testing and local infrastructure
 
+## Phase 9 documents and files
+
+Run `pnpm test:documents:integration` and `pnpm test:documents:e2e` with the owned local fixture running. The integration suite verifies actual MongoDB transactions and private disk bytes, revisions, restore, retries, failed storage/finalization, safe binary input, checksums, reconciliation and revoked/archived/deleted parents. Compose verification sets the S3 driver and exercises the same flows against private Garage. Tests remove only uniquely owned records and object keys.
+
+Browser coverage includes rich text and safe links, history/restore, real image/text/PDF previews, download byte equality, attachments, filtering/paging, original-version conflicts, preserved drafts, guest/archive access, live revocation, unconfirmed upload retries and unavailable preview recovery. Theme/viewport audits include keyboard containment/restoration, overflow and axe. Production checks retain document/file return links. Never rebuild contracts or edit imported application code during browser runs.
+
+`pnpm files:cleanup` uses current environment configuration and reports examined/cleaned/failed counts for at most100 eligible deleted, expired pending or orphaned objects. It is an operator command, not a scheduled job. Back up the database and matching private objects together. PDF assets are prepared by dev/build/fixture commands. [Exact Phase9 results](PHASE9_REPORT.md).
+
 ## Phase 5 projects and tasks
 
 With the existing isolated fixture running, execute:

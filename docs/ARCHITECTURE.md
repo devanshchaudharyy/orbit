@@ -1,5 +1,13 @@
 # Architecture
 
+## Phase 9 documents and storage
+
+The documents module separates contracts, routes/controller, service, repository/models and private storage adapters. Current organization/workspace/project authority and transaction fences remain the permission boundary. Shared writers edit documents; authors/managers remove documents and manage file metadata. Guests and archives read only. Live streams include document/revision/file changes and emit content-free scoped invalidations; editor snapshots preserve original versions.
+
+Disk/S3 implement put/get/remove. Development disk data is ignored and never exposed statically; production requires private S3. Generated keys, actual checksums, bounded formats/body sizes and authorization after storage I/O protect reads. Raw parsing runs only inside the explicitly authorized upload handler; other mutations retain JSON/Origin/CSRF rules. Durable pending intents coordinate object storage with MongoDB finalization. Logical removal precedes physical deletion; bounded reconciliation handles expired/deleted/orphaned objects without a worker.
+
+Tiptap3.32.0 and PDF.js6.4.299 load lazily. Server validation enforces the supported editor JSON subset. PDF worker/fonts/maps/WASM are self-hosted generated build assets; canvas rendering disables XFA and does not integrate annotation/viewer scripting. Browser bytes always pass through current API authorization. Signature checks validate format, not malware scanning. No public sharing, CRDT editor, analytics, AI, billing or deployment. [Scope](PHASE9_PLAN.md), [verification](PHASE9_REPORT.md).
+
 ## Phase 5 project boundary
 
 `projects` separates strict shared contracts, HTTP controller/routes, service entry points, Mongoose models and scoped persistence. The persistent Express service and cookie-session protections remain unchanged. No new dependency, provider, worker or deployment is introduced. The sections below retain earlier phase decisions as historical context.

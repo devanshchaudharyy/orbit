@@ -56,7 +56,7 @@ export class AuthController {
     res.status(status).json({ data, meta: { requestId: res.locals.requestId } });
   }
 
-  private origin(req: Request, mutation: boolean) {
+  private origin(req: Request, mutation: boolean, binary = false) {
     const origin = req.get('Origin');
     if (
       (mutation && origin !== this.service.configuration.APP_ORIGIN) ||
@@ -64,20 +64,24 @@ export class AuthController {
       req.get('Sec-Fetch-Site') === 'cross-site'
     )
       throw new AuthError(403, 'ORIGIN_INVALID', 'This request is not allowed from this website.');
-    if (mutation && !req.is('application/json'))
-      throw new AuthError(415, 'CONTENT_TYPE_INVALID', 'Send this request as JSON.');
+    if (mutation && !req.is(binary ? 'application/octet-stream' : 'application/json'))
+      throw new AuthError(
+        415,
+        'CONTENT_TYPE_INVALID',
+        binary ? 'Send file bytes as application/octet-stream.' : 'Send this request as JSON.',
+      );
   }
 
   handle(
     operation: (req: Request, res: Response, context: AuthContext) => Promise<void>,
-    options: { anonymous?: boolean } = {},
+    options: { anonymous?: boolean; binary?: boolean } = {},
   ) {
     return async (req: Request, res: Response, next: NextFunction) => {
       res.setHeader('Cache-Control', 'no-store');
       res.setHeader('Vary', 'Cookie, Origin');
       try {
         const mutation = !['GET', 'HEAD', 'OPTIONS'].includes(req.method);
-        this.origin(req, mutation);
+        this.origin(req, mutation, options.binary);
         await this.service.prepare(req.ip ?? 'unknown');
         const context = await this.service.context(
           this.readCookie(req),

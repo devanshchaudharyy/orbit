@@ -179,6 +179,7 @@ async function shutdown(code = 0) {
 }
 
 async function start() {
+  await import('./pdf-assets.mjs');
   if (!existsSync(mailpit))
     throw new Error('Mailpit fixture is missing. Run pnpm auth:fixture prepare first.');
   if (process.platform === 'win32' && !existsSync(mongo))

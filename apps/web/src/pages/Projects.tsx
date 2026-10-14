@@ -1,4 +1,4 @@
-import { useCallback, useId, useRef, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useCallback, useId, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import {
   Plus,
@@ -44,6 +44,8 @@ import { ProjectPlanning } from '../components/ProjectPlanning';
 import { ProjectRealtime, LiveProjectStatus } from '../components/ProjectRealtime';
 import { ProjectCollaboration } from '../components/ProjectCollaboration';
 import { Conversation } from '../components/Conversation';
+import { FilePanel } from '../components/FilePanel';
+const ProjectDocuments = lazy(() => import('../components/ProjectDocuments'));
 
 const titleFor = (action: ProjectAction) =>
   action.kind === 'create-project'
@@ -528,7 +530,9 @@ export default function ProjectsPage({
                     <Link
                       to={detailPath}
                       aria-current={
-                        !['planning', 'collaboration'].includes(search.get('section') ?? '')
+                        !['planning', 'collaboration', 'documents'].includes(
+                          search.get('section') ?? '',
+                        )
                           ? 'page'
                           : undefined
                       }
@@ -547,12 +551,30 @@ export default function ProjectsPage({
                     >
                       Collaboration
                     </Link>
+                    <Link
+                      to={`${detailPath}?section=documents`}
+                      aria-current={search.get('section') === 'documents' ? 'page' : undefined}
+                    >
+                      Documents & files
+                    </Link>
                   </nav>
                   <div
-                    className={`project-work-grid${['planning', 'collaboration'].includes(search.get('section') ?? '') ? ' is-planning' : ''}`}
+                    className={`project-work-grid${['planning', 'collaboration', 'documents'].includes(search.get('section') ?? '') ? ' is-planning' : ''}`}
                   >
                     <section className="project-work">
-                      {search.get('section') === 'collaboration' ? (
+                      {search.get('section') === 'documents' ? (
+                        <Suspense fallback={<p role="status">Loading documents and files…</p>}>
+                          <ProjectDocuments
+                            scope={{
+                              organizationId: orgId!,
+                              workspaceId: wsId!,
+                              projectId: project.id,
+                            }}
+                            path={detailPath}
+                            canWrite={project.canWriteTasks}
+                          />
+                        </Suspense>
+                      ) : search.get('section') === 'collaboration' ? (
                         <ProjectCollaboration
                           scope={{
                             organizationId: orgId!,
@@ -856,6 +878,12 @@ export default function ProjectsPage({
                   ) : null}
                   <Conversation
                     scope={{ organizationId: orgId!, workspaceId: wsId!, projectId: project.id }}
+                    taskId={task.id}
+                    canWrite={project.canWriteTasks}
+                  />
+                  <FilePanel
+                    scope={{ organizationId: orgId!, workspaceId: wsId!, projectId: project.id }}
+                    path={detailPath}
                     taskId={task.id}
                     canWrite={project.canWriteTasks}
                   />

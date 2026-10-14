@@ -1,6 +1,6 @@
 # Phase progress
 
-Current status: Phase 8 collaboration complete and published to the private GitHub repository, with local and full remote Compose verification passed. Results are recorded in [the current report](PHASE8_REPORT.md). Docker infrastructure acceptance remains deferred locally; earlier sections are historical records. Phase 9 has not started.
+Current status: Phase 9 documents and files implemented; final browser/regression verification and publication are in progress. Results are recorded in [the current report](PHASE9_REPORT.md). Docker infrastructure acceptance remains deferred locally; earlier sections are historical records. Phase 10 has not started.
 
 ## Phase 0 — foundation implemented; infrastructure verification blocked
 

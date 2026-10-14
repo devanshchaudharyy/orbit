@@ -27,6 +27,9 @@ describe('Authentication environment validation', () => {
         NODE_ENV: 'production',
         APP_ORIGIN: 'https://orbit.example',
         SMTP_SECURE: 'true',
+        FILE_STORAGE_DRIVER: 's3',
+        S3_ACCESS_KEY: 'test-key',
+        S3_SECRET_KEY: 'test-secret',
       }).SMTP_SECURE,
     ).toBe(true);
   });

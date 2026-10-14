@@ -1,5 +1,11 @@
 # ORBIT Design Language
 
+## Phase 9 document workspace
+
+Documents & files adds a scoped library, readable document canvas, compact formatting controls, revision review and attachment lists. Shared semantic surfaces, violet emphasis, self-hosted typography, focus and reduced-motion rules apply. Labeled rich-text controls support keyboard shortcuts and safe links in a Radix overlay; link submits stay inside that overlay.
+
+Dialogs retain original snapshots; conflicts preserve drafts and require explicit reload. Escape restores the initiating control, with a heading fallback when deletion removes it. Pending state prevents duplicate submissions. Actual private image, bounded text and paginated canvas PDF previews have loading/error/retry states. Filters use actual loaded/matching counts. Guests/archives omit mutations. Dark/light375/768/1440 evidence and exact axe results are recorded in [the Phase9 report](PHASE9_REPORT.md).
+
 ## Phase 5 project experience
 
 The project directory uses layered semantic cards, original orbital SVG cover treatments, actual completion counts and progress bars. Project detail balances tasks/filters with labels and persisted activity; task detail gives context/checklist and people/labels separate readable surfaces. The layout collapses cleanly to a single column on mobile. No controls point to unimplemented views or features.

@@ -249,6 +249,9 @@ export function createRealtime(
     'workspace_memberships',
     'auth_users',
     'auth_sessions',
+    'project_documents',
+    'document_revisions',
+    'project_files',
   ];
   function onChange(event: {
     operationType?: string;

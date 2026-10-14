@@ -1,5 +1,27 @@
 # API
 
+## Phase 9 documents and files
+
+Routes below are relative to `/api/v1/organizations/:organizationId/workspaces/:workspaceId/projects/:projectId`. Cookie sessions, verified onboarding, explicit workspace membership and current project permission apply. Mutations require exact Origin and session CSRF; library mutations are bounded to60/actor/minute. JSON responses use shared request-ID envelopes; content returns private binary bytes.
+
+| Method | Suffix                                               | Input / behavior                                                                                                                                                                  |
+| ------ | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/documents`                                         | Optional literal title q/scoped cursor; fifty summaries, total, nextCursor.                                                                                                       |
+| POST   | `/documents`                                         | `{title,content,clientId}` safe JSON and UUID; 201 including identical retries.                                                                                                   |
+| GET    | `/documents/:documentId`                             | Current content and current capabilities.                                                                                                                                         |
+| PATCH  | `/documents/:documentId`                             | `{title,content,version}`; shared writer edit plus immutable revision.                                                                                                            |
+| DELETE | `/documents/:documentId`                             | `{version}`; author/manager; hides history and attachments.                                                                                                                       |
+| GET    | `/documents/:documentId/history`                     | Optional scoped cursor; fifty immutable snapshots.                                                                                                                                |
+| POST   | `/documents/:documentId/history/:revisionId/restore` | `{version}`; appends a new revision.                                                                                                                                              |
+| GET    | `/files`                                             | Optional literal q/cursor/type (`image`, `pdf`, `text`), taskId or documentId; fifty active metadata rows and total.                                                              |
+| POST   | `/files`                                             | Raw `application/octet-stream`, at most8MiB; query `{name,type,clientId,taskId?,documentId?}`. Type is the verified logical MIME. 201 after durable bytes and finalized metadata. |
+| GET    | `/files/:fileId`                                     | Current metadata, without storage key/public URL.                                                                                                                                 |
+| PATCH  | `/files/:fileId`                                     | `{name,version}`; author/manager; retains verified extension/type agreement.                                                                                                      |
+| DELETE | `/files/:fileId`                                     | `{version}`; immediate logical removal, `{removed:true,cleanupPending}`.                                                                                                          |
+| GET    | `/files/:fileId/content`                             | Actual checksum-verified bytes; optional `download=1`; safe disposition/no-store/nosniff/sandbox headers. Authority is rechecked after storage I/O.                               |
+
+Safe text supports paragraphs, headings1–3, lists, quotes, code, rules, emphasis and HTTP/HTTPS/mailto links. Raw HTML, images, arbitrary attributes, unsafe links and excessive depth/size are rejected. Bounds:200 active documents/project,500 revisions/document,50,000 characters,56KiB JSON,1,000 pending/ready files/project. Files accept PNG/JPEG/WebP/PDF/UTF-8 TXT/MD/CSV with filename/extension/signature validation. Guests and archives read only. Foreign references return404, conflicts409, bounds422, oversized input413 and unavailable storage/persistence503. Pending uploads are never served. [Verification](PHASE9_REPORT.md).
+
 ## Phase 5 projects and tasks
 
 All endpoints use shared envelopes, no-store, verified/onboarded live cookie sessions and current organization/workspace/project authorization. Mutations require JSON, exact Origin and CSRF; a persistent 100/minute actor budget and existing global limits apply. Paths below start at `/api/v1/organizations/:organizationId/workspaces/:workspaceId/projects`.

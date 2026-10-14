@@ -18,3 +18,4 @@ export type HealthResponse = z.infer<typeof healthResponseSchema>;
 export type ApiErrorResponse = z.infer<typeof apiErrorSchema>;
 export type ApiSuccess<T> = { data: T; meta: z.infer<typeof responseMetaSchema> };
 export type ThemePreference = 'dark' | 'light' | 'system';
+export * from './documents.js';

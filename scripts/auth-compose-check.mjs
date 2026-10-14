@@ -25,6 +25,7 @@ source.pathname = '/orbit_test_auth';
 const env = {
   ...process.env,
   NODE_ENV: 'test',
+  FILE_STORAGE_DRIVER: 's3',
   HOST: '127.0.0.1',
   PORT: '4001',
   APP_ORIGIN: 'http://127.0.0.1:5174',
@@ -111,6 +112,7 @@ async function wait(url, child) {
 }
 try {
   await Promise.all([ensureUnused(4001), ensureUnused(5174)]);
+  await finished(start(process.execPath, [resolve(root, 'scripts/pdf-assets.mjs')], root));
   const api = start(
     process.execPath,
     [apiRequire.resolve('tsx/cli'), 'src/server.ts'],
@@ -227,6 +229,20 @@ try {
         '-c',
         'playwright.collaboration.config.ts',
       ],
+      root,
+    ),
+  );
+  await finished(
+    start(
+      process.execPath,
+      [apiRequire.resolve('tsx/cli'), resolve(root, 'tests/integration/documents.ts')],
+      root,
+    ),
+  );
+  await finished(
+    start(
+      process.execPath,
+      [rootRequire.resolve('@playwright/test/cli'), 'test', '-c', 'playwright.documents.config.ts'],
       root,
     ),
   );

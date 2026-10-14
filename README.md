@@ -2,9 +2,9 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 8 adds real-time project/task/planning updates, task comments, project discussions, explicit mentions, private notifications and live presence to the existing authorized workspace. See [the Phase 8 verification report](docs/PHASE8_REPORT.md). Marketing sample content demonstrates the intended product. Files, analytics, AI and billing remain in later phases.
+Phase 9 adds shared rich-text documents, immutable history and restore, and private project/task/document attachments with real previews and downloads. See [the Phase 9 verification report](docs/PHASE9_REPORT.md). Marketing sample content demonstrates the intended product. Analytics, AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–8 are published, and Phase 8 verification is complete. Windows Docker/WSL and restart acceptance remain deferred; fixture verification and remote Compose evidence are recorded separately in each phase report.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–8 are published; Phase 9 final verification is in progress. Windows Docker/WSL and restart acceptance remain deferred; fixture verification and remote Compose evidence are recorded separately in each phase report.
 
 ## Screenshots
 
@@ -93,6 +93,16 @@ The live panel reports actual connection state and distinct viewers. Saved task/
 Phase 8 local verification passed **148 unit/component/API tests**, **178 real integration/transaction/socket checks**, **69 browser scenarios**, **364 axe scans with zero violations**, and **15 production checks**, plus strict types, lint, formatting and builds. All final browser suites passed directly. The gallery includes 60 collaboration captures across dark/light at 375/768/1440px. The [completed GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38420224406) passed for application commit `11ac996adba48bd5f9992cab3315e7c581176b34`, independently verifying all checks/builds, four pinned Compose infrastructure checks, 178 application integration checks, 69 browser scenarios and 15 production checks. No failed or flaky browser result was reported. Phase 9 has not started.
 
 ## Start locally
+
+### Documents and private files
+
+![ORBIT shared document and private attachments](docs/screenshots/documents-reading-dark-1440.png)
+
+![ORBIT immutable document history](docs/screenshots/documents-history-light-1440.png)
+
+Open an authorized project and choose **Documents & files** to write notes, review or restore saved revisions, or manage supporting files. Upload PNG/JPEG/WebP/PDF/TXT/MD/CSV up to8MiB to the project, a task/subtask or a document. Previews and downloads check current project access. Guests and archives are read-only; stale edits keep the draft and offer explicit reload.
+
+Development/test uses private disk storage under ignored `.local/files`; production requires private S3. Set `FILE_STORAGE_DRIVER=s3` with the existing private S3 configuration to use Garage. `pnpm files:cleanup` retries eligible expired/deleted/orphaned object cleanup. [Storage and recovery details](docs/TESTING.md).
 
 Prerequisites: Node **24.18.0**, pnpm **11.25.0**, and Git. Docker Desktop with Linux containers is required for the infrastructure checks. The UI and health API run without Docker, with readiness reporting HTTP 503.
 
@@ -193,6 +203,8 @@ Production builds omit the lab route and lab JavaScript. For deliberate producti
 - [Phase 7 implementation and verification](docs/PHASE7_REPORT.md)
 - [Phase 8 scope](docs/PHASE8_PLAN.md)
 - [Phase 8 implementation and verification](docs/PHASE8_REPORT.md)
+- [Phase 9 scope](docs/PHASE9_PLAN.md)
+- [Phase 9 implementation and verification](docs/PHASE9_REPORT.md)
 - [Testing and Windows setup](docs/TESTING.md)
 
 Current execution results and remaining blockers are recorded in the phase progress document. Source code is hosted in the private repository linked above. The application has not been deployed.

@@ -1,5 +1,17 @@
 # Database
 
+## Phase 9 project knowledge
+
+`project_documents`: organization/workspace/project parents, title, safe JSON, author/latest writer, optimistic version, create UUID/fingerprint, timestamps and deletedAt. Parent/deletion/descending-ID and unique project/author/clientId indexes support current fifty-row lists and deduplicated creates. Project fences enforce current writes and the200-document bound.
+
+`document_revisions`: same parents, documentId, immutable title/content, version, writer and createdAt. Unique document/version and parent/document/ID indexes protect append-only history/paging. Create/edit/restore, revision and activity commit atomically; failed event writes roll back content and history. Restore copies a verified snapshot into a new version. Maximum500 revisions/document.
+
+`project_files`: same parents, nullable same-project task/subtask or document, validated name/type/size/SHA-256, author, UUID/fingerprint, generated private key, version, timestamps, pending/ready/deleted status and cleanedAt. Scoped status/ID, unique project/author/clientId and cleanup indexes protect paging, retries and reconciliation. Filenames never select storage paths.
+
+MongoDB and object writes cannot share a transaction. Reserve a durable pending intent, persist bytes, then recheck current parents/membership transactionally and finalize with activity. Pending data is never served; identical retries recover put/finalization failures. Retries renew their cleanup lease. Deletion hides metadata first and removes bytes afterwards, explicitly reporting cleanup failure. `pnpm files:cleanup` examines at most100 deleted, expired pending (24h), or orphaned rows per invocation. Deleted parents hide attachments before physical cleanup; archives retain readable files. Future tenant purges must include all three collections and private objects.
+
+Development/test persist actual private bytes under ignored `.local/files`; production requires private S3 and CI uses Garage. No public URL, browser credential, worker or user-account seed. New storage/database instances verify persistence separately from deferred Windows container restart acceptance. [Phase9 report](PHASE9_REPORT.md).
+
 ## Phase 5 implemented project work
 
 | Collection       | Stored relationships and indexes                                                                                                                                                                                                                                                                                                              |

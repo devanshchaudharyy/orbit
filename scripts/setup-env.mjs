@@ -18,6 +18,7 @@ try {
   await writeFile(envPath, text, { flag: 'wx', mode: 0o600 });
 }
 const authDefaults = {
+  FILE_STORAGE_DRIVER: 'disk',
   APP_ORIGIN: 'http://127.0.0.1:5173',
   SMTP_FROM: 'ORBIT <noreply@orbit.local>',
   SESSION_IDLE_MINUTES: '1440',

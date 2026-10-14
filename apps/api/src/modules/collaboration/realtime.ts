@@ -252,6 +252,7 @@ export function createRealtime(
     'project_documents',
     'document_revisions',
     'project_files',
+    'sprint_burndown_observations',
   ];
   function onChange(event: {
     operationType?: string;

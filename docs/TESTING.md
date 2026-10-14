@@ -1,5 +1,13 @@
 # Testing and local infrastructure
 
+## Phase 10 analytics verification
+
+Use `pnpm test:analytics:integration` and `pnpm test:analytics:e2e` with the owned MongoDB/Mailpit fixture running. The real integration suite verifies current scope/roles, report consistency, UTC counts and forecast, observation capture/rollback, reopening/scope changes, final capture before carryover, immutable completed effort, unavailable legacy data, safe consistent CSV, all pages, fresh-connection persistence, revocation before export, archives/deletion and task/activity/observation bounds. It creates and cleans uniquely owned synthetic rows, including controlled limit fixtures.
+
+Browser checks use actual API/database data, real CSV downloads and two signed-in contexts. Coverage includes chart keyboard/legend controls, known/unknown units, dates/back/refresh, legacy snapshots, live status updates, guest/archive permissions, revoked report/export access, unavailable feedback/retry, pagination beyond 50/100 rows, formula neutralization, reduced motion, console/runtime failures and 72 dark/light 375/768/1440 axe captures. The default Playwright config excludes this suite; full Compose verification appends it after documents. Exact executed totals are in [PHASE10_REPORT.md](PHASE10_REPORT.md).
+
+Commands: `pnpm typecheck`, `pnpm lint`, `pnpm format:check`, `pnpm test`, `pnpm build`, `node scripts/check-production.mjs`, analytics integration/browser scripts, and all earlier integration/browser scripts. Do not edit imported application code or rebuild contracts during browser runs. Local Windows Docker/restart acceptance remains distinct from remote Compose results.
+
 ## Phase 9 documents and files
 
 Run `pnpm test:documents:integration` and `pnpm test:documents:e2e` with the owned local fixture running. The integration suite verifies actual MongoDB transactions and private disk bytes, revisions, restore, retries, failed storage/finalization, safe binary input, checksums, reconciliation and revoked/archived/deleted parents. Compose verification sets the S3 driver and exercises the same flows against private Garage. Tests remove only uniquely owned records and object keys.

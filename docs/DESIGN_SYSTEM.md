@@ -1,5 +1,11 @@
 # ORBIT Design Language
 
+## Phase 10 delivery signals
+
+The private Analytics section uses semantic metric cards, violet/cyan chart series, compact date controls, planned workload tables, milestone progress, overdue deep links and immutable sprint snapshots. Empty, zero, unspecified capacity/effort, unavailable legacy history and failed services have distinct feedback. Dates and metric meaning are visible beside generation time.
+
+Recharts charts provide keyboard arrow inspection, explicit series toggles, task/estimate-hour unit controls and labeled equivalent data tables. Small screens stack panels and contain table scrolling; all five project tabs wrap. Reduced-motion preferences disable chart/CSS animation. Downloads are real private CSV files with pending/success/error states. No mock series or arbitrary productivity score. [Verification and theme/viewport captures](PHASE10_REPORT.md).
+
 ## Phase 9 document workspace
 
 Documents & files adds a scoped library, readable document canvas, compact formatting controls, revision review and attachment lists. Shared semantic surfaces, violet emphasis, self-hosted typography, focus and reduced-motion rules apply. Labeled rich-text controls support keyboard shortcuts and safe links in a Radix overlay; link submits stay inside that overlay.

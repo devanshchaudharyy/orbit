@@ -857,6 +857,9 @@ try {
   );
   console.log(`Phase 7 integration: ${results.length} checks passed.`);
 } finally {
+  await connection
+    .collection('sprint_burndown_observations')
+    .deleteMany({ organizationId: { $in: orgs.map((id) => new mongoose.Types.ObjectId(id)) } });
   for (const model of Object.values(planning.models))
     await model.deleteMany({ organizationId: { $in: orgs } });
   for (const model of Object.values(repo.models))

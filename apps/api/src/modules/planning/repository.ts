@@ -16,6 +16,7 @@ import type { StoredUser } from '../auth/models.js';
 import { AuthError } from '../auth/errors.js';
 import { missingTenant } from '../tenants/repository.js';
 import { createPlanningModels, type StoredPlan, type Totals } from './models.js';
+import { observeSprint } from '../analytics/observations.js';
 const stale = () =>
   new AuthError(
     409,
@@ -497,6 +498,28 @@ export class PlanningRepository {
         const tasks = await this.tasks(scope, projectId, session);
         const plans = await this.models.plans.find(filter).session(session).lean();
         const totals = this.totals(tasks, plans, 'sprintId', id);
+        const completed = tasks.filter(
+          (t) =>
+            t.status === 'done' &&
+            plans.some((p) => String(p.taskId) === String(t._id) && String(p.sprintId) === id),
+        );
+        totals.doneEstimateHours = completed.reduce(
+          (sum, t) =>
+            sum + (plans.find((p) => String(p.taskId) === String(t._id))?.estimateHours ?? 0),
+          0,
+        );
+        totals.doneUnestimated = completed.filter(
+          (t) => plans.find((p) => String(p.taskId) === String(t._id))?.estimateHours == null,
+        ).length;
+        await observeSprint(
+          this.projects.tenants.connection,
+          scope,
+          projectId,
+          `complete:${id}`,
+          session,
+          id,
+          true,
+        );
         const unfinished = tasks.filter((t) => t.status !== 'done').map((t) => t._id);
         await this.models.plans.updateMany(
           { ...filter, sprintId: id, taskId: { $in: unfinished } },

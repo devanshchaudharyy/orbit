@@ -24,6 +24,9 @@ import { CollaborationRepository } from './modules/collaboration/repository.js';
 import { CollaborationService } from './modules/collaboration/service.js';
 import type { DocumentService } from './modules/documents/service.js';
 import { documentRoutes } from './modules/documents/routes.js';
+import { AnalyticsRepository } from './modules/analytics/repository.js';
+import { AnalyticsService } from './modules/analytics/service.js';
+import { analyticsRoutes } from './modules/analytics/routes.js';
 
 export function createApp(
   dependencies: Dependencies,
@@ -60,6 +63,14 @@ export function createApp(
   app.use('/api/v1/health', healthRoutes(dependencies));
   if (auth) app.use('/api/v1/auth', authRoutes(auth));
   if (auth && tenants && projects) {
+    app.use(
+      '/api/v1/organizations',
+      analyticsRoutes(
+        auth,
+        tenants,
+        new AnalyticsService(new AnalyticsRepository(projects.repository)),
+      ),
+    );
     if (documents) app.use('/api/v1/organizations', documentRoutes(auth, tenants, documents));
     const collab =
       collaboration ?? new CollaborationService(new CollaborationRepository(projects.repository));

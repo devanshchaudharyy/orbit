@@ -1,5 +1,13 @@
 # Architecture
 
+## Phase 10 analytics boundary
+
+The analytics module separates strict contracts, bounded repository snapshots, pure calculations/CSV serialization, service authorization and HTTP controllers. Report transactions reuse current tenant/project authority fences and read one consistent committed snapshot; dates do not pretend to reconstruct historical task state. Live project invalidations refresh scoped report query keys, while internal fence-only writes are ignored by change streams.
+
+Project activity writes record changed active-sprint totals in the same transaction. Start captures actual initial remaining work; completion captures final totals before carryover and freezes completed estimate hours plus unknown-estimate counts. Observation failure rolls back the associated mutation. Unchanged totals do not create activity-shaped fake data. Earlier completed snapshots retain unavailable effort/history; there is no backfill, worker or fabricated baseline. Indexes support scoped observed-date and activity-date reads.
+
+Recharts 3.10.1 and matching react-is 19.3.0 load only with the private analytics view. Charts support keyboard inspection, series/unit controls, equivalent data tables and reduced motion. [Recharts accessibility](https://github.com/recharts/recharts/wiki/Recharts-and-accessibility), [responsive chart API](https://recharts.github.io/en-US/api/ResponsiveContainer/). No external chart service, AI, billing or deployment. [Phase 10 scope](PHASE10_PLAN.md), [verification](PHASE10_REPORT.md).
+
 ## Phase 9 documents and storage
 
 The documents module separates contracts, routes/controller, service, repository/models and private storage adapters. Current organization/workspace/project authority and transaction fences remain the permission boundary. Shared writers edit documents; authors/managers remove documents and manage file metadata. Guests and archives read only. Live streams include document/revision/file changes and emit content-free scoped invalidations; editor snapshots preserve original versions.

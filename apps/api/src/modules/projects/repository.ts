@@ -15,6 +15,8 @@ import type { StoredUser } from '../auth/models.js';
 import { AuthError } from '../auth/errors.js';
 import { MongoTenantRepository, missingTenant } from '../tenants/repository.js';
 import { createProjectModels, type StoredProject, type StoredTask } from './models.js';
+import { observationModel } from '../analytics/models.js';
+import { observeSprint } from '../analytics/observations.js';
 
 export type ProjectScope = { organizationId: string; workspaceId: string };
 const manager = (role: string) => ['owner', 'admin', 'project-manager'].includes(role);
@@ -59,6 +61,9 @@ export class ProjectRepository {
     this.indexes ??= (async () => {
       await Promise.all(Object.values(this.models).map((model) => model.createCollection()));
       await Promise.all(Object.values(this.models).map((model) => model.createIndexes()));
+      const observations = observationModel(this.tenants.connection);
+      await observations.createCollection();
+      await observations.createIndexes();
     })().catch((error: unknown) => {
       this.indexes = undefined;
       throw error;
@@ -155,7 +160,7 @@ export class ProjectRepository {
     session: ClientSession,
   ) {
     const user = await this.users().findById(actor).session(session).lean();
-    await this.models.events.create(
+    const [event] = await this.models.events.create(
       [
         {
           ...scope,
@@ -170,6 +175,7 @@ export class ProjectRepository {
       ],
       { session },
     );
+    await observeSprint(this.tenants.connection, scope, projectId, String(event!._id), session);
   }
   private async eligible(
     scope: ProjectScope,

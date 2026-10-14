@@ -1,5 +1,15 @@
 # API
 
+## Phase 10 analytics reports
+
+Relative to `/api/v1/organizations/:organizationId/workspaces/:workspaceId/projects/:projectId`: `GET /analytics` returns the request-ID report envelope; `GET /analytics/export` returns an authenticated CSV attachment. Existing cookie, verified profile, explicit workspace membership and current project authorization apply to both. Guests and archives may read. Rate limit: 60 report/export reads per actor/minute. Responses are no-store; exports check resource authority again before returning bytes and use safe fixed filenames, nosniff and sandbox headers.
+
+Strict query: optional `from`, `to` (UTC calendar dates) and `sprint` (canonical same-project ID). Defaults: last 30 UTC days. Ordered windows are at most 90 days and cannot end in the future. Export additionally requires `dataset`: tasks, workload, milestones, sprints, activity or burndown. Unknown keys, malformed dates/IDs and datasets return400; missing/foreign resources404; oversized reports or future end dates422; unavailable persistence503 `ANALYTICS_UNAVAILABLE`.
+
+Reports expose generation time, current completion/status/overdue/undated counts, at most5,000 active task summaries, workload and capacity, milestone progress, immutable completed-sprint delivery, daily activity and observed burndown. Limits are50 milestones/sprints,1,000 collaborators,20,000 selected activity events and10,000 selected observations plus a single prior anchor. Limits return errors instead of silent truncation. Date selection applies to activity, scheduled forecast, sprint close dates and burndown; current task statistics remain current.
+
+CSV rows repeat project, generation time and selected UTC window in consistent columns. Empty datasets contain headers only. Blank values mean unavailable; numeric zero remains zero. Unicode, quotes and embedded newlines are preserved, while spreadsheet formula/control prefixes are neutralized. Exports are bounded to8MiB and contain only current authorized project data. [Exact definitions/results](PHASE10_REPORT.md).
+
 ## Phase 9 documents and files
 
 Routes below are relative to `/api/v1/organizations/:organizationId/workspaces/:workspaceId/projects/:projectId`. Cookie sessions, verified onboarding, explicit workspace membership and current project permission apply. Mutations require exact Origin and session CSRF; library mutations are bounded to60/actor/minute. JSON responses use shared request-ID envelopes; content returns private binary bytes.

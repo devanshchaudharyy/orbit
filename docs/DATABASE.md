@@ -1,5 +1,13 @@
 # Database
 
+## Phase 10 observations and report snapshots
+
+`sprint_burndown_observations` stores organization/workspace/project/sprint parents, a server-generated source identifier, observedAt, total/done/remaining task counts, known remaining estimate hours and unestimated remaining task count. Unique sprint/source prevents duplicate committed sources; parent/sprint/observedAt/ID supports ordered range reads and one preceding anchor. Records are append-only. Sources are committed activity IDs or a unique sprint-completion marker. Current parent authorization protects retained observations after grants or resources disappear.
+
+The project activity transaction records changed current active-sprint totals. First observation is actual observed state, never an invented historical start. Completion records before unfinished plans move and preserves completed known estimate hours/unknown counts in the frozen delivery snapshot. Older deliveries without these fields remain unknown. Reads do not backfill or add observations. Rollbacks remove both activity and metric writes; unchanged totals produce no observation. Task scope additions/removals and reopened work can raise or lower the curve.
+
+Project events gain a parent/createdAt/ID index for bounded report windows. Reports read current task/planning/member data consistently in a fenced transaction; plans join only active task IDs. Scoped counts and indexed history stay bounded, with explicit errors when a smaller window is needed. Future tenant purges must include observation rows. No TTL or automatic retention policy is introduced. [Phase10 report](PHASE10_REPORT.md).
+
 ## Phase 9 project knowledge
 
 `project_documents`: organization/workspace/project parents, title, safe JSON, author/latest writer, optimistic version, create UUID/fingerprint, timestamps and deletedAt. Parent/deletion/descending-ID and unique project/author/clientId indexes support current fifty-row lists and deduplicated creates. Project fences enforce current writes and the200-document bound.

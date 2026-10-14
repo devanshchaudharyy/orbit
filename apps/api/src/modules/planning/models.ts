@@ -12,6 +12,8 @@ export interface Totals {
   done: number;
   estimateHours: number;
   unestimated: number;
+  doneEstimateHours?: number;
+  doneUnestimated?: number;
 }
 export interface StoredMilestone extends Parents, MilestoneInput {
   nameKey: string;

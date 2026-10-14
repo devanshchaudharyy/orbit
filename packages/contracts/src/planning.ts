@@ -73,6 +73,8 @@ const totalsSchema = z.object({
   done: z.int().min(0),
   estimateHours: z.number().min(0),
   unestimated: z.int().min(0),
+  doneEstimateHours: z.number().min(0).optional(),
+  doneUnestimated: z.int().min(0).optional(),
 });
 export const milestoneSchema = milestoneInputSchema.extend({
   id: resourceIdSchema,

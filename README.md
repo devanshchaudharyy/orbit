@@ -2,9 +2,9 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 9 adds shared rich-text documents, immutable history and restore, and private project/task/document attachments with real previews and downloads. See [the Phase 9 verification report](docs/PHASE9_REPORT.md). Marketing sample content demonstrates the intended product. Analytics, AI and billing remain in later phases.
+Phase 10 adds permission-aware analytics: real completion, workload, overdue work, milestones, sprint delivery, activity and observed burndown, with date ranges and private CSV reports. See [the Phase 10 verification report](docs/PHASE10_REPORT.md). Marketing sample content demonstrates the intended product. AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–9 are implemented and published. [Phase 9 CI passed](https://github.com/devanshchaudharyy/orbit/actions/runs/38522283565); one earlier project scenario required a retry, recorded in the report. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–9 are published; Phase 10 final verification/publication is in progress. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately.
 
 ## Screenshots
 
@@ -101,6 +101,21 @@ Phase 8 local verification passed **148 unit/component/API tests**, **178 real i
 Open an authorized project and choose **Documents & files** to write notes, review or restore saved revisions, or manage supporting files. Upload PNG/JPEG/WebP/PDF/TXT/MD/CSV up to 8 MiB to the project, a task/subtask or a document. Previews and downloads check current project access. Guests and archives are read-only; stale edits keep the draft and offer explicit reload.
 
 Development/test uses private disk storage under ignored `.local/files`; production requires private S3. Set `FILE_STORAGE_DRIVER=s3` with the existing private S3 configuration to use Garage. `pnpm files:cleanup` retries eligible expired/deleted/orphaned object cleanup. [Storage and recovery details](docs/TESTING.md).
+
+## Analytics and private reports
+
+Open an authorized project → **Analytics**. Choose UTC dates, inspect chart series with keyboard arrows, switch task/estimate units or open equivalent data tables. Download tasks, workload, milestones, sprint delivery, activity or burndown as private CSV. Statistics and exports use actual database data; unknown estimates/history stay explicit. Completed legacy sprints have unavailable burndown, and new tracking begins with actual committed sprint state.
+
+<details>
+<summary>Analytics screenshots from real API/database verification</summary>
+
+![ORBIT analytics with actual task statistics and workload](docs/screenshots/analytics-overview-dark-1440.png)
+
+![ORBIT immutable sprint velocity and observed burndown](docs/screenshots/analytics-velocity-hours-light-1440.png)
+
+</details>
+
+Use `pnpm test:analytics:integration` and `pnpm test:analytics:e2e` for dedicated checks. [Definitions, limits and verification](docs/PHASE10_REPORT.md).
 
 ## Start locally
 
@@ -207,6 +222,8 @@ Production builds omit the lab route and lab JavaScript. For deliberate producti
 - [Phase 8 implementation and verification](docs/PHASE8_REPORT.md)
 - [Phase 9 scope](docs/PHASE9_PLAN.md)
 - [Phase 9 implementation and verification](docs/PHASE9_REPORT.md)
+- [Phase 10 scope](docs/PHASE10_PLAN.md)
+- [Phase 10 implementation and verification](docs/PHASE10_REPORT.md)
 - [Testing and Windows setup](docs/TESTING.md)
 
 Current execution results and remaining blockers are recorded in the phase progress document. Source code is hosted in the private repository linked above. The application has not been deployed.

@@ -7,6 +7,7 @@ import {
   apiErrorSchema,
   messageSchema,
   responseMetaSchema,
+  analyticsQuerySchema,
   type AuthSession,
   type OrbitUser,
 } from '@orbit/contracts';
@@ -225,6 +226,21 @@ export function safeReturnTo(value: string | null): string {
     /^\/app\/organizations\/[a-f0-9]{24}\/workspaces\/[a-f0-9]{24}\/projects\/[a-f0-9]{24}$/;
   if (target.search) {
     const query = target.searchParams;
+    const analyticsLink =
+      projectRoute.test(path) &&
+      query.get('section') === 'analytics' &&
+      query.getAll('section').length === 1 &&
+      [...query.keys()].every((key) => ['section', 'from', 'to', 'sprint'].includes(key)) &&
+      ['from', 'to', 'sprint'].every((key) => query.getAll(key).length <= 1) &&
+      ((!query.has('from') &&
+        !query.has('to') &&
+        (!query.has('sprint') || /^[a-f0-9]{24}$/.test(query.get('sprint') ?? ''))) ||
+        analyticsQuerySchema.safeParse({
+          from: query.get('from'),
+          to: query.get('to'),
+          ...(query.has('sprint') ? { sprint: query.get('sprint') } : {}),
+        }).success) &&
+      !target.hash;
     const documentLink =
       projectRoute.test(path) &&
       query.get('section') === 'documents' &&
@@ -237,6 +253,7 @@ export function safeReturnTo(value: string | null): string {
       !(query.has('document') && query.has('library'));
     if (
       !documentLink &&
+      !analyticsLink &&
       (!projectRoute.test(path) ||
         query.get('section') !== 'collaboration' ||
         [...query.keys()].some((key) => !['section', 'collaboration'].includes(key)) ||

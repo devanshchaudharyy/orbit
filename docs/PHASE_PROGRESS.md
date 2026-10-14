@@ -1,6 +1,6 @@
 # Phase progress
 
-Current status: Phase 9 documents and files complete and published. Local regression and remote Compose/Garage CI passed; one earlier project CI scenario required a retry. Results are recorded in [the current report](PHASE9_REPORT.md). Docker infrastructure acceptance remains deferred locally; earlier sections are historical records. Phase 10 has not started.
+Current status: Phase 10 analytics implemented and local regression passed; GitHub publication verification is in progress. Results are recorded in [the current report](PHASE10_REPORT.md). Docker infrastructure acceptance remains deferred locally; earlier sections are historical records. Phase 11 has not started.
 
 ## Phase 0 — foundation implemented; infrastructure verification blocked
 
@@ -211,4 +211,14 @@ Phase 9 is complete and published as application commit `03c0d73d4e15ba600f30707
 
 The [GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38522283565) completed successfully, including pinned Compose services and actual private Garage document/file integration and browser flows. One earlier project deletion scenario required a retry; all five new document scenarios passed directly. Exact evidence and the existing flaky assertion follow-up are recorded in the report. The final evidence commit changes documentation only. Windows Docker/WSL and restart acceptance remain deferred. No deployment, paid provisioning or business-data seed.
 
-Phase 10 analytics has not started. Existing project/task/planning records prepare real permission-aware metrics and exports for the next separately authorized phase.
+The user subsequently authorized Phase 10; its implementation follows.
+
+## Phase 10 — analytics and reports
+
+Date: 14 October 2026. [Plan](PHASE10_PLAN.md), [verification report](PHASE10_REPORT.md), [screenshots](SCREENSHOTS.md).
+
+Implemented project completion/status, overdue work, planned workload/capacity, milestone progress, recorded activity trends, frozen sprint velocity, observed burndown, custom UTC dates and six private CSV datasets. Current tenant/project grants protect every report and download, including guests, archives and revoked grants. Missing estimates and historical observations remain explicitly unavailable. Transactional observations roll back with failed mutations; completed delivery snapshots survive later task edits.
+
+Recharts charts include keyboard inspection, equivalent tables, series/unit controls and reduced motion. CSV exports use consistent columns, Unicode, formula neutralization and bounded resource reads. No synthetic business data, performance score, AI, billing or deployment is introduced.
+
+Local verification passed 198 tests in 30 files, 230 application integration checks, 78 browser scenarios, 508 axe scans with zero violations and 20 production checks, plus strict types, lint and builds. All local browser scenarios passed directly. The gallery retains 72 new captures, totaling 507 PNGs. GitHub publication evidence is pending. Windows Docker/WSL and named-volume restart acceptance remain deferred. Phase 11 has not started.

@@ -109,6 +109,7 @@ export function createProjectModels(connection: Connection) {
     { collection: 'project_events', autoIndex: false, bufferCommands: false },
   );
   event.index({ organizationId: 1, workspaceId: 1, projectId: 1, _id: -1 });
+  event.index({ organizationId: 1, workspaceId: 1, projectId: 1, createdAt: 1, _id: 1 });
   return {
     projects: connection.model<StoredProject>('Project', project),
     tasks: connection.model<StoredTask>('Task', task),

@@ -220,6 +220,7 @@ test.afterEach(async () => {
       'projects',
       'tasks',
       'project_events',
+      'sprint_burndown_observations',
       'work_preferences',
       'saved_task_filters',
       'project_milestones',

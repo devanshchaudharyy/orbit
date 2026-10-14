@@ -46,6 +46,7 @@ import { ProjectCollaboration } from '../components/ProjectCollaboration';
 import { Conversation } from '../components/Conversation';
 import { FilePanel } from '../components/FilePanel';
 const ProjectDocuments = lazy(() => import('../components/ProjectDocuments'));
+const ProjectAnalytics = lazy(() => import('../components/ProjectAnalytics'));
 
 const titleFor = (action: ProjectAction) =>
   action.kind === 'create-project'
@@ -528,9 +529,15 @@ export default function ProjectsPage({
                   </div>
                   <nav className="plan-project-navigation" aria-label="Project sections">
                     <Link
+                      to={`${detailPath}?section=analytics`}
+                      aria-current={search.get('section') === 'analytics' ? 'page' : undefined}
+                    >
+                      Analytics
+                    </Link>
+                    <Link
                       to={detailPath}
                       aria-current={
-                        !['planning', 'collaboration', 'documents'].includes(
+                        !['planning', 'collaboration', 'documents', 'analytics'].includes(
                           search.get('section') ?? '',
                         )
                           ? 'page'
@@ -559,10 +566,22 @@ export default function ProjectsPage({
                     </Link>
                   </nav>
                   <div
-                    className={`project-work-grid${['planning', 'collaboration', 'documents'].includes(search.get('section') ?? '') ? ' is-planning' : ''}`}
+                    className={`project-work-grid${['planning', 'collaboration', 'documents', 'analytics'].includes(search.get('section') ?? '') ? ' is-planning' : ''}`}
                   >
                     <section className="project-work">
-                      {search.get('section') === 'documents' ? (
+                      {search.get('section') === 'analytics' ? (
+                        <Suspense fallback={<p role="status">Loading analytics…</p>}>
+                          <ProjectAnalytics
+                            key={`${project.id}-${search.get('from')}-${search.get('to')}`}
+                            scope={{
+                              organizationId: orgId!,
+                              workspaceId: wsId!,
+                              projectId: project.id,
+                            }}
+                            path={detailPath}
+                          />
+                        </Suspense>
+                      ) : search.get('section') === 'documents' ? (
                         <Suspense fallback={<p role="status">Loading documents and files…</p>}>
                           <ProjectDocuments
                             scope={{

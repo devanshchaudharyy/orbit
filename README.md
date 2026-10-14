@@ -4,7 +4,7 @@
 
 Phase 9 adds shared rich-text documents, immutable history and restore, and private project/task/document attachments with real previews and downloads. See [the Phase 9 verification report](docs/PHASE9_REPORT.md). Marketing sample content demonstrates the intended product. Analytics, AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–8 are published; Phase 9 final verification is in progress. Windows Docker/WSL and restart acceptance remain deferred; fixture verification and remote Compose evidence are recorded separately in each phase report.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–9 are implemented and published. [Phase 9 CI passed](https://github.com/devanshchaudharyy/orbit/actions/runs/38522283565); one earlier project scenario required a retry, recorded in the report. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately.
 
 ## Screenshots
 
@@ -90,19 +90,19 @@ Open an authorized project and choose **Collaboration** for its shared discussio
 
 The live panel reports actual connection state and distinct viewers. Saved task/planning/history/discussion changes refresh across sessions; unsent drafts and open edit versions remain intact. Reconnect recovers missed work from MongoDB. Guests and archives are read-only; current membership/session revocation disconnects live access. Notifications are in-app only, and this phase supports a single API process. [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md), [verification](docs/PHASE8_REPORT.md).
 
-Phase 8 local verification passed **148 unit/component/API tests**, **178 real integration/transaction/socket checks**, **69 browser scenarios**, **364 axe scans with zero violations**, and **15 production checks**, plus strict types, lint, formatting and builds. All final browser suites passed directly. The gallery includes 60 collaboration captures across dark/light at 375/768/1440px. The [completed GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38420224406) passed for application commit `11ac996adba48bd5f9992cab3315e7c581176b34`, independently verifying all checks/builds, four pinned Compose infrastructure checks, 178 application integration checks, 69 browser scenarios and 15 production checks. No failed or flaky browser result was reported. Phase 9 has not started.
+Phase 8 local verification passed **148 unit/component/API tests**, **178 real integration/transaction/socket checks**, **69 browser scenarios**, **364 axe scans with zero violations**, and **15 production checks**, plus strict types, lint, formatting and builds. All final browser suites passed directly. The gallery includes 60 collaboration captures across dark/light at 375/768/1440px. The [completed GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38420224406) passed for application commit `11ac996adba48bd5f9992cab3315e7c581176b34`, independently verifying all checks/builds, four pinned Compose infrastructure checks, 178 application integration checks, 69 browser scenarios and 15 production checks. No failed or flaky browser result was reported. Phase 9 was subsequently authorized; its verification is recorded in the current report.
 
-## Start locally
-
-### Documents and private files
+## Documents and private files
 
 ![ORBIT shared document and private attachments](docs/screenshots/documents-reading-dark-1440.png)
 
 ![ORBIT immutable document history](docs/screenshots/documents-history-light-1440.png)
 
-Open an authorized project and choose **Documents & files** to write notes, review or restore saved revisions, or manage supporting files. Upload PNG/JPEG/WebP/PDF/TXT/MD/CSV up to8MiB to the project, a task/subtask or a document. Previews and downloads check current project access. Guests and archives are read-only; stale edits keep the draft and offer explicit reload.
+Open an authorized project and choose **Documents & files** to write notes, review or restore saved revisions, or manage supporting files. Upload PNG/JPEG/WebP/PDF/TXT/MD/CSV up to 8 MiB to the project, a task/subtask or a document. Previews and downloads check current project access. Guests and archives are read-only; stale edits keep the draft and offer explicit reload.
 
 Development/test uses private disk storage under ignored `.local/files`; production requires private S3. Set `FILE_STORAGE_DRIVER=s3` with the existing private S3 configuration to use Garage. `pnpm files:cleanup` retries eligible expired/deleted/orphaned object cleanup. [Storage and recovery details](docs/TESTING.md).
+
+## Start locally
 
 Prerequisites: Node **24.18.0**, pnpm **11.25.0**, and Git. Docker Desktop with Linux containers is required for the infrastructure checks. The UI and health API run without Docker, with readiness reporting HTTP 503.
 
@@ -173,6 +173,8 @@ After registration, email verification, and personal onboarding, choose **Open m
 | `pnpm test:collaboration:e2e`                | Cross-session live work, comments/inbox, preserved drafts, keyboard and responsive axe checks |
 
 Install the test browser with `pnpm exec playwright install chromium`. On Linux CI, use `--with-deps chromium`.
+
+Phase 9 commands: `pnpm test:documents:integration`, `pnpm test:documents:e2e`, and operator reconciliation with `pnpm files:cleanup`.
 
 ## Configuration and safety
 

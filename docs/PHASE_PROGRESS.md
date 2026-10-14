@@ -1,6 +1,6 @@
 # Phase progress
 
-Current status: Phase 9 documents and files implemented; final browser/regression verification and publication are in progress. Results are recorded in [the current report](PHASE9_REPORT.md). Docker infrastructure acceptance remains deferred locally; earlier sections are historical records. Phase 10 has not started.
+Current status: Phase 9 documents and files complete and published. Local regression and remote Compose/Garage CI passed; one earlier project CI scenario required a retry. Results are recorded in [the current report](PHASE9_REPORT.md). Docker infrastructure acceptance remains deferred locally; earlier sections are historical records. Phase 10 has not started.
 
 ## Phase 0 — foundation implemented; infrastructure verification blocked
 
@@ -199,4 +199,16 @@ Socket.IO 4.8.4 uses same-origin WebSockets, exact Origin, cookie sessions, CSRF
 
 Final local verification passed 148 unit/component/API tests, 178 real integration/transaction/socket checks, 69 browser scenarios, 364 axe scans with zero violations and 15 production checks, plus types, lint, formatting and builds. All final browser suites passed directly. The gallery retains 60 new captures, totaling 363 PNGs. The planning regression exposed a live-refresh/explicit-reload race; serialized refreshes and a pending-until-rendered reload fix passed the original conflict test and both full affected suites.
 
-Phase 8 is complete and published to the existing private repository. The [GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38420224406) completed successfully for **`11ac996adba48bd5f9992cab3315e7c581176b34`**: frozen installation, all checks/builds, four pinned Compose infrastructure checks, 148 tests, 178 application integration/transaction/socket checks, 69 browser scenarios and 15 production checks passed. All browser suites passed directly; no failed or flaky result was reported. The final evidence commit changes documentation only. Windows Docker/WSL and restart acceptance remain deferred, with exact recovery commands documented. No deployment, paid provisioning or user-account business-data seed. Phase 9 has not started.
+Phase 8 is complete and published to the existing private repository. The [GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38420224406) completed successfully for **`11ac996adba48bd5f9992cab3315e7c581176b34`**: frozen installation, all checks/builds, four pinned Compose infrastructure checks, 148 tests, 178 application integration/transaction/socket checks, 69 browser scenarios and 15 production checks passed. All browser suites passed directly; no failed or flaky result was reported. The final evidence commit changes documentation only. Windows Docker/WSL and restart acceptance remain deferred, with exact recovery commands documented. No deployment, paid provisioning or user-account business-data seed. Phase 9 was subsequently authorized; its verification is recorded in the current report.
+
+## Phase 9 — documents and files
+
+Date: 14 October 2026. [Plan](PHASE9_PLAN.md), [verification report](PHASE9_REPORT.md), [screenshots](SCREENSHOTS.md).
+
+Implemented safe shared rich-text documents, immutable history and restore, original-version conflicts and live draft preservation. Private project/task/subtask/document attachments support validated uploads, real image/text/PDF previews and downloads, rename/removal, literal search and bounded paging. Current membership, guests, archives and deleted parents are enforced by the API. Durable pending intents, UUID/fingerprint deduplication, transactional finalization/activity and bounded cleanup coordinate MongoDB with private disk/S3 storage.
+
+Phase 9 is complete and published as application commit `03c0d73d4e15ba600f3070797a0a920c018b97f5`. Local verification passed **177** tests, **205** integration/transaction/socket/storage checks, **74** browser scenarios, **436** axe scans with zero violations and **18** production checks, plus types, lint, formatting and builds. All local browser scenarios passed directly. The gallery retains 72 new captures, totaling 435 PNGs.
+
+The [GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38522283565) completed successfully, including pinned Compose services and actual private Garage document/file integration and browser flows. One earlier project deletion scenario required a retry; all five new document scenarios passed directly. Exact evidence and the existing flaky assertion follow-up are recorded in the report. The final evidence commit changes documentation only. Windows Docker/WSL and restart acceptance remain deferred. No deployment, paid provisioning or business-data seed.
+
+Phase 10 analytics has not started. Existing project/task/planning records prepare real permission-aware metrics and exports for the next separately authorized phase.

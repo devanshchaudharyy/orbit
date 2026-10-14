@@ -1,6 +1,6 @@
 # Phase progress
 
-Current status: Phase 10 analytics implemented and local regression passed; GitHub publication verification is in progress. Results are recorded in [the current report](PHASE10_REPORT.md). Docker infrastructure acceptance remains deferred locally; earlier sections are historical records. Phase 11 has not started.
+Current status: Phase 10 is complete and published; local regression and full GitHub Compose verification passed. Results are recorded in [the current report](PHASE10_REPORT.md). Docker infrastructure acceptance remains deferred locally; earlier sections are historical records. Phase 11 has not started.
 
 ## Phase 0 — foundation implemented; infrastructure verification blocked
 
@@ -221,4 +221,4 @@ Implemented project completion/status, overdue work, planned workload/capacity, 
 
 Recharts charts include keyboard inspection, equivalent tables, series/unit controls and reduced motion. CSV exports use consistent columns, Unicode, formula neutralization and bounded resource reads. No synthetic business data, performance score, AI, billing or deployment is introduced.
 
-Local verification passed 198 tests in 30 files, 230 application integration checks, 78 browser scenarios, 508 axe scans with zero violations and 20 production checks, plus strict types, lint and builds. All local browser scenarios passed directly. The gallery retains 72 new captures, totaling 507 PNGs. GitHub publication evidence is pending. Windows Docker/WSL and named-volume restart acceptance remain deferred. Phase 11 has not started.
+Local verification passed 198 tests in 30 files, 230 application integration checks, 78 browser scenarios, 508 axe scans with zero violations and 20 production checks, plus strict types, lint and builds. All local browser scenarios passed directly. The gallery retains 72 new captures, totaling 507 PNGs. The [GitHub workflow](https://github.com/devanshchaudharyy/orbit/actions/runs/38600797715) passed for `0fcb88826bb0ab0424bfdf6bd2bb73124796d40c`, including four pinned infrastructure checks and the full application suite. All remote browser scenarios passed directly, with no failed or flaky result reported. The final evidence commit updates documentation only. Windows Docker/WSL and named-volume restart acceptance remain deferred. Phase 11 has not started.

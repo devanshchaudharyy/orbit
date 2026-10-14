@@ -4,7 +4,7 @@
 
 Phase 10 adds permission-aware analytics: real completion, workload, overdue work, milestones, sprint delivery, activity and observed burndown, with date ranges and private CSV reports. See [the Phase 10 verification report](docs/PHASE10_REPORT.md). Marketing sample content demonstrates the intended product. AI and billing remain in later phases.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–9 are published; Phase 10 final verification/publication is in progress. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–10 are published; Phase 10 local regression and [GitHub verification](https://github.com/devanshchaudharyy/orbit/actions/runs/38600797715) passed. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately.
 
 ## Screenshots
 

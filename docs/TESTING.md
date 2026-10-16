@@ -1,5 +1,13 @@
 # Testing and local infrastructure
 
+## Phase 11 AI verification
+
+`pnpm test:ai:integration` runs actual isolated MongoDB/API/transaction checks with an explicit injected test provider. It also exercises the real SDK's HTTP structured-output transport. `pnpm test:ai:e2e` starts owned API 4002/web 5175 plus a loopback deterministic HTTP provider and tests real accounts, task changes and workflow configuration. Occupied ports abort without interrupting other services. Test-provider content is labeled and never counts as live-model verification.
+
+`pnpm test:ai:live` separately calls the already installed local Ollama `llama3.2:3b` with synthetic summary/task context; it neither downloads a model nor uses a cloud provider. Malformed or foreign output must fail rather than become a suggestion. Successful smoke cases are not a quality/latency benchmark. API tests cover quotas, concurrency, idempotency, stale/atomic application, rollback, permissions and mid-inference revocation; browser checks include all eight modes, edited selections, confirmations/focus, schedule consent, guest/archive/revocation, retries, stale feedback and both themes at 375/768/1440 with axe.
+
+`pnpm test:ai:worker` requires real Redis and a loopback test MongoDB URI. It uses uniquely owned records/queue names to verify dispatch, duplicate delivery, restart, pause/revocation and heartbeat cleanup. Full `pnpm test:auth:compose` appends AI integration, worker and browser verification after earlier suites. Local unavailable Redis and deferred Windows Docker/WSL/restart acceptance must be recorded separately from remote Compose results. `pnpm worker` starts the persistent worker from ignored `.env.local`; `pnpm worker:check` verifies MongoDB, Redis and a recent dispatch heartbeat. [Exact results and recovery](PHASE11_REPORT.md).
+
 ## Phase 10 analytics verification
 
 Use `pnpm test:analytics:integration` and `pnpm test:analytics:e2e` with the owned MongoDB/Mailpit fixture running. The real integration suite verifies current scope/roles, report consistency, UTC counts and forecast, observation capture/rollback, reopening/scope changes, final capture before carryover, immutable completed effort, unavailable legacy data, safe consistent CSV, all pages, fresh-connection persistence, revocation before export, archives/deletion and task/activity/observation bounds. It creates and cleans uniquely owned synthetic rows, including controlled limit fixtures.

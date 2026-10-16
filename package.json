@@ -43,7 +43,14 @@
     "test:documents:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/documents.ts",
     "test:documents:e2e": "playwright test -c playwright.documents.config.ts",
     "test:analytics:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/analytics.ts",
-    "test:analytics:e2e": "playwright test -c playwright.analytics.config.ts"
+    "test:analytics:e2e": "playwright test -c playwright.analytics.config.ts",
+    "worker": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx --env-file=../../.env.local src/worker.ts",
+    "worker:check": "pnpm --filter @orbit/api exec tsx --env-file=../../.env.local ../../scripts/worker-check.ts",
+    "test:ai:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/ai.ts",
+    "test:ai:worker": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/ai-worker.ts",
+    "test:ai:live": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/ai-live.ts",
+    "test:ai:e2e": "pnpm --filter @orbit/contracts build && node scripts/check-ai-browser.mjs",
+    "auth:fixture:ai": "pnpm --filter @orbit/contracts build && node scripts/auth-local-fixture.mjs start --ai"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

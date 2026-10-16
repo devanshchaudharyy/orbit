@@ -1,5 +1,23 @@
 # API
 
+## Phase 11 private AI and workflow APIs
+
+All endpoints below are relative to the authorized organization/workspace/project prefix used by analytics. Cookie sessions, completed verified profiles, explicit workspace/project access, request-ID envelopes and no-store headers apply. Mutations require exact Origin and CSRF. Rate limit: 60 AI API operations per actor/minute, with separate durable generation quotas.
+
+| Method | Path                            | Behavior                                                                                                                   |
+| ------ | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/ai?cursor=<runId>`            | Current configuration, recent worker heartbeat, UTC usage, 30 private actor-owned runs and project workflow configurations |
+| POST   | `/ai/runs`                      | `{ requestId, mode, prompt, taskId? }`; synchronous bounded local generation with a durable retry identity                 |
+| POST   | `/ai/runs/:runId/apply`         | `{ confirmed: true, tasks, priorities }`; apply reviewed edits/selections atomically with snapshot/authority checks        |
+| POST   | `/ai/workflows`                 | Manager creates a confirmed daily/weekly private-draft schedule; paused by default in the UI                               |
+| PATCH  | `/ai/workflows/:workflowId`     | Confirmed configuration plus original `version`; saving delegates to the current manager                                   |
+| DELETE | `/ai/workflows/:workflowId`     | Original `{ version }`; soft-delete and stop future attempts                                                               |
+| POST   | `/ai/workflows/:workflowId/run` | `{ requestId }`; manager requests a private briefing immediately without changing the schedule                             |
+
+Modes: assistant, tasks, subtasks, summary, risks, weekly-report, priorities and search. Task/search/assistant requests need a prompt; subtasks require a current top-level task ID. Requests and outputs are strict and bounded. Every output reference/priority/search ID must belong to the captured authorized context. Results contain plain-text answer, references, up to five task proposals, ten priority suggestions or twenty matching IDs as appropriate to the mode. No arbitrary tool, destructive action, assignment or public message is accepted.
+
+Generation returns a durable run: `running`, `ready`, `failed` or `applied`. Model failures persist a sanitized `failed` run with no output, rather than a successful suggestion. Stable request retries reuse the same result and quota reservation; conflicting reuse returns 409. Disabled configuration returns 503, daily/concurrency limits 429, invalid bodies 400, oversized context 422, unavailable persistence 503 and unauthorized/missing resources 403/404. Stale draft/workflow/application conflicts return 409. Transport deadline is 90 seconds; the UI uses a 100-second request deadline and history recovery. Reported tokens can be unavailable; no cost estimate is invented. [Definitions and results](PHASE11_REPORT.md).
+
 ## Phase 10 analytics reports
 
 Relative to `/api/v1/organizations/:organizationId/workspaces/:workspaceId/projects/:projectId`: `GET /analytics` returns the request-ID report envelope; `GET /analytics/export` returns an authenticated CSV attachment. Existing cookie, verified profile, explicit workspace membership and current project authorization apply to both. Guests and archives may read. Rate limit: 60 report/export reads per actor/minute. Responses are no-store; exports check resource authority again before returning bytes and use safe fixed filenames, nosniff and sandbox headers.

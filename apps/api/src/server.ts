@@ -17,6 +17,9 @@ import { createRealtime } from './modules/collaboration/realtime.js';
 import { DocumentRepository } from './modules/documents/repository.js';
 import { DocumentService } from './modules/documents/service.js';
 import { createPrivateStorage } from './modules/documents/storage.js';
+import { AIRepository } from './modules/ai/repository.js';
+import { AIService } from './modules/ai/service.js';
+import { createAIProvider } from './modules/ai/provider.js';
 
 const env = parseEnvironment(process.env);
 const logger = createLogger(env.LOG_LEVEL);
@@ -33,7 +36,17 @@ const documents = new DocumentService(
   createPrivateStorage(env),
 );
 const server = createServer(
-  createApp(dependencies, logger, auth, tenants, teams, projects, collaboration, documents),
+  createApp(
+    dependencies,
+    logger,
+    auth,
+    tenants,
+    teams,
+    projects,
+    collaboration,
+    documents,
+    new AIService(new AIRepository(projects.repository), createAIProvider(env)),
+  ),
 );
 const live = createRealtime(server, auth, tenants, collaboration, logger);
 server.listen(env.PORT, env.HOST, () => logger.info({ port: env.PORT }, 'ORBIT API listening'));

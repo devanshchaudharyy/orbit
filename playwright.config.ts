@@ -12,6 +12,7 @@ export default defineConfig({
     '**/collaboration.spec.ts',
     '**/documents.spec.ts',
     '**/analytics.spec.ts',
+    '**/ai.spec.ts',
   ],
   outputDir: 'test-results/foundation',
   fullyParallel: false,

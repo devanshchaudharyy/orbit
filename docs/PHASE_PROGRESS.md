@@ -1,6 +1,6 @@
 # Phase progress
 
-Current status: Phase 10 is complete and published; local regression and full GitHub Compose verification passed. Results are recorded in [the current report](PHASE10_REPORT.md). Docker infrastructure acceptance remains deferred locally; earlier sections are historical records. Phase 11 has not started.
+Current status: Phase 11 is implemented; final regression, worker CI and publication verification are in progress. See [the current report](PHASE11_REPORT.md). Windows Docker/WSL and restart acceptance remain deferred. Earlier sections are historical records. Phase 12 has not started.
 
 ## Phase 0 — foundation implemented; infrastructure verification blocked
 

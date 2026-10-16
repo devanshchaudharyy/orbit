@@ -19,6 +19,34 @@ export const envSchema = z
       .regex(/^mongodb(?:\+srv)?:\/\/[^\s]+$/, 'Expected a MongoDB connection URI'),
     REDIS_URL: z.url().refine((value) => /^rediss?:\/\//.test(value), 'Expected a Redis URL'),
     DEPENDENCY_TIMEOUT_MS: z.coerce.number().int().min(100).max(10000).default(1500),
+    AI_PROVIDER: z.enum(['disabled', 'ollama']).default('disabled'),
+    AI_QUEUE_NAME: z
+      .string()
+      .regex(/^[a-zA-Z0-9_-]{1,100}$/)
+      .default('orbit-ai-workflows'),
+    AI_MODEL: z
+      .string()
+      .regex(/^[a-zA-Z0-9._:/-]{1,100}$/)
+      .default('llama3.2:3b'),
+    AI_BASE_URL: z
+      .url()
+      .default('http://127.0.0.1:11434/v1')
+      .refine((value) => {
+        try {
+          const url = new URL(value);
+          return (
+            url.protocol === 'http:' &&
+            ['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname) &&
+            !url.username &&
+            !url.password &&
+            !url.search &&
+            !url.hash &&
+            url.pathname === '/v1'
+          );
+        } catch {
+          return false;
+        }
+      }, 'Phase 11 AI uses a loopback-only Ollama /v1 endpoint'),
     FILE_STORAGE_DRIVER: z.enum(['disk', 's3']).default('disk'),
     FILE_STORAGE_DIRECTORY: z
       .string()

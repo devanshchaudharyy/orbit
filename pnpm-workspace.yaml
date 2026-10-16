@@ -7,6 +7,7 @@ allowBuilds:
   argon2: true
   esbuild: true
   '@tailwindcss/oxide': true
+  msgpackr-extract: false
 minimumReleaseAgeExclude:
   - '@types/node@24.19.2 || 26.6.5'
   - '@aws-sdk/checksums@3.1001.2'
@@ -58,3 +59,6 @@ minimumReleaseAgeExclude:
   - '@tiptap/pm@3.32.0'
   - '@tiptap/react@3.32.0'
   - '@tiptap/starter-kit@3.32.0'
+  - '@ai-sdk/gateway@4.0.113'
+  - ai@7.0.140
+  - bullmq@6.3.15

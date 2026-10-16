@@ -20,3 +20,4 @@ export type ApiSuccess<T> = { data: T; meta: z.infer<typeof responseMetaSchema> 
 export type ThemePreference = 'dark' | 'light' | 'system';
 export * from './documents.js';
 export * from './analytics.js';
+export * from './ai.js';

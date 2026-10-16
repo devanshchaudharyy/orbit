@@ -47,6 +47,7 @@ import { Conversation } from '../components/Conversation';
 import { FilePanel } from '../components/FilePanel';
 const ProjectDocuments = lazy(() => import('../components/ProjectDocuments'));
 const ProjectAnalytics = lazy(() => import('../components/ProjectAnalytics'));
+const ProjectAI = lazy(() => import('../components/ProjectAI'));
 
 const titleFor = (action: ProjectAction) =>
   action.kind === 'create-project'
@@ -529,6 +530,12 @@ export default function ProjectsPage({
                   </div>
                   <nav className="plan-project-navigation" aria-label="Project sections">
                     <Link
+                      to={`${detailPath}?section=ai`}
+                      aria-current={search.get('section') === 'ai' ? 'page' : undefined}
+                    >
+                      AI assistance
+                    </Link>
+                    <Link
                       to={`${detailPath}?section=analytics`}
                       aria-current={search.get('section') === 'analytics' ? 'page' : undefined}
                     >
@@ -537,7 +544,7 @@ export default function ProjectsPage({
                     <Link
                       to={detailPath}
                       aria-current={
-                        !['planning', 'collaboration', 'documents', 'analytics'].includes(
+                        !['planning', 'collaboration', 'documents', 'analytics', 'ai'].includes(
                           search.get('section') ?? '',
                         )
                           ? 'page'
@@ -566,10 +573,23 @@ export default function ProjectsPage({
                     </Link>
                   </nav>
                   <div
-                    className={`project-work-grid${['planning', 'collaboration', 'documents', 'analytics'].includes(search.get('section') ?? '') ? ' is-planning' : ''}`}
+                    className={`project-work-grid${['planning', 'collaboration', 'documents', 'analytics', 'ai'].includes(search.get('section') ?? '') ? ' is-planning' : ''}`}
                   >
                     <section className="project-work">
-                      {search.get('section') === 'analytics' ? (
+                      {search.get('section') === 'ai' ? (
+                        <Suspense fallback={<p role="status">Loading AI assistance…</p>}>
+                          <ProjectAI
+                            key={project.id}
+                            scope={{
+                              organizationId: orgId!,
+                              workspaceId: wsId!,
+                              projectId: project.id,
+                            }}
+                            path={detailPath}
+                            canWrite={project.canWriteTasks}
+                          />
+                        </Suspense>
+                      ) : search.get('section') === 'analytics' ? (
                         <Suspense fallback={<p role="status">Loading analytics…</p>}>
                           <ProjectAnalytics
                             key={`${project.id}-${search.get('from')}-${search.get('to')}`}

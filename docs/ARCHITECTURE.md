@@ -1,5 +1,13 @@
 # Architecture
 
+## Phase 11 AI and worker boundary
+
+The persistent API exposes a lazy private project AI section with eight modes and actor-owned draft history. Contracts, bounded context repository, local provider adapter, generation/application service and HTTP routes remain separate. The AI SDK and provider execute only in Node. Loopback Ollama is optional and disabled by default; no cloud fallback or browser secret is introduced. Context uses current resource authority and excludes account credentials/file bytes/other projects. Dynamic mode/ID schemas and independent validation constrain output; plain-text rendering and explicit user review remain necessary for factual quality.
+
+Generation reserves durable quotas and concurrency outside the model request. It stores a retry identity and snapshot hash, calls the model with a bounded deadline, then rechecks authority before committing a private result. Applying user-reviewed tasks/priorities uses the existing project repository with a shared transaction, preserving validation, activity and sprint observations. A current snapshot mismatch requires regeneration; no AI write tools run automatically.
+
+`apps/api/src/worker.ts` is a separate persistent process for scheduled private draft workflows. MongoDB owns versioned due records; BullMQ carries only identifiers through Redis. Dispatch is bounded and repeat-safe; worker execution rechecks current account, manager grants, archive and workflow state. Successful heartbeat, provider configuration and actual generation success are distinct. Schedules cannot send messages or apply AI changes. Run `pnpm worker` separately and verify `pnpm worker:check`; no worker is silently enabled by starting the API. [Scope](PHASE11_PLAN.md), [results](PHASE11_REPORT.md).
+
 ## Phase 10 analytics boundary
 
 The analytics module separates strict contracts, bounded repository snapshots, pure calculations/CSV serialization, service authorization and HTTP controllers. Report transactions reuse current tenant/project authority fences and read one consistent committed snapshot; dates do not pretend to reconstruct historical task state. Live project invalidations refresh scoped report query keys, while internal fence-only writes are ignored by change streams.

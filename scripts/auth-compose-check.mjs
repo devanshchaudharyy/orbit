@@ -260,6 +260,21 @@ try {
       root,
     ),
   );
+  await finished(
+    start(
+      process.execPath,
+      [apiRequire.resolve('tsx/cli'), resolve(root, 'tests/integration/ai.ts')],
+      root,
+    ),
+  );
+  await finished(
+    start(
+      process.execPath,
+      [apiRequire.resolve('tsx/cli'), resolve(root, 'tests/integration/ai-worker.ts')],
+      root,
+    ),
+  );
+  await finished(start(process.execPath, [resolve(root, 'scripts/check-ai-browser.mjs')], root));
 } catch (error) {
   console.error(error.message);
   process.exitCode ??= 1;

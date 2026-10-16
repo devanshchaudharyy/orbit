@@ -675,8 +675,9 @@ export class ProjectRepository {
     projectId: string,
     input: TaskInput | TaskUpdate,
     taskId?: string,
+    existingSession?: ClientSession,
   ) {
-    return this.tenants.connection.transaction(async (session) => {
+    const save = async (session: ClientSession) => {
       const { project } = await this.access(actor, scope, projectId, session, 'task');
       await this.taskFields(scope, project, input, session);
       let task: StoredTask;
@@ -727,7 +728,8 @@ export class ProjectRepository {
         session,
       );
       return taskDto(task);
-    });
+    };
+    return existingSession ? save(existingSession) : this.tenants.connection.transaction(save);
   }
   async deleteTask(
     actor: string,

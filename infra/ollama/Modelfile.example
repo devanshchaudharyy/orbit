@@ -1,0 +1,4 @@
+# Optional local alias; reuses an already installed model, without downloading weights.
+# Choose a context size appropriate for available memory and the selected project scope.
+FROM llama3.2:3b
+PARAMETER num_ctx 32768

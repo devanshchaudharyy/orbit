@@ -217,6 +217,7 @@ async function start() {
   await waitHttp('http://127.0.0.1:18025/readyz', 'Mailpit');
   const fixtureEnv = {
     ...process.env,
+    ...(process.argv.includes('--ai') ? { AI_PROVIDER: 'ollama', AI_MODEL: 'llama3.2:3b' } : {}),
     NODE_ENV: 'test',
     PORT: '4001',
     HOST: '127.0.0.1',

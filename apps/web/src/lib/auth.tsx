@@ -33,6 +33,7 @@ export async function authRequest<T>(
     data?: unknown;
     csrfToken?: string;
     scope?: 'auth' | 'organizations';
+    timeoutMs?: number;
   } = {},
 ): Promise<T> {
   let response: Response;
@@ -48,7 +49,7 @@ export async function authRequest<T>(
         ...(options.csrfToken ? { 'X-CSRF-Token': options.csrfToken } : {}),
       },
       ...(hasBody ? { body: JSON.stringify(options.data ?? {}) } : {}),
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(options.timeoutMs ?? 8000),
     });
   } catch {
     throw new AuthServiceError(
@@ -91,6 +92,7 @@ interface AuthContextValue {
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
     data?: unknown,
     scope?: 'auth' | 'organizations',
+    timeoutMs?: number,
   ) => Promise<T>;
   acceptSession: (session: AuthSession) => void;
   updateUser: (user: OrbitUser) => void;
@@ -148,6 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
     data?: unknown,
     scope: 'auth' | 'organizations' = 'auth',
+    timeoutMs?: number,
   ): Promise<T> {
     const session =
       method === 'GET'
@@ -162,6 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method,
         data,
         scope,
+        ...(timeoutMs === undefined ? {} : { timeoutMs }),
         ...(session ? { csrfToken: session.csrfToken } : {}),
       });
     } catch (error) {
@@ -226,6 +230,11 @@ export function safeReturnTo(value: string | null): string {
     /^\/app\/organizations\/[a-f0-9]{24}\/workspaces\/[a-f0-9]{24}\/projects\/[a-f0-9]{24}$/;
   if (target.search) {
     const query = target.searchParams;
+    const aiLink =
+      projectRoute.test(path) &&
+      query.get('section') === 'ai' &&
+      [...query.keys()].length === 1 &&
+      !target.hash;
     const analyticsLink =
       projectRoute.test(path) &&
       query.get('section') === 'analytics' &&
@@ -253,6 +262,7 @@ export function safeReturnTo(value: string | null): string {
       !(query.has('document') && query.has('library'));
     if (
       !documentLink &&
+      !aiLink &&
       !analyticsLink &&
       (!projectRoute.test(path) ||
         query.get('section') !== 'collaboration' ||

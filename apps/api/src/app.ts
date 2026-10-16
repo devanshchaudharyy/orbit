@@ -27,6 +27,10 @@ import { documentRoutes } from './modules/documents/routes.js';
 import { AnalyticsRepository } from './modules/analytics/repository.js';
 import { AnalyticsService } from './modules/analytics/service.js';
 import { analyticsRoutes } from './modules/analytics/routes.js';
+import { AIRepository } from './modules/ai/repository.js';
+import { AIService } from './modules/ai/service.js';
+import { createAIProvider } from './modules/ai/provider.js';
+import { aiRoutes } from './modules/ai/routes.js';
 
 export function createApp(
   dependencies: Dependencies,
@@ -37,6 +41,7 @@ export function createApp(
   projects?: ProjectService,
   collaboration?: CollaborationService,
   documents?: DocumentService,
+  ai?: AIService,
 ) {
   const app = express();
   app.disable('x-powered-by');
@@ -63,6 +68,17 @@ export function createApp(
   app.use('/api/v1/health', healthRoutes(dependencies));
   if (auth) app.use('/api/v1/auth', authRoutes(auth));
   if (auth && tenants && projects) {
+    const assistant =
+      ai ??
+      new AIService(
+        new AIRepository(projects.repository),
+        createAIProvider({
+          AI_PROVIDER: 'disabled',
+          AI_MODEL: 'llama3.2:3b',
+          AI_BASE_URL: 'http://127.0.0.1:11434/v1',
+        }),
+      );
+    app.use('/api/v1/organizations', aiRoutes(auth, tenants, assistant));
     app.use(
       '/api/v1/organizations',
       analyticsRoutes(

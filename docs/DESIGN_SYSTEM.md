@@ -1,5 +1,11 @@
 # ORBIT Design Language
 
+## Phase 11 private intelligence
+
+The project AI view extends the existing semantic midnight/violet surfaces with a provider/context banner, focused request form, private draft history and quiet workflow cards. Eight modes explain their scope. Model configuration, missing service, running, failed, ready, stale and applied results have distinct feedback; no placeholder answer appears as a real result. History and generated content are plain text. Every proposal is editable/selectable and a second dialog previews exact changes before confirmation.
+
+Controlled review/workflow dialogs explicitly trap and restore focus to their opening button, with a safe fallback after deleting a row. Applied results focus their success heading. Forms have native labels, bounded values, field errors and explicit automation-consent checkboxes. The layout stacks on small screens and all six project tabs wrap; motion follows existing reduced-motion styles. Synthetic test-provider captures are labeled component demonstrations. [Verification](PHASE11_REPORT.md).
+
 ## Phase 10 delivery signals
 
 The private Analytics section uses semantic metric cards, violet/cyan chart series, compact date controls, planned workload tables, milestone progress, overdue deep links and immutable sprint snapshots. Empty, zero, unspecified capacity/effort, unavailable legacy history and failed services have distinct feedback. Dates and metric meaning are visible beside generation time.

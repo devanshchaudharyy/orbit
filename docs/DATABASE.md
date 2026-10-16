@@ -1,5 +1,17 @@
 # Database
 
+## Phase 11 AI persistence
+
+`ai_runs` is actor-private within organization/workspace/project parents. It stores the request UUID/fingerprint, mode/prompt/task scope, captured context hash, provider/model, execution state/deadline, validated result or sanitized error, timestamps, reported tokens, application fingerprint and created task IDs. Unique actor/request IDs deduplicate retries. Scoped actor/ID indexes paginate history; status/lease supports interrupted generation recovery. Partial unique running-state indexes enforce two global slots and one concurrent run per actor. Expired leases become failed and release their slots; reads recover expired owned attempts instead of showing endless loading.
+
+`ai_usage` uses organization/date/actor or organization/date keys with transactional counters. Explicit UTC date keys enforce limits before TTL cleanup. Two-day TTL removes expired quota counters, not private drafts. Generation reservation, both counters and retry identity commit together; failed attempts count. No credential or complete context snapshot is persisted in usage records.
+
+`ai_workflows` stores current tenant/project/owner, confirmed mode/schedule/enable state, version, execution fence, next due time and last attempt/error/run reference. Parent/deleted/ID and enabled/deleted/next-date indexes support management and dispatch. MongoDB is the schedule source of truth. BullMQ jobs contain only workflow ID, version and due time. Versioned fences reject stale queued or in-flight work; completion advances the due record, and replay uses a deterministic run UUID. Histories are private to the workflow's owner, including when management transfers on a newly confirmed save.
+
+`ai_worker_state` contains only instance UUID and successful dispatch time; 90-second TTL prunes it, and explicit 30-second freshness defines dashboard/check health. It is operational metadata without project content. Graceful shutdown removes the owned heartbeat. Project/tenant data purges must include AI runs, workflows and usage; user deletion must remove private runs and stop owned workflows. Draft retention currently has no TTL; define backup/privacy retention before deployment. The Phase 11 fixture removes only its owned records and queue namespace.
+
+Applying selected proposals reuses task persistence inside one transaction: current authority and snapshot checks, all task writes, project events, sprint observations and run/application state commit or roll back together. No external model request runs inside a database transaction. [Verification](PHASE11_REPORT.md).
+
 ## Phase 10 observations and report snapshots
 
 `sprint_burndown_observations` stores organization/workspace/project/sprint parents, a server-generated source identifier, observedAt, total/done/remaining task counts, known remaining estimate hours and unestimated remaining task count. Unique sprint/source prevents duplicate committed sources; parent/sprint/observedAt/ID supports ordered range reads and one preceding anchor. Records are append-only. Sources are committed activity IDs or a unique sprint-completion marker. Current parent authorization protects retained observations after grants or resources disappear.

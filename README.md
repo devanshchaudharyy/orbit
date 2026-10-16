@@ -2,9 +2,9 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 10 adds permission-aware analytics: real completion, workload, overdue work, milestones, sprint delivery, activity and observed burndown, with date ranges and private CSV reports. See [the Phase 10 verification report](docs/PHASE10_REPORT.md). Marketing sample content demonstrates the intended product. AI and billing remain in later phases.
+Phase 11 adds local AI assistance: private summaries, task/subtask proposals, priority and risk suggestions, natural-language task matching and scheduled draft workflows. Changes require review and confirmation. See [the Phase 11 verification report](docs/PHASE11_REPORT.md). Marketing sample content demonstrates the intended product; billing remains in a later phase.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–10 are published; Phase 10 local regression and [GitHub verification](https://github.com/devanshchaudharyy/orbit/actions/runs/38600797715) passed. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–10 are published; Phase 11 is implemented and its final regression/publication verification is in progress. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately.
 
 ## Screenshots
 
@@ -117,6 +117,21 @@ Open an authorized project → **Analytics**. Choose UTC dates, inspect chart se
 
 Use `pnpm test:analytics:integration` and `pnpm test:analytics:e2e` for dedicated checks. [Definitions, limits and verification](docs/PHASE10_REPORT.md).
 
+## Private AI assistance
+
+<details>
+<summary>Reviewable AI drafts and explicitly enabled automation</summary>
+
+These component demonstrations use a labeled deterministic test provider with real API/database operations. Separate live local Ollama smoke results are recorded in the verification report.
+
+![ORBIT private AI draft and edited task proposals](docs/screenshots/ai-task-draft-dark-1440.png)
+
+![ORBIT scheduled private draft workflows](docs/screenshots/ai-workflows-light-1440.png)
+
+</details>
+
+AI defaults to disabled. Use a local installed Ollama model, set `AI_PROVIDER=ollama` in ignored server configuration, and restart the API. The owned fixture can be started with `pnpm auth:fixture:ai`. Scheduled generation additionally requires real Redis and the separate `pnpm worker` process; verify it with `pnpm worker:check`. Workflows never automatically apply AI changes or send messages.
+
 ## Start locally
 
 Prerequisites: Node **24.18.0**, pnpm **11.25.0**, and Git. Docker Desktop with Linux containers is required for the infrastructure checks. The UI and health API run without Docker, with readiness reporting HTTP 503.
@@ -222,6 +237,8 @@ Production builds omit the lab route and lab JavaScript. For deliberate producti
 - [Phase 8 implementation and verification](docs/PHASE8_REPORT.md)
 - [Phase 9 scope](docs/PHASE9_PLAN.md)
 - [Phase 9 implementation and verification](docs/PHASE9_REPORT.md)
+- [Phase 11 scope](docs/PHASE11_PLAN.md)
+- [Phase 11 implementation and verification](docs/PHASE11_REPORT.md)
 - [Phase 10 scope](docs/PHASE10_PLAN.md)
 - [Phase 10 implementation and verification](docs/PHASE10_REPORT.md)
 - [Testing and Windows setup](docs/TESTING.md)

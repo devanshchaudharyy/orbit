@@ -1,0 +1,291 @@
+.project-ai {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+}
+.ai-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.ai-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  font-weight: 750;
+  color: var(--primary);
+}
+.ai-heading h2 {
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  letter-spacing: -0.045em;
+  margin: 0.6rem 0;
+  line-height: 1.12;
+}
+.ai-heading p,
+.ai-panel header p,
+.ai-help,
+.ai-caveat,
+.ai-usage,
+.ai-provider p,
+.ai-history > p {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+.ai-provider {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background: linear-gradient(105deg, var(--primary-soft), var(--surface));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem;
+}
+.ai-provider > svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.ai-provider > div {
+  flex: 1;
+  min-width: 0;
+}
+.ai-provider p {
+  margin: 0.25rem 0 0;
+}
+.ai-provider strong {
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+.ai-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 1.25rem;
+  align-items: start;
+}
+.ai-layout > div {
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+}
+.ai-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(1rem, 2vw, 1.5rem);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.ai-panel h3 {
+  font-size: 1.15rem;
+  letter-spacing: -0.025em;
+  margin: 0.6rem 0;
+}
+.ai-panel fieldset {
+  min-width: 0;
+  margin: 1rem 0;
+  padding: 0;
+  border: 0;
+}
+.ai-panel legend {
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.ai-form {
+  display: grid;
+  gap: 0.65rem;
+}
+.ai-form label,
+.ai-proposal label {
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+.ai-form select,
+.ai-form textarea,
+.ai-proposal select,
+.ai-proposal textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-raised);
+  color: var(--foreground);
+  padding: 0.75rem;
+  font: inherit;
+  font-size: 0.85rem;
+}
+.ai-form textarea {
+  min-height: 125px;
+  resize: vertical;
+}
+.ai-proposal textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+.ai-form select:focus-visible,
+.ai-form textarea:focus-visible,
+.ai-proposal select:focus-visible,
+.ai-proposal textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+.ai-help {
+  margin: 0 0 0.3rem;
+}
+.ai-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.65rem;
+}
+.ai-actions > span {
+  font-size: 0.73rem;
+  color: var(--muted);
+}
+.ai-prose {
+  white-space: pre-wrap;
+  font-size: 0.88rem;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+.ai-caveat {
+  padding: 0.85rem;
+  background: var(--surface-raised);
+  border-radius: 10px;
+}
+.ai-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  font-size: 0.8rem;
+}
+.ai-result a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ai-proposal {
+  display: grid;
+  gap: 0.65rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-top: 0.75rem;
+}
+.ai-proposal label:not(.ai-check) {
+  display: grid;
+  gap: 0.45rem;
+}
+.ai-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  line-height: 1.6;
+}
+.ai-check input {
+  accent-color: var(--primary);
+  margin-top: 0.3rem;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+.ai-history ul,
+.ai-workflow-list {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+.ai-history li button {
+  display: grid;
+  text-align: left;
+  gap: 0.4rem;
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  padding: 0.85rem;
+  border-radius: 10px;
+  color: var(--foreground);
+  cursor: pointer;
+}
+.ai-history li button[aria-pressed='true'] {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+}
+.ai-history li button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+.ai-history li strong {
+  font-size: 0.8rem;
+}
+.ai-history li span,
+.ai-history li small {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.ai-history li small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.ai-workflow-list li {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.ai-workflow-list li > div:first-child {
+  display: grid;
+  gap: 0.4rem;
+}
+.ai-workflow-list span,
+.ai-workflow-list small {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.ai-workflow-list p {
+  font-size: 0.8rem;
+}
+.ai-usage {
+  margin-bottom: 0;
+}
+@media (max-width: 1100px) {
+  .ai-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ai-history ul {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .ai-provider {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .ai-provider > div {
+    flex-basis: 70%;
+  }
+  .ai-heading > button {
+    width: 100%;
+  }
+  .ai-actions {
+    align-items: stretch;
+  }
+  .ai-actions > button {
+    max-width: 100%;
+    white-space: normal;
+  }
+  .ai-history ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -100,6 +100,7 @@ try {
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}?section=documents&document=${'d'.repeat(24)}`,
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}?section=documents&library=files`,
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}?section=analytics`,
+    `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}?section=ai`,
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects/${'c'.repeat(24)}?section=analytics&from=2026-10-01&to=2026-10-14&sprint=${'d'.repeat(24)}`,
   ]) {
     await page.goto(`http://127.0.0.1:4173${path}`);

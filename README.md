@@ -4,7 +4,7 @@
 
 Phase 11 adds local AI assistance: private summaries, task/subtask proposals, priority and risk suggestions, natural-language task matching and scheduled draft workflows. Changes require review and confirmation. See [the Phase 11 verification report](docs/PHASE11_REPORT.md). Marketing sample content demonstrates the intended product; billing remains in a later phase.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–10 are published; Phase 11 is implemented and its final regression/publication verification is in progress. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–11 are implemented and published. [Phase 11 CI passed](https://github.com/devanshchaudharyy/orbit/actions/runs/38860050962), including real Redis worker verification; the report records one earlier collaboration browser retry. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately. Llama was unloaded after live verification at the user's request; generating another local AI draft loads it again.
 
 ## Screenshots
 

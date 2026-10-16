@@ -16,6 +16,8 @@ All endpoints below are relative to the authorized organization/workspace/projec
 
 Modes: assistant, tasks, subtasks, summary, risks, weekly-report, priorities and search. Task/search/assistant requests need a prompt; subtasks require a current top-level task ID. Requests and outputs are strict and bounded. Every output reference/priority/search ID must belong to the captured authorized context. Results contain plain-text answer, references, up to five task proposals, ten priority suggestions or twenty matching IDs as appropriate to the mode. No arbitrary tool, destructive action, assignment or public message is accepted.
 
+History and results are private to the requesting actor. Current-actor usage is visible to that actor; organization-wide usage totals are returned only to organization owners/admins and are `null` for other roles. Shared limits still apply without disclosing those totals.
+
 Generation returns a durable run: `running`, `ready`, `failed` or `applied`. Model failures persist a sanitized `failed` run with no output, rather than a successful suggestion. Stable request retries reuse the same result and quota reservation; conflicting reuse returns 409. Disabled configuration returns 503, daily/concurrency limits 429, invalid bodies 400, oversized context 422, unavailable persistence 503 and unauthorized/missing resources 403/404. Stale draft/workflow/application conflicts return 409. Transport deadline is 90 seconds; the UI uses a 100-second request deadline and history recovery. Reported tokens can be unavailable; no cost estimate is invented. [Definitions and results](PHASE11_REPORT.md).
 
 ## Phase 10 analytics reports

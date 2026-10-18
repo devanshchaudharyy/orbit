@@ -4,7 +4,7 @@ Public hosting is pending by user choice. These files prepare a single API insta
 
 ## Runtime topology
 
-`infra/release/Dockerfile` builds with Node 24.18.0 and pnpm 11.25.0 using the frozen lockfile. Production-only API dependencies are packaged offline from that build's store. Only compiled API/contracts files are packaged. The web target uses nginx 1.30.6, selected after reviewing the [upstream advisories](https://nginx.org/en/security_advisories.html). Recheck base-image advisories before a real release; version pins do not replace ongoing patching or OS-image scanning.
+`infra/release/Dockerfile` builds with Node 24.18.0 and pnpm 11.25.0 using the frozen lockfile. A separate stage installs production-only API dependencies offline from that build's store and exact frozen graph, preserving workspace links. Only compiled API/contracts application files are packaged. The web target uses nginx 1.30.6, selected after reviewing the [upstream advisories](https://nginx.org/en/security_advisories.html). Recheck base-image advisories before a real release; version pins do not replace ongoing patching or OS-image scanning.
 
 Both runtimes use non-root users, read-only filesystems, bounded writable `/tmp`, dropped capabilities and no new privileges. The example publishes only `127.0.0.1:8443`; API 4000 and data services are not published. TLS terminates at nginx using operator-provided `fullchain.pem` and `privkey.pem`. Allow the nginx image user to read the key through restricted owner/group permissions; do not make real keys world-readable. Keep TLS assets outside the repository/image and rotate/reload them using the certificate issuer's procedure. The synthetic CI certificate is not publicly trusted.
 
@@ -29,7 +29,7 @@ docker compose -f infra/release/compose.yaml config --quiet
 docker compose -f infra/release/compose.yaml build
 ```
 
-On Linux, use `export ORBIT_RELEASE_TAG="$(git rev-parse --short=12 HEAD)"` and `export ORBIT_TLS_DIRECTORY=/private/orbit-tls`. Image tags are local; no registry push occurs. The [pnpm deployment packaging](https://pnpm.io/cli/deploy) and [multi-stage build](https://docs.docker.com/build/building/multi-stage/) keep build tooling outside the runtime.
+On Linux, use `export ORBIT_RELEASE_TAG="$(git rev-parse --short=12 HEAD)"` and `export ORBIT_TLS_DIRECTORY=/private/orbit-tls`. Image tags are local; no registry push occurs. The [filtered workspace install](https://pnpm.io/filtering) and [multi-stage build](https://docs.docker.com/build/building/multi-stage/) keep build tooling outside the runtime.
 
 4. Once the hosting target and operations owner are approved, the prepared startup commands are:
 

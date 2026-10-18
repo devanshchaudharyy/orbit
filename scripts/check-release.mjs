@@ -156,7 +156,7 @@ try {
     'node',
     '--input-type=module',
     '-e',
-    "import assert from 'node:assert/strict';import{existsSync}from'node:fs';assert(process.getuid()>0);await import('argon2');await import('@orbit/contracts');assert(!existsSync('/app/src'));assert(!existsSync('/app/test'));assert(!existsSync('/app/.env.local'));let absent=false;try{await import('tsx')}catch{absent=true}assert(absent);",
+    "import assert from 'node:assert/strict';import{existsSync}from'node:fs';assert(process.getuid()>0);await import('argon2');await import('@orbit/contracts');assert(!existsSync('/app/apps/api/src'));assert(!existsSync('/app/apps/api/test'));assert(!existsSync('/app/.env.local'));let absent=false;try{await import('tsx')}catch{absent=true}assert(absent);",
   );
   await compose('exec', '-T', 'web', 'sh', '-c', 'test "$(id -u)" != 0');
   console.log('PASS release non-root API/web images and worker readiness');

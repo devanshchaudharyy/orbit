@@ -21,7 +21,7 @@ describe('discovery direct links', () => {
         <SearchResults query={query as unknown as ReturnType<typeof useGlobalSearch>} />
       </MemoryRouter>,
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Load more results', exact: true }));
+    await userEvent.click(screen.getByRole('button', { name: 'Load more results' }));
     expect(next).toHaveBeenCalledOnce();
   });
   it('preserves exact safe search, preferences and administration returns', () => {

@@ -185,6 +185,33 @@ try {
     try {
       await client.connect();
       assert.equal(client.db().databaseName, `orbit_test_release${token}`);
+      const { S3Client, DeleteObjectCommand } = requireApi('@aws-sdk/client-s3');
+      const storage = new S3Client({
+        endpoint: process.env.S3_ENDPOINT,
+        region: process.env.S3_REGION,
+        forcePathStyle: true,
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY,
+          secretAccessKey: process.env.S3_SECRET_KEY,
+        },
+        maxAttempts: 1,
+      });
+      try {
+        const rows = await client
+          .db()
+          .collection('project_files')
+          .find({}, { projection: { objectKey: 1 } })
+          .toArray();
+        for (const row of rows) {
+          assert(/^objects\/[a-f0-9]{24}\/[a-f0-9]{24}$/.test(row.objectKey));
+          await storage.send(
+            new DeleteObjectCommand({ Bucket: process.env.S3_BUCKET, Key: row.objectKey }),
+            { abortSignal: AbortSignal.timeout(5000) },
+          );
+        }
+      } finally {
+        storage.destroy();
+      }
       await client.db().dropDatabase();
       const { Queue } = requireApi('bullmq');
       const { Redis } = requireApi('ioredis');

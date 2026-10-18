@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { chromium, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { releasePdf } from '../tests/support/release-assets.mjs';
 
 export async function verifyRelease(origin, mailbox, email, evidenceDirectory) {
   assert.equal(origin, 'https://localhost:8443');
@@ -34,8 +35,14 @@ export async function verifyRelease(origin, mailbox, email, evidenceDirectory) {
     assert.equal(headers['referrer-policy'], 'no-referrer');
     assert.equal(headers['x-frame-options'], 'DENY');
     assert(headers['strict-transport-security'].includes('31536000'));
-    assert(headers['content-security-policy'].includes("script-src 'self';"));
-    assert(!headers['content-security-policy'].includes('unsafe-eval'));
+    assert(headers['content-security-policy'].includes("script-src 'self' 'wasm-unsafe-eval';"));
+    assert(!headers['content-security-policy'].includes("'unsafe-eval'"));
+    assert(
+      await page.evaluate(async () => {
+        await WebAssembly.compile(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0]));
+        return true;
+      }),
+    );
     pass('HTTPS headers, CSP and uncached HTML');
     const script = await page.locator('script[type="module"]').getAttribute('src');
     const asset = await context.request.get(script, { headers: { 'Accept-Encoding': 'gzip' } });
@@ -166,6 +173,49 @@ export async function verifyRelease(origin, mailbox, email, evidenceDirectory) {
       }),
     ).toBeVisible();
     pass('saved task survives fresh production route');
+    const projectRoute = taskRoute.replace(/\/tasks\/[a-f0-9]{24}$/, '');
+    await page.goto(`${projectRoute}?section=documents`);
+    await page.getByRole('button', { name: 'Create document', exact: true }).click();
+    await page.getByLabel('Document title', { exact: true }).fill('Release document');
+    await page
+      .getByRole('textbox', { name: 'Document content', exact: true })
+      .fill('Persisted rich text through production CSP.');
+    await page.getByRole('button', { name: 'Create document', exact: true }).click();
+    await expect(
+      page.getByRole('heading', { name: 'Release document', exact: true }),
+    ).toBeVisible();
+    await page.reload();
+    await expect(
+      page.getByRole('textbox', { name: 'Document content', exact: true }),
+    ).toContainText('Persisted rich text');
+    pass('lazy rich-text editor and persisted document under production CSP');
+    await page.goto(`${projectRoute}?section=documents&library=files`);
+    const pdf = releasePdf();
+    await page.getByRole('button', { name: 'Upload file', exact: true }).click();
+    await page
+      .getByLabel('Choose file', { exact: true })
+      .setInputFiles({ name: 'release.pdf', mimeType: 'application/pdf', buffer: pdf });
+    await page.getByRole('button', { name: 'Upload selected file', exact: true }).click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Preview release.pdf', exact: true }).click();
+    await expect(page.getByText('Page 1 of 2', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Next page', exact: true })).toBeEnabled();
+    await page.getByRole('button', { name: 'Next page', exact: true }).click();
+    await expect(page.getByRole('img', { name: 'PDF page 2', exact: true })).toBeVisible();
+    await page.keyboard.press('Escape');
+    const downloadPromise = page.waitForEvent('download');
+    await page.getByRole('button', { name: 'Download release.pdf', exact: true }).click();
+    const download = await downloadPromise;
+    assert.deepEqual(await readFile(await download.path()), pdf);
+    pass('private S3 PDF upload, worker preview and exact downloaded bytes');
+    await page.goto(`${projectRoute}?section=analytics`);
+    await expect(
+      page.getByRole('heading', { name: 'Delivery, in view.', exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('group', { name: 'Work distribution chart', exact: true }),
+    ).toBeVisible();
+    pass('lazy analytics chart uses saved tasks under production CSP');
     let scans = 0;
     for (const [name, path] of [
       ['marketing', '/'],

@@ -1,3 +1,4 @@
+import { cleanupBillingFixtures, seedPaidBillingFixture } from '../support/billing-fixture.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
@@ -530,6 +531,7 @@ try {
     assert(![...first.organizations, ...second.organizations].some((org) => org.id === orgB));
   });
   await check('membership write fence orders creation before concurrent revocation', async () => {
+    await seedPaidBillingFixture(uri, orgA, 'business');
     const original = tenants.models.workspaces.create.bind(tenants.models.workspaces);
     let release!: () => void;
     let reached!: () => void;
@@ -624,5 +626,6 @@ try {
   await tenants.models.organizations.deleteMany({ _id: { $in: ids }, ownerId: { $in: userIds } });
   await authRepo.models.sessions.deleteMany({ userId: { $in: userIds } });
   await authRepo.models.users.deleteMany({ _id: { $in: userIds } });
+  await cleanupBillingFixtures(uri, ids);
   await connection.close();
 }

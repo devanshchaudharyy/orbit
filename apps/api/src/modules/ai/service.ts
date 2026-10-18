@@ -5,6 +5,7 @@ import { validateOutput, hash, nextSchedule } from './calculations.js';
 import type { AIProvider } from './provider.js';
 import type { ProjectScope } from '../projects/repository.js';
 import { AuthError } from '../auth/errors.js';
+import { requireBillingFeature } from '../billing/policy.js';
 export class AIService {
   constructor(
     readonly repository: AIRepository,
@@ -162,6 +163,11 @@ export class AIService {
       lastRunId: string | null = null;
     try {
       await this.repository.access(actor, scope, id, undefined, 'project');
+      await requireBillingFeature(
+        this.repository.connection,
+        scope.organizationId,
+        'scheduledWorkflows',
+      );
       const run = await this.generate(
         actor,
         scope,
@@ -178,6 +184,12 @@ export class AIService {
         'automation',
         async (session) => {
           await this.repository.access(actor, scope, id, session, 'project');
+          await requireBillingFeature(
+            this.repository.connection,
+            scope.organizationId,
+            'scheduledWorkflows',
+            session,
+          );
           const current = await this.repository.models.workflows
             .findOneAndUpdate(
               { _id: row._id, version, enabled: true, deletedAt: null },
@@ -197,7 +209,13 @@ export class AIService {
       if (error instanceof AuthError && error.code === 'AI_BUSY') throw error;
       lastError =
         error instanceof AuthError &&
-        ['AI_DAILY_LIMIT', 'AI_NOT_CONFIGURED', 'AI_CONTEXT_LIMIT'].includes(error.code)
+        [
+          'AI_DAILY_LIMIT',
+          'AI_NOT_CONFIGURED',
+          'AI_CONTEXT_LIMIT',
+          'PLAN_REQUIRED',
+          'PLAN_LIMIT_REACHED',
+        ].includes(error.code)
           ? error.message
           : 'Workflow could not run with its current authorization or model. Review access and configuration.';
     }

@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { seedPaidBillingFixture, cleanupBillingFixtures } from '../support/billing-fixture.mjs';
 import { createRequire } from 'node:module';
 import { randomUUID } from 'node:crypto';
 import { spawn, execFileSync } from 'node:child_process';
@@ -102,6 +103,7 @@ try {
     description: '',
   });
   orgs.push(organization.id);
+  await seedPaidBillingFixture(isolatedUri.href, organization.id);
   const workspace = await tenants.createWorkspace(owner, organization.id, {
       name: 'Worker workspace',
       description: '',
@@ -311,4 +313,5 @@ try {
   await tenants.models.organizations.deleteMany({ _id: { $in: orgs } });
   await auth.models.users.deleteOne({ _id: owner });
   await connection.close();
+  await cleanupBillingFixtures(isolatedUri.href, orgs);
 }

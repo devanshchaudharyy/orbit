@@ -1,6 +1,6 @@
 # Phase progress
 
-Current status: Phase 11 is complete and published, including full Compose CI and real Redis worker verification. See [the current report](PHASE11_REPORT.md) for exact results and one earlier collaboration browser retry. Windows Docker/WSL and restart acceptance remain deferred. Llama was unloaded after live verification at the user's request. Earlier sections are historical records. Phase 12 has not started.
+Current status: Phase 12 is implemented; final regression and publication verification are in progress. Live Stripe sandbox verification is explicitly deferred by the user. See [the current report](PHASE12_REPORT.md) for results and boundaries. Phase 11 is complete and published, including full Compose CI and real Redis worker verification. Windows Docker/WSL and restart acceptance remain deferred. Llama was unloaded after live verification at the user's request. Earlier sections are historical records. Phase 13 has not started.
 
 ## Phase 0 — foundation implemented; infrastructure verification blocked
 

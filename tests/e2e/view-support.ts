@@ -176,9 +176,29 @@ async function audit(page: Page, name: string, triggerName?: string) {
       }
       await page.mouse.move(0, 0);
       await settle(page);
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
-        true,
-      );
+      const fits = await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth);
+      if (!fits)
+        console.log(
+          'Horizontal overflow diagnostics',
+          await page.evaluate(() => ({
+            viewport: innerWidth,
+            width: document.documentElement.scrollWidth,
+            elements: [...document.querySelectorAll('body *')]
+              .filter(
+                (node) =>
+                  node.getBoundingClientRect().right > innerWidth + 0.5 &&
+                  !node.closest('.billing-table-scroll'),
+              )
+              .slice(0, 12)
+              .map((node) => ({
+                tag: node.tagName,
+                className: node.className,
+                right: node.getBoundingClientRect().right,
+                width: node.getBoundingClientRect().width,
+              })),
+          })),
+        );
+      expect(fits).toBe(true);
       const scan = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
         .analyze();
@@ -224,6 +244,9 @@ test.afterEach(async () => {
       'ai_runs',
       'ai_workflows',
       'ai_usage',
+      'billing_operations',
+      'billing_events',
+      'billing_invoices',
       'work_preferences',
       'saved_task_filters',
       'project_milestones',
@@ -239,6 +262,7 @@ test.afterEach(async () => {
     ])
       await db.collection(collection).deleteMany({ organizationId: { $in: orgs } });
     await db.collection('organizations').deleteMany({ _id: { $in: orgs } });
+    await db.collection('billing_accounts').deleteMany({ _id: { $in: orgs } });
     await db.collection('auth_sessions').deleteMany({ userId: { $in: ids } });
     await db.collection('auth_users').deleteMany({ _id: { $in: ids } });
     await clearTestLoopbackLimits(db);

@@ -20,6 +20,44 @@ export const envSchema = z
     REDIS_URL: z.url().refine((value) => /^rediss?:\/\//.test(value), 'Expected a Redis URL'),
     DEPENDENCY_TIMEOUT_MS: z.coerce.number().int().min(100).max(10000).default(1500),
     AI_PROVIDER: z.enum(['disabled', 'ollama']).default('disabled'),
+    BILLING_MODE: z.enum(['disabled', 'stripe-test']).default('disabled'),
+    STRIPE_SECRET_KEY: z
+      .string()
+      .default('')
+      .refine(
+        (value) => !value || /^sk_test_[A-Za-z0-9]{12,}$/.test(value),
+        'Use a Stripe test secret key only',
+      ),
+    STRIPE_WEBHOOK_SECRET: z
+      .string()
+      .default('')
+      .refine(
+        (value) => !value || /^whsec_[A-Za-z0-9]{12,}$/.test(value),
+        'Expected a webhook signing secret',
+      ),
+    STRIPE_PRO_MONTH_PRICE: z
+      .string()
+      .default('')
+      .refine((value) => !value || /^price_[A-Za-z0-9]+$/.test(value), 'Expected a Price ID'),
+    STRIPE_PRO_YEAR_PRICE: z
+      .string()
+      .default('')
+      .refine((value) => !value || /^price_[A-Za-z0-9]+$/.test(value), 'Expected a Price ID'),
+    STRIPE_BUSINESS_MONTH_PRICE: z
+      .string()
+      .default('')
+      .refine((value) => !value || /^price_[A-Za-z0-9]+$/.test(value), 'Expected a Price ID'),
+    STRIPE_BUSINESS_YEAR_PRICE: z
+      .string()
+      .default('')
+      .refine((value) => !value || /^price_[A-Za-z0-9]+$/.test(value), 'Expected a Price ID'),
+    STRIPE_PORTAL_CONFIGURATION: z
+      .string()
+      .default('')
+      .refine(
+        (value) => !value || /^bpc_[A-Za-z0-9]+$/.test(value),
+        'Expected a portal configuration ID',
+      ),
     AI_QUEUE_NAME: z
       .string()
       .regex(/^[a-zA-Z0-9_-]{1,100}$/)
@@ -89,6 +127,34 @@ export const envSchema = z
     SMTP_PASSWORD: z.string().max(1024).optional(),
   })
   .superRefine((value, context) => {
+    if (value.BILLING_MODE === 'stripe-test') {
+      for (const field of [
+        'STRIPE_SECRET_KEY',
+        'STRIPE_WEBHOOK_SECRET',
+        'STRIPE_PRO_MONTH_PRICE',
+        'STRIPE_PRO_YEAR_PRICE',
+        'STRIPE_BUSINESS_MONTH_PRICE',
+        'STRIPE_BUSINESS_YEAR_PRICE',
+      ] as const)
+        if (!value[field])
+          context.addIssue({
+            code: 'custom',
+            path: [field],
+            message: 'Required for Stripe test billing',
+          });
+      const prices = [
+        value.STRIPE_PRO_MONTH_PRICE,
+        value.STRIPE_PRO_YEAR_PRICE,
+        value.STRIPE_BUSINESS_MONTH_PRICE,
+        value.STRIPE_BUSINESS_YEAR_PRICE,
+      ];
+      if (new Set(prices).size !== 4)
+        context.addIssue({
+          code: 'custom',
+          path: ['STRIPE_PRO_MONTH_PRICE'],
+          message: 'Use four distinct test Price IDs',
+        });
+    }
     if (value.NODE_ENV === 'production' && value.FILE_STORAGE_DRIVER !== 's3')
       context.addIssue({
         code: 'custom',

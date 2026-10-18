@@ -50,7 +50,9 @@
     "test:ai:worker": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/ai-worker.ts",
     "test:ai:live": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/ai-live.ts",
     "test:ai:e2e": "pnpm --filter @orbit/contracts build && node scripts/check-ai-browser.mjs",
-    "auth:fixture:ai": "pnpm --filter @orbit/contracts build && node scripts/auth-local-fixture.mjs start --ai"
+    "auth:fixture:ai": "pnpm --filter @orbit/contracts build && node scripts/auth-local-fixture.mjs start --ai",
+    "test:billing:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/billing.ts",
+    "test:billing:e2e": "pnpm --filter @orbit/contracts build && node scripts/check-billing-browser.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

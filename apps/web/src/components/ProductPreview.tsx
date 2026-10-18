@@ -243,7 +243,7 @@ export function ProductPreview() {
             <span>{selected?.status}</span>
             <p>
               This sample task shows how work could stay connected to its owner, status, and
-              project. Project creation and editing are coming in a later release.
+              project. Sign in to manage actual projects; this demonstration does not save work.
             </p>
           </div>
           <Button onClick={() => setSelected(null)}>Back to preview</Button>

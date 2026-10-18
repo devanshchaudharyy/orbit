@@ -291,6 +291,12 @@ export class ProjectRepository {
     return this.tenants.connection.transaction(async (session) => {
       const { member } = await this.workspace(actor, scope, session);
       if (!manager(member.role)) throw forbidden();
+      await enforceResourceLimit(
+        this.tenants.connection,
+        scope.organizationId,
+        'projects',
+        session,
+      );
       await this.eligible(scope, [input.ownerId], session, false);
       await this.eligible(scope, input.memberIds, session, true);
       const { template, ...fields } = input;
@@ -783,3 +789,4 @@ export class ProjectRepository {
     };
   }
 }
+import { enforceResourceLimit } from '../billing/policy.js';

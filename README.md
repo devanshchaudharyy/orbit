@@ -4,7 +4,17 @@
 
 Phase 11 adds local AI assistance: private summaries, task/subtask proposals, priority and risk suggestions, natural-language task matching and scheduled draft workflows. Changes require review and confirmation. See [the Phase 11 verification report](docs/PHASE11_REPORT.md). Marketing sample content demonstrates the intended product; billing remains in a later phase.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–11 are implemented and published. [Phase 11 CI passed](https://github.com/devanshchaudharyy/orbit/actions/runs/38860050962), including real Redis worker verification; the report records one earlier collaboration browser retry. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately. Llama was unloaded after live verification at the user's request; generating another local AI draft loads it again.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–11 are implemented and published. Phase 12 adds test-mode billing; final regression and publication verification are in progress. [Phase 11 CI passed](https://github.com/devanshchaudharyy/orbit/actions/runs/38860050962), including real Redis worker verification; the report records one earlier collaboration browser retry. Windows Docker/WSL and restart acceptance remain deferred; fixture and remote Compose evidence are recorded separately. Llama was unloaded after live verification at the user's request; generating another local AI draft loads it again.
+
+## Test-mode subscriptions
+
+Free, Pro and Business plans use organization billing boundaries, server-enforced workspace/project limits, paid CSV exports and scheduled-AI entitlements. Owners explicitly confirm hosted checkout/portal actions; current provider state and signed webhooks determine access. Downgrades preserve existing work. [Setup and recovery](docs/BILLING.md), [verification](docs/PHASE12_REPORT.md).
+
+Live Stripe sandbox verification is pending by user choice. Without configured credentials the local preview reports billing unavailable and creates no payment. These captures use the explicitly labeled test HTTP fixture, synthetic accounts and real local API/MongoDB workflows; they are not hosted Stripe payment evidence.
+
+![ORBIT organization plan and usage view](docs/screenshots/billing-free-dark-1440.png)
+
+![ORBIT private test invoice history](docs/screenshots/billing-history-light-1440.png)
 
 ## Screenshots
 

@@ -13,6 +13,7 @@ import { AuthError } from '../auth/errors.js';
 import type { StoredUser } from '../auth/models.js';
 import { aiModels, type StoredAIRun, type StoredAIWorkflow } from './models.js';
 import { hash, nextSchedule } from './calculations.js';
+import { requireBillingFeature } from '../billing/policy.js';
 export const aiError = (status: number, code: string, message: string) =>
   new AuthError(status, code, message);
 export const actorDailyLimit = 20,
@@ -483,6 +484,28 @@ export class AIRepository {
   ) {
     return this.connection.transaction(async (session) => {
       await this.access(actor, scope, id, session, 'project');
+      if (input.enabled) {
+        const entitlements = await requireBillingFeature(
+          this.connection,
+          scope.organizationId,
+          'scheduledWorkflows',
+          session,
+        );
+        const enabled = await this.models.workflows
+          .countDocuments({
+            organizationId: scope.organizationId,
+            enabled: true,
+            deletedAt: null,
+            ...(workflowId ? { _id: { $ne: workflowId } } : {}),
+          })
+          .session(session);
+        if (enabled >= entitlements.limits.scheduledWorkflows)
+          throw aiError(
+            402,
+            'PLAN_LIMIT_REACHED',
+            'Your plan has reached its scheduled workflow limit. Pause another workflow or open organization Billing.',
+          );
+      }
       let row: StoredAIWorkflow | null;
       if (workflowId && 'version' in input) {
         const { version, ...values } = input;

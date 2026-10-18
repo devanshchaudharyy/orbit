@@ -21,9 +21,7 @@ describe('Marketing product and plan previews', () => {
     const list = screen.getByRole('tabpanel');
     expect(within(list).getAllByRole('button')).toHaveLength(2);
     await user.click(within(list).getByRole('button', { name: /Map the onboarding journey/ }));
-    expect(screen.getByRole('dialog')).toHaveTextContent(
-      'Project creation and editing are coming in a later release.',
-    );
+    expect(screen.getByRole('dialog')).toHaveTextContent('Sign in to manage actual projects');
   });
   it('carries the chosen billing period into a plan preview', async () => {
     const user = userEvent.setup();

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { seedPaidBillingFixture } from '../support/billing-fixture.mjs';
 import { readFile } from 'node:fs/promises';
 import {
   analyticsReportSchema,
@@ -29,6 +30,11 @@ async function report(page: Page, path: string) {
 async function fixture(page: Page) {
   const people = await setup(page),
     path = await project(page);
+  await seedPaidBillingFixture(
+    process.env.ORBIT_AUTH_MONGO_URI ??
+      'mongodb://127.0.0.1:27018/orbit_test_phase2?replicaSet=orbit-test&directConnection=true',
+    people.org,
+  );
   return { ...people, path };
 }
 async function tasks(page: Page, people: Awaited<ReturnType<typeof fixture>>) {

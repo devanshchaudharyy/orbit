@@ -39,6 +39,7 @@ const OrganizationOverview = lazy(() =>
   import('./pages/Organizations').then((module) => ({ default: module.OrganizationOverview })),
 );
 const WorkspacePage = lazy(() => import('./pages/Workspace'));
+const BillingPage = lazy(() => import('./pages/Billing'));
 const ProjectsPage = lazy(() => import('./pages/Projects'));
 const TenantSettings = lazy(() =>
   import('./pages/Workspace').then((module) => ({ default: module.TenantSettings })),
@@ -94,6 +95,14 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                       />
                     ))}
                     <Route path="/" element={<Marketing />} />
+                    <Route
+                      path="/app/organizations/:organizationId/billing"
+                      element={
+                        <AuthGate requireOnboarding>
+                          <BillingPage />
+                        </AuthGate>
+                      }
+                    />
                     <Route path="/auth/register" element={<RegisterPage />} />
                     <Route path="/auth/login" element={<LoginPage />} />
                     <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />

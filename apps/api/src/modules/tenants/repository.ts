@@ -14,6 +14,7 @@ import {
   type StoredWorkspace,
 } from './models.js';
 import { AuthError } from '../auth/errors.js';
+import { enforceResourceLimit, readyBilling } from '../billing/policy.js';
 
 export const missingTenant = () =>
   new AuthError(404, 'RESOURCE_NOT_FOUND', 'This space is unavailable or you do not have access.');
@@ -62,6 +63,7 @@ export class MongoTenantRepository {
   }
   async ready() {
     this.indexes ??= (async () => {
+      await readyBilling(this.connection);
       await Promise.all(Object.values(this.models).map((model) => model.createCollection()));
       await Promise.all(Object.values(this.models).map((model) => model.createIndexes()));
     })().catch((error: unknown) => {
@@ -226,6 +228,7 @@ export class MongoTenantRepository {
     const id = new Types.ObjectId();
     return this.connection.transaction(async (session) => {
       const { member } = await this.organizationAccess(userId, organizationId, session, true);
+      await enforceResourceLimit(this.connection, organizationId, 'workspaces', session);
       const [ws] = await this.models.workspaces.create([{ _id: id, organizationId, ...input }], {
         session,
       });

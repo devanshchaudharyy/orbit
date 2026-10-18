@@ -275,6 +275,16 @@ try {
     ),
   );
   await finished(start(process.execPath, [resolve(root, 'scripts/check-ai-browser.mjs')], root));
+  await finished(
+    start(
+      process.execPath,
+      [apiRequire.resolve('tsx/cli'), resolve(root, 'tests/integration/billing.ts')],
+      root,
+    ),
+  );
+  await finished(
+    start(process.execPath, [resolve(root, 'scripts/check-billing-browser.mjs')], root),
+  );
 } catch (error) {
   console.error(error.message);
   process.exitCode ??= 1;

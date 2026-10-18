@@ -266,3 +266,20 @@ Socket.IO 4.8.4 uses same-origin `/api/live`, WebSocket transport, credential co
 Server events: `project:refresh` contains only the three verified IDs; `project:presence` contains `{people: [{id,name}], total}` (twenty displayed, users deduplicated); `live:state` contains `{available}`; `project:revoked` removes access and disconnects. Current identity and resource authority are rechecked before outgoing presence/refresh and at five-second intervals. Passive checks do not extend idle expiry. Committed MongoDB streams drive invalidation; reconnect/recovery resynchronizes REST data. Stream failure does not claim live delivery, and the UI offers reconnect. Limits: 200 sockets/process, eight/user, thirty connection/subscription attempts/user/minute, 8 KiB incoming payload. One API process is supported; Redis adapter/multi-node fan-out and email notifications are outside Phase 8.
 
 Live refetches share the general HTTP IP allowance of 600 requests/minute. Existing sign-in, recovery, actor mutation and socket budgets remain stricter. Clients coalesce invalidation events over 200ms. Account return destinations preserve only allowlisted collaboration section/inbox query choices and canonical message anchors on known local resource routes; external, malformed and arbitrary redirect parameters remain rejected.
+
+## Phase 12 test billing APIs
+
+Relative to `/api/v1/organizations/:organizationId/billing`:
+
+| Method | Path                   | Access and behavior                                                                                                                      |
+| ------ | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| GET    | `/entitlements`        | Current organization members; plan and limits only                                                                                       |
+| GET    | `/`                    | Owner/admin; stored subscription, actual usage, current test price catalog, private invoice page and owner-only pending checkout choices |
+| GET    | `/history?cursor=<id>` | Owner/admin;20row invoice pages with scoped cursors                                                                                      |
+| POST   | `/checkout`            | Owner only; strict `{ requestId, quoteId, plan, interval, trial, confirmed: true }`; server-selected test prices and durable idempotency |
+| POST   | `/portal`              | Owner only; strict `{ confirmed: true }`; short-lived hosted test portal URL                                                             |
+| POST   | `/refresh`             | Owner/admin; strict `{}`; canonical provider state synchronization                                                                       |
+
+Existing verified/completed account, current membership, cookie session, exact Origin/CSRF on mutations, no-store and request-ID envelopes apply. Billing API rate limit is 40 operations per actor/minute. Disabled configuration returns503 without creating a checkout. Concurrent/conflicting/expired intents return409; feature/usage restrictions402; invalid input400; missing/forbidden scopes404/403; provider/database outages503. Provider details are sanitized and secrets remain server-only. Paid endpoints do not accept client prices, amounts, customer IDs, subscriptions or success flags.
+
+`POST /api/v1/webhooks/stripe` is a separate raw JSON route before the JSON parser, bounded to 256KiB. It requires a valid Stripe signature within 300seconds and rejects live/connected-account events. It has no cookie/CSRF dependency. Supported snapshot subscription/checkout/invoice events retrieve canonical current state, then commit transactionally before acknowledging. Failed/uncommitted work returns a retryable response. Unknown events/customers do not grant access. [Setup, accepted events, lifecycle and limits](BILLING.md).

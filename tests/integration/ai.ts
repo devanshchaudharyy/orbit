@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { seedPaidBillingFixture, cleanupBillingFixtures } from '../support/billing-fixture.mjs';
 import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
 import {
@@ -176,6 +177,7 @@ try {
     ).body.data.id,
   );
   orgs.push(org);
+  await seedPaidBillingFixture(uri, org);
   const ws = String(
       (
         await mutate(owner, `/api/v1/organizations/${org}/workspaces`, {
@@ -865,4 +867,5 @@ try {
   await authRepo.models.users.deleteMany({ _id: { $in: ids } });
   await clearTestLoopbackLimits(connection.db);
   await connection.close();
+  await cleanupBillingFixtures(uri, orgs);
 }

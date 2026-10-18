@@ -62,7 +62,7 @@ test('interactive sample views, filtering, and task detail focus', async ({ page
   const card = page.locator('.preview-list button').first();
   await card.click();
   await expect(page.getByRole('dialog')).toContainText('Product demonstration');
-  await expect(page.getByRole('dialog')).toContainText('Project creation and editing are coming');
+  await expect(page.getByRole('dialog')).toContainText('Sign in to manage actual projects');
   await page.keyboard.press('Escape');
   await expect(card).toBeFocused();
   await page.getByRole('button', { name: 'Design only' }).click();
@@ -84,7 +84,7 @@ test('keyboard tour traps focus, advances, and restores its trigger', async ({ p
   await page.getByRole('button', { name: 'Next', exact: true }).click();
   await expect(page.getByRole('dialog')).toContainText('See work your way.');
   await page.getByRole('button', { name: 'Next', exact: true }).click();
-  await expect(page.getByRole('dialog')).toContainText('ORBIT is in development.');
+  await expect(page.getByRole('dialog')).toContainText('production billing is not enabled.');
   const scan = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
   expect(scan.violations).toEqual([]);
   await page.keyboard.press('Escape');
@@ -105,20 +105,20 @@ test('pricing changes truthfully and selected plan opens without checkout', asyn
   await page.getByRole('button', { name: 'Yearly' }).click();
   const team = page
     .locator('.pricing-card')
-    .filter({ has: page.getByRole('heading', { name: 'Team', exact: true }) });
+    .filter({ has: page.getByRole('heading', { name: 'Pro', exact: true }) });
   await expect(team).toContainText('$10');
-  await expect(team).toContainText('$120 per member, billed yearly');
-  await team.getByRole('button', { name: 'Explore Team' }).click();
-  await expect(page.getByRole('dialog')).toContainText('Team plan preview');
+  await expect(team).toContainText('$120 per organization, billed yearly');
+  await team.getByRole('button', { name: 'Explore Pro' }).click();
+  await expect(page.getByRole('dialog')).toContainText('Pro plan preview');
   await expect(page.getByRole('dialog')).toContainText('no payment is collected');
   await expect(page.locator('.plan-modal-price')).toContainText('$10');
   await page.getByRole('button', { name: 'Keep exploring' }).click();
-  await expect(team.getByRole('button', { name: 'Explore Team' })).toBeFocused();
+  await expect(team.getByRole('button', { name: 'Explore Pro' })).toBeFocused();
   await page.getByRole('button', { name: 'Monthly', exact: true }).click();
   await expect(team).toContainText('$12');
   await page.getByRole('button', { name: 'Are these the final prices?' }).click();
   await expect(
-    page.getByText('There is no checkout and you won’t be charged.', { exact: false }),
+    page.getByText('There is no checkout on this marketing page', { exact: false }),
   ).toBeVisible();
 });
 

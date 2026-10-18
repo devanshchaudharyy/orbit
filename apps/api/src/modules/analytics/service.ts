@@ -3,6 +3,7 @@ import { AnalyticsRepository } from './repository.js';
 import type { ProjectScope } from '../projects/repository.js';
 import { csv } from './calculations.js';
 import { AuthError } from '../auth/errors.js';
+import { requireBillingFeature } from '../billing/policy.js';
 export class AnalyticsService {
   constructor(readonly repository: AnalyticsRepository) {}
   ready = () => this.repository.ready();
@@ -16,6 +17,11 @@ export class AnalyticsService {
     dataset: AnalyticsDataset,
   ) {
     const report = await this.report(actor, scope, project, input);
+    await requireBillingFeature(
+      this.repository.projects.tenants.connection,
+      scope.organizationId,
+      'csvExport',
+    );
     let rows: unknown[][];
     switch (dataset) {
       case 'tasks':
@@ -161,6 +167,11 @@ export class AnalyticsService {
       'utf8',
     );
     await this.repository.projects.access(actor, scope, project);
+    await requireBillingFeature(
+      this.repository.projects.tenants.connection,
+      scope.organizationId,
+      'csvExport',
+    );
     if (data.length > 8 * 1024 * 1024)
       throw new AuthError(
         422,

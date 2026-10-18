@@ -225,11 +225,18 @@ export function safeReturnTo(value: string | null): string {
   const target = new URL(value, 'https://orbit.invalid');
   if (target.origin !== 'https://orbit.invalid') return '/onboarding';
   const path = target.pathname;
+  if (/^\/app\/organizations\/[a-f0-9]{24}\/billing$/.test(path) && target.hash)
+    return '/onboarding';
   if (value.split(/[?#]/)[0] !== path) return '/onboarding';
   const projectRoute =
     /^\/app\/organizations\/[a-f0-9]{24}\/workspaces\/[a-f0-9]{24}\/projects\/[a-f0-9]{24}$/;
   if (target.search) {
     const query = target.searchParams;
+    const billingLink =
+      /^\/app\/organizations\/[a-f0-9]{24}\/billing$/.test(path) &&
+      ['returned', 'canceled'].includes(query.get('checkout') ?? '') &&
+      [...query.keys()].length === 1 &&
+      !target.hash;
     const aiLink =
       projectRoute.test(path) &&
       query.get('section') === 'ai' &&
@@ -262,6 +269,7 @@ export function safeReturnTo(value: string | null): string {
       !(query.has('document') && query.has('library'));
     if (
       !documentLink &&
+      !billingLink &&
       !aiLink &&
       !analyticsLink &&
       (!projectRoute.test(path) ||
@@ -278,7 +286,7 @@ export function safeReturnTo(value: string | null): string {
   const result = `${path}${target.search}${fragment}`;
   if (path === '/account' || path === '/app' || path === '/invitations/accept') return result;
   if (
-    /^\/app\/organizations\/[a-f0-9]{24}(?:\/(?:settings|team)|\/workspaces\/[a-f0-9]{24}(?:\/settings|\/projects(?:\/[a-f0-9]{24}(?:\/tasks\/[a-f0-9]{24})?)?)?)?$/.test(
+    /^\/app\/organizations\/[a-f0-9]{24}(?:\/(?:settings|team|billing)|\/workspaces\/[a-f0-9]{24}(?:\/settings|\/projects(?:\/[a-f0-9]{24}(?:\/tasks\/[a-f0-9]{24})?)?)?)?$/.test(
       path,
     )
   )

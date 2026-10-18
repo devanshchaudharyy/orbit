@@ -31,6 +31,10 @@ import { AIRepository } from './modules/ai/repository.js';
 import { AIService } from './modules/ai/service.js';
 import { createAIProvider } from './modules/ai/provider.js';
 import { aiRoutes } from './modules/ai/routes.js';
+import { BillingRepository } from './modules/billing/repository.js';
+import { BillingService } from './modules/billing/service.js';
+import { createBillingProvider } from './modules/billing/provider.js';
+import { billingRoutes, billingWebhookRoute } from './modules/billing/routes.js';
 
 export function createApp(
   dependencies: Dependencies,
@@ -42,6 +46,7 @@ export function createApp(
   collaboration?: CollaborationService,
   documents?: DocumentService,
   ai?: AIService,
+  billing?: BillingService,
 ) {
   const app = express();
   app.disable('x-powered-by');
@@ -64,9 +69,30 @@ export function createApp(
     );
     next();
   });
+  const payments =
+    billing ??
+    (tenants
+      ? new BillingService(
+          new BillingRepository(tenants.repository),
+          createBillingProvider({
+            BILLING_MODE: 'disabled',
+            STRIPE_SECRET_KEY: '',
+            STRIPE_WEBHOOK_SECRET: '',
+            STRIPE_PRO_MONTH_PRICE: '',
+            STRIPE_PRO_YEAR_PRICE: '',
+            STRIPE_BUSINESS_MONTH_PRICE: '',
+            STRIPE_BUSINESS_YEAR_PRICE: '',
+            STRIPE_PORTAL_CONFIGURATION: '',
+            APP_ORIGIN: 'http://127.0.0.1:5173',
+          }),
+        )
+      : null);
+  if (payments) app.use('/api/v1/webhooks', billingWebhookRoute(payments));
   app.use(express.json({ limit: '64kb' }));
   app.use('/api/v1/health', healthRoutes(dependencies));
   if (auth) app.use('/api/v1/auth', authRoutes(auth));
+  if (auth && tenants && payments)
+    app.use('/api/v1/organizations', billingRoutes(auth, tenants, payments));
   if (auth && tenants && projects) {
     const assistant =
       ai ??

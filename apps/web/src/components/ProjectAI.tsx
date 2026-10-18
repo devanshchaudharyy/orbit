@@ -19,6 +19,7 @@ import { StatusNotice } from './AuthLayout';
 import { AIReview } from './AIReview';
 import { AIWorkflows } from './AIWorkflows';
 import '../ai.css';
+import { BillingFeatureNote } from '../lib/billing';
 export const aiModes: [AIMode, string, string][] = [
   ['assistant', 'Project assistant', 'Ask about the work currently recorded in this project.'],
   ['tasks', 'Generate tasks', 'Turn your brief into up to five editable task proposals.'],
@@ -382,6 +383,7 @@ export default function ProjectAI({
                 await refresh();
               }}
             />
+            <BillingFeatureNote org={scope.organizationId} feature="scheduledWorkflows" />
           </>
         )
       )}

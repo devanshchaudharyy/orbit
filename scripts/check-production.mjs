@@ -89,6 +89,7 @@ try {
   );
   for (const path of [
     '/app',
+    `/app/organizations/${'a'.repeat(24)}/billing`,
     `/app/organizations/${'a'.repeat(24)}/team`,
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/settings`,
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/projects`,

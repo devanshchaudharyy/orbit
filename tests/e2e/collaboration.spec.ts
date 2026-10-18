@@ -414,7 +414,8 @@ test('revoked workspace membership closes an open task overlay and clears privat
         userId: new ObjectId(people.member.id),
       });
     });
-    await expect(member.getByRole('dialog')).toHaveCount(0);
+    // Authorization sweeps run every five seconds, then transport/render must finish.
+    await expect(member.getByRole('dialog')).toHaveCount(0, { timeout: 15000 });
     await expect(member.getByRole('heading', { name: 'Private review', exact: true })).toHaveCount(
       0,
     );

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { seedPaidBillingFixture } from '../support/billing-fixture.mjs';
 import { setup, project, api, audit, database, signIn, ObjectId } from './view-support';
 import {
   aiRunSchema,
@@ -23,6 +24,11 @@ const taskInput = {
 async function fixture(page: Page) {
   const people = await setup(page),
     path = await project(page);
+  await seedPaidBillingFixture(
+    process.env.ORBIT_AUTH_MONGO_URI ??
+      'mongodb://127.0.0.1:27018/orbit_test_phase2?replicaSet=orbit-test&directConnection=true',
+    people.org,
+  );
   await page.getByRole('link', { name: 'AI assistance', exact: true }).click();
   await expect(
     page.getByRole('heading', { name: 'Think through the next move.', exact: true }),

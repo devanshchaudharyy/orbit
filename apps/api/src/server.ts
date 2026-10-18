@@ -20,6 +20,9 @@ import { createPrivateStorage } from './modules/documents/storage.js';
 import { AIRepository } from './modules/ai/repository.js';
 import { AIService } from './modules/ai/service.js';
 import { createAIProvider } from './modules/ai/provider.js';
+import { BillingService } from './modules/billing/service.js';
+import { BillingRepository } from './modules/billing/repository.js';
+import { createBillingProvider } from './modules/billing/provider.js';
 
 const env = parseEnvironment(process.env);
 const logger = createLogger(env.LOG_LEVEL);
@@ -46,6 +49,7 @@ const server = createServer(
     collaboration,
     documents,
     new AIService(new AIRepository(projects.repository), createAIProvider(env)),
+    new BillingService(new BillingRepository(tenants.repository), createBillingProvider(env)),
   ),
 );
 const live = createRealtime(server, auth, tenants, collaboration, logger);

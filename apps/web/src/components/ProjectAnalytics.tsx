@@ -6,6 +6,7 @@ import { analyticsQuerySchema, type LiveScope, type AnalyticsDataset } from '@or
 import { useAnalytics } from '../lib/analytics';
 import { StatusNotice } from './AuthLayout';
 import '../analytics.css';
+import { BillingFeatureNote, useBillingEntitlements } from '../lib/billing';
 const Chart = lazy(() => import('./AnalyticsChart'));
 const violet = 'var(--primary)',
   cyan = 'var(--cyan)',
@@ -18,6 +19,7 @@ function defaultDates() {
   return { from: now.toISOString().slice(0, 10), to };
 }
 export default function ProjectAnalytics({ scope, path }: { scope: LiveScope; path: string }) {
+  const plan = useBillingEntitlements(scope.organizationId);
   const [search, setSearch] = useSearchParams(),
     [defaults] = useState(defaultDates);
   const query = new URLSearchParams();
@@ -475,6 +477,7 @@ export default function ProjectAnalytics({ scope, path }: { scope: LiveScope; pa
             <div>
               <span className="analytics-eyebrow">TAKE THE EVIDENCE WITH YOU</span>
               <h3>Export a private report</h3>
+              <BillingFeatureNote org={scope.organizationId} feature="csvExport" />
               <p>
                 CSV includes its generation time and UTC window. Current permissions are checked
                 again for every download.
@@ -496,7 +499,7 @@ export default function ProjectAnalytics({ scope, path }: { scope: LiveScope; pa
                 ))}
               </select>
               <Button
-                disabled={exporting}
+                disabled={exporting || !plan.data?.limits.csvExport}
                 onClick={async () => {
                   setExporting(true);
                   setError('');

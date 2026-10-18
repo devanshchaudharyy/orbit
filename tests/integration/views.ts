@@ -1,3 +1,4 @@
+import { cleanupBillingFixtures } from '../support/billing-fixture.mjs';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { createRequire } from 'node:module';
@@ -592,5 +593,6 @@ try {
   await authRepo.models.sessions.deleteMany({ userId: { $in: ids } });
   await authRepo.models.users.deleteMany({ _id: { $in: ids } });
   await clearTestLoopbackLimits(connection.db);
+  await cleanupBillingFixtures(uri, orgIds);
   await connection.close();
 }

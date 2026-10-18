@@ -11,6 +11,7 @@ import {
   ArrowUpRight,
   LockKeyhole,
   UsersRound,
+  Layers3,
 } from 'lucide-react';
 import {
   Button,
@@ -130,6 +131,12 @@ export function TenantShell({
           <NavLink to={`${orgPath(organization.id)}/team`} onClick={() => setMobileOpen(false)}>
             <UsersRound size={17} />
             Team & access
+          </NavLink>
+        ) : null}
+        {organization && ['owner', 'admin'].includes(organization.role) ? (
+          <NavLink to={`${orgPath(organization.id)}/billing`} onClick={() => setMobileOpen(false)}>
+            <Layers3 size={17} />
+            Billing
           </NavLink>
         ) : null}
         <NavLink

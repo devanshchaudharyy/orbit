@@ -30,7 +30,7 @@ import './marketing.css';
 
 const plans = [
   {
-    name: 'Starter',
+    name: 'Free',
     monthly: 0,
     annual: 0,
     description: 'A little structure for your next big idea.',
@@ -41,14 +41,14 @@ const plans = [
     ],
   },
   {
-    name: 'Team',
+    name: 'Pro',
     monthly: 12,
     annual: 10,
     description: 'A shared rhythm for teams moving forward.',
     features: [
-      'Everything in Starter',
-      'Team collaboration and planning',
-      'More room for connected work',
+      'Everything in Free',
+      'CSV exports and scheduled AI drafts',
+      'Larger workspace and project limits',
     ],
   },
   {
@@ -57,9 +57,9 @@ const plans = [
     annual: 20,
     description: 'Clarity that grows with your organization.',
     features: [
-      'Everything in Team',
-      'Organization controls and insights',
-      'Advanced administration',
+      'Everything in Pro',
+      'More workspaces and projects',
+      'Higher scheduled workflow limits',
     ],
   },
 ];
@@ -76,7 +76,7 @@ const tour = [
   },
   {
     title: 'Make room for what’s next.',
-    text: 'ORBIT is in development. You can create an account, verify your email, and set up your profile. Projects, collaboration, and billing are coming in future releases.',
+    text: 'Create a verified account and an organization, then bring projects, planning, collaboration and documents into one place. Organization owners can configure test-mode subscriptions; production billing is not enabled.',
     icon: Sparkles,
   },
 ];
@@ -344,7 +344,8 @@ export default function Marketing() {
               </button>
             </div>
             <p className="pricing-disclaimer">
-              Proposed pricing in USD. Plans and features are previews, subject to change.
+              Illustrative pricing in USD. Actual Stripe sandbox prices and organization limits are
+              shown in organization Billing. No live payments are enabled.
             </p>
           </div>
           <div className="pricing-grid">
@@ -355,13 +356,13 @@ export default function Marketing() {
                 <p>{plan.description}</p>
                 <div className="plan-price">
                   <strong>${annual ? plan.annual : plan.monthly}</strong>
-                  <span>{plan.monthly === 0 ? '/ forever' : '/ member / month'}</span>
+                  <span>{plan.monthly === 0 ? '/ forever' : '/ organization / month'}</span>
                 </div>
                 <p className="plan-billing">
                   {plan.monthly === 0
                     ? 'A proposed free starting point'
                     : annual
-                      ? `$${plan.annual * 12} per member, billed yearly`
+                      ? `$${plan.annual * 12} per organization, billed yearly`
                       : 'Billed monthly'}
                 </p>
                 <Button
@@ -399,23 +400,23 @@ export default function Marketing() {
           </div>
           <div className="faq-list">
             <Accordion title="Can I start using ORBIT today?">
-              You can create an account, verify your email, and set up your profile today. The
-              interactive workspace is a product preview; real project management is coming in a
-              future release.
+              Create a verified account and an organization to manage real projects, planning,
+              collaboration and documents. The workspace cards on this marketing page remain a
+              labeled demonstration. Organization billing supports test-mode integration only.
             </Accordion>
             <Accordion title="Is the preview connected to my real work?">
               No. It uses clearly labeled sample content. View changes and filters only affect the
               demonstration; they don’t create projects or save business data.
             </Accordion>
             <Accordion title="Are these the final prices?">
-              These are proposed USD prices to help you compare the intended plans. Pricing and
-              included features may change before billing becomes available. There is no checkout
-              and you won’t be charged.
+              These illustrative USD prices are not checkout quotes. Actual configured test prices
+              and limits appear in organization Billing. There is no checkout on this marketing page
+              and no live charges are enabled.
             </Accordion>
             <Accordion title="Who is ORBIT being built for?">
               Independent builders, creative studios, and teams looking for a shared place to plan
-              and organize work. Organization administration and workspace membership are part of
-              the planned foundation.
+              and organize work. Organization administration and explicit workspace membership
+              protect access to your actual work.
             </Accordion>
           </div>
         </section>
@@ -517,11 +518,13 @@ export default function Marketing() {
           <DialogDescription>{selectedPlan?.description}</DialogDescription>
           <div className="plan-modal-price">
             ${selectedPlan ? (annual ? selectedPlan.annual : selectedPlan.monthly) : 0}
-            <span> {selectedPlan?.monthly === 0 ? '/ forever' : '/ member / month'}</span>
+            <span> {selectedPlan?.monthly === 0 ? '/ forever' : '/ organization / month'}</span>
           </div>
           <p className="plan-modal-note">
             {annual ? 'Yearly' : 'Monthly'} pricing preview. ORBIT is in development. Account setup
-            is available. Paid subscriptions are not available yet; no payment is collected.
+            is available. Owners manage test subscriptions from organization Billing. These
+            illustrative prices do not start checkout or change a plan; no payment is collected from
+            this preview.
           </p>
           <Button onClick={() => setSelectedPlan(null)}>Keep exploring</Button>
         </DialogContent>

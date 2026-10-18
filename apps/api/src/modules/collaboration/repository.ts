@@ -11,6 +11,7 @@ import type { StoredProject } from '../projects/models.js';
 import { AuthError } from '../auth/errors.js';
 import { missingTenant } from '../tenants/repository.js';
 import { ProjectRepository } from '../projects/repository.js';
+import { notificationPreferences } from '../administration/models.js';
 import {
   createCollaborationModels,
   type StoredMessage,
@@ -219,6 +220,12 @@ export class CollaborationRepository {
         }
         throw error;
       }
+      const preferences = await notificationPreferences(
+        this.projects.tenants.connection,
+        user,
+        session,
+      );
+      if (mentions.has(user) ? !preferences.mentions : !preferences.taskComments) continue;
       await this.models.notifications.updateOne(
         { messageId: row._id, userId: user },
         {

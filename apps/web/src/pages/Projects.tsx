@@ -41,6 +41,7 @@ import {
 import '../projects.css';
 import { ProjectWorkViews } from '../components/ProjectWorkViews';
 import { ProjectPlanning } from '../components/ProjectPlanning';
+import { CalendarExport } from '../components/CalendarExport';
 import { ProjectRealtime, LiveProjectStatus } from '../components/ProjectRealtime';
 import { ProjectCollaboration } from '../components/ProjectCollaboration';
 import { Conversation } from '../components/Conversation';
@@ -458,6 +459,7 @@ export default function ProjectsPage({
                 </StatusNotice>
               ) : null}
               <LiveProjectStatus />
+              <CalendarExport org={orgId!} workspace={wsId!} project={project.id} />
               {mode === 'project' ? (
                 <>
                   <Cover kind={project.cover} />

@@ -14,6 +14,7 @@ export default defineConfig({
     '**/analytics.spec.ts',
     '**/ai.spec.ts',
     '**/billing.spec.ts',
+    '**/administration.spec.ts',
   ],
   outputDir: 'test-results/foundation',
   fullyParallel: false,

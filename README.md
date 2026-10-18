@@ -2,9 +2,17 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 11 adds local AI assistance: private summaries, task/subtask proposals, priority and risk suggestions, natural-language task matching and scheduled draft workflows. Changes require review and confirmation. See [the Phase 11 verification report](docs/PHASE11_REPORT.md). Marketing sample content demonstrates the intended product; billing remains in a later phase.
+Phase 13 adds private global search, keyboard commands, notification controls, organization usage/audit pages and authenticated calendar exports. [Operating guide](docs/ADMINISTRATION.md), [verification report](docs/PHASE13_REPORT.md). Marketing sample content demonstrates the product; actual workspace features use authenticated API/database operations. Test billing is implemented, with live Stripe sandbox acceptance explicitly deferred.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–12 are implemented and published. [Phase 12 CI passed](https://github.com/devanshchaudharyy/orbit/actions/runs/39104067047): 245 tests, 297 application integration checks including real Redis workers, four infrastructure checks, 22 production checks and 87 browser scenarios with no retries. [Verification report](docs/PHASE12_REPORT.md). Live Stripe sandbox verification is pending by explicit user choice. Windows Docker/WSL and restart acceptance remain deferred; local fixture and remote Compose evidence are recorded separately. Llama remains unloaded at the user's request; generating another local AI draft loads it again. Phase 13 has not started.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–12 are published; Phase 13 is implemented and final verification/publication is in progress. [Previous Phase 12 CI](https://github.com/devanshchaudharyy/orbit/actions/runs/39104067047) remains a separate historical result. Live Stripe sandbox verification is pending by explicit user choice. Windows Docker/WSL and restart acceptance remain deferred; local fixture and remote Compose evidence are recorded separately. Llama remains unloaded at the user's request; generating another local AI draft loads it again. Phase 14 has not started.
+
+## Search and administration
+
+Find authorized work by name or title, open quick commands with Ctrl/Cmd+K, tune private inbox notifications and review organization usage/audit records. Calendar export requires an administrator to enable it and a current project grant; it downloads a private file for manual import. No external account or model is used. [Operating guide](docs/ADMINISTRATION.md).
+
+![ORBIT global search](docs/screenshots/discovery-results-dark-1440.png)
+
+![ORBIT organization administration](docs/screenshots/discovery-usage-light-1440.png)
 
 ## Test-mode subscriptions
 

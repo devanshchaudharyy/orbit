@@ -17,6 +17,7 @@ import { MongoTenantRepository, missingTenant } from '../tenants/repository.js';
 import { createProjectModels, type StoredProject, type StoredTask } from './models.js';
 import { observationModel } from '../analytics/models.js';
 import { observeSprint } from '../analytics/observations.js';
+import { recordAudit } from '../administration/models.js';
 
 export type ProjectScope = { organizationId: string; workspaceId: string };
 const manager = (role: string) => ['owner', 'admin', 'project-manager'].includes(role);
@@ -176,6 +177,15 @@ export class ProjectRepository {
       { session },
     );
     await observeSprint(this.tenants.connection, scope, projectId, String(event!._id), session);
+    await recordAudit(
+      this.tenants.connection,
+      scope.organizationId,
+      actor,
+      'project',
+      action,
+      projectId,
+      session,
+    );
   }
   private async eligible(
     scope: ProjectScope,

@@ -1,6 +1,6 @@
 # Phase progress
 
-Current status: Phase 12 implementation is complete and published, with local regression and full Compose CI passed. Live Stripe sandbox verification is explicitly deferred by the user. See [the current report](PHASE12_REPORT.md) for results and boundaries. Windows Docker/WSL and restart acceptance remain deferred. Llama remains unloaded at the user's request. Earlier sections are historical records. Phase 13 has not started.
+Current status: Phase 13 is implemented; final regression and publication verification are in progress. See [the current report](PHASE13_REPORT.md). Phase 12 is complete and published with full Compose CI. Live Stripe sandbox verification and Windows Docker/WSL/named-volume restart acceptance remain explicitly deferred. Llama remains unloaded. Earlier sections are historical records. Phase 14 has not started.
 
 ## Phase 0 — foundation implemented; infrastructure verification blocked
 

@@ -1,4 +1,5 @@
 import { Schema, Types, type ClientSession } from 'mongoose';
+import { recordAudit } from '../administration/models.js';
 import type { InvitationInput, MemberUpdate, TeamMember, Invitation } from '@orbit/contracts';
 import { MongoTenantRepository, missingTenant } from '../tenants/repository.js';
 import type { OrganizationMembership } from '../tenants/models.js';
@@ -233,6 +234,15 @@ export class TeamRepository {
         { session },
       );
       await deliver(authority.org.name);
+      await recordAudit(
+        this.tenants.connection,
+        org,
+        actor,
+        'team',
+        'invitation.created',
+        String(id),
+        session,
+      );
       return invitationDto(invitation!.toObject());
     });
   }
@@ -246,6 +256,15 @@ export class TeamRepository {
       if (!i) throw invalidInvite();
       this.policy(member, 'member', i.role);
       await this.invitations.updateOne({ _id: id }, { $set: { status: 'revoked' } }, { session });
+      await recordAudit(
+        this.tenants.connection,
+        org,
+        actor,
+        'team',
+        'invitation.revoked',
+        id,
+        session,
+      );
     });
   }
   async accept(actor: string, tokenHash: string) {
@@ -298,6 +317,15 @@ export class TeamRepository {
         { $set: { status: 'accepted' } },
         { session },
       );
+      await recordAudit(
+        this.tenants.connection,
+        org,
+        actor,
+        'team',
+        'invitation.accepted',
+        String(i._id),
+        session,
+      );
       return { organizationId: org };
     });
   }
@@ -343,6 +371,15 @@ export class TeamRepository {
           { session },
         );
       // Outstanding links issued under the previous role cannot silently gain authority again.
+      await recordAudit(
+        this.tenants.connection,
+        org,
+        actor,
+        'team',
+        'membership.updated',
+        id,
+        session,
+      );
       if (target.role !== input.role)
         await this.invitations.updateMany(
           { organizationId: org, inviterId: target.userId, status: 'pending' },
@@ -385,6 +422,15 @@ export class TeamRepository {
         );
       if ((target.version ?? 1) !== version) throw stale();
       await this.deleteMember(org, target, session);
+      await recordAudit(
+        this.tenants.connection,
+        org,
+        actor,
+        'team',
+        'membership.removed',
+        id,
+        session,
+      );
     });
   }
   async leave(actor: string, org: string) {
@@ -402,6 +448,15 @@ export class TeamRepository {
         { session },
       );
       await this.deleteMember(org, member, session);
+      await recordAudit(
+        this.tenants.connection,
+        org,
+        actor,
+        'team',
+        'membership.left',
+        String(member._id),
+        session,
+      );
     });
   }
   async transferCredentials(actor: string, org: string) {
@@ -462,6 +517,15 @@ export class TeamRepository {
         { organizationId: org, inviterId: new Types.ObjectId(actor), status: 'pending' },
         { $set: { status: 'revoked' } },
         { session },
+      );
+      await recordAudit(
+        this.tenants.connection,
+        org,
+        actor,
+        'team',
+        'ownership.transferred',
+        id,
+        session,
       );
     });
   }

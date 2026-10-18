@@ -6,6 +6,7 @@ import { AuthError } from '../auth/errors.js';
 import { billingModels, readyBilling } from './models.js';
 import { billingEntitlements } from './policy.js';
 import type { Snapshot } from './provider.js';
+import { recordAudit } from '../administration/models.js';
 export const billingError = (status: number, code: string, message: string) =>
   new AuthError(status, code, message);
 export const fingerprint = (value: unknown) =>
@@ -238,6 +239,7 @@ export class BillingRepository {
         { $set: { sessionId: result.id, url: result.url, expiresAt: result.expiresAt } },
         { session },
       );
+      await recordAudit(this.connection, org, actor, 'billing', 'checkout.confirmed', org, session);
       await this.models.accounts.updateOne(
         { _id: org, pendingKey: input.requestId },
         {
@@ -285,6 +287,20 @@ export class BillingRepository {
       if (!current)
         throw billingError(503, 'BILLING_LEASE_EXPIRED', 'Billing refresh expired. Please retry.');
       const { invoices, ...values } = snapshot;
+      if (
+        current.plan !== snapshot.plan ||
+        current.status !== snapshot.status ||
+        current.cancelAtPeriodEnd !== snapshot.cancelAtPeriodEnd
+      )
+        await recordAudit(
+          this.connection,
+          org,
+          null,
+          'billing',
+          'subscription.synchronized',
+          org,
+          session,
+        );
       await this.models.accounts.updateOne(
         { _id: org, syncLease: token },
         {

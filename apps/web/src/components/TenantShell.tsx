@@ -28,6 +28,7 @@ import { authErrorMessage, useAuth } from '../lib/auth';
 import { orgPath, wsPath, useOrganizations, useWorkspaces } from '../lib/tenants';
 import type { Organization, Workspace } from '@orbit/contracts';
 import '../workspace.css';
+import { CommandPalette } from './CommandPalette';
 
 export function TenantState({
   error,
@@ -118,6 +119,19 @@ export function TenantShell({
         </Link>
       ) : null}
       <nav aria-label="Organization navigation" className="tenant-navigation">
+        <NavLink to="/app/search" onClick={() => setMobileOpen(false)}>
+          <Grid2X2 size={17} />
+          Search your work
+        </NavLink>
+        {organization && ['owner', 'admin'].includes(organization.role) ? (
+          <NavLink
+            to={`${orgPath(organization.id)}/administration`}
+            onClick={() => setMobileOpen(false)}
+          >
+            <Settings2 size={17} />
+            Administration
+          </NavLink>
+        ) : null}
         {organization && workspace ? (
           <NavLink
             to={`${wsPath(organization.id, workspace.id)}/projects`}
@@ -219,6 +233,10 @@ export function TenantShell({
           </span>
         </div>
         <nav aria-label="Account navigation" className="tenant-navigation">
+          <Link to="/app/preferences">
+            <UserRound size={17} />
+            Notifications
+          </Link>
           <Link to="/account">
             <UserRound size={17} />
             My account
@@ -272,6 +290,7 @@ export function TenantShell({
             ) : null}
           </div>
           <div className="tenant-topbar-actions">
+            <CommandPalette key={auth.user?.id} organization={organization} />
             <ThemeControl />
             <Button
               variant="ghost"

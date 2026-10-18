@@ -15,6 +15,7 @@ import {
 } from './models.js';
 import { AuthError } from '../auth/errors.js';
 import { enforceResourceLimit, readyBilling } from '../billing/policy.js';
+import { readyAdministration, recordAudit } from '../administration/models.js';
 
 export const missingTenant = () =>
   new AuthError(404, 'RESOURCE_NOT_FOUND', 'This space is unavailable or you do not have access.');
@@ -64,6 +65,7 @@ export class MongoTenantRepository {
   async ready() {
     this.indexes ??= (async () => {
       await readyBilling(this.connection);
+      await readyAdministration(this.connection);
       await Promise.all(Object.values(this.models).map((model) => model.createCollection()));
       await Promise.all(Object.values(this.models).map((model) => model.createIndexes()));
     })().catch((error: unknown) => {
@@ -170,6 +172,15 @@ export class MongoTenantRepository {
         [{ organizationId: id, userId, role: 'owner' }],
         { session },
       );
+      await recordAudit(
+        this.connection,
+        String(id),
+        userId,
+        'organization',
+        'organization.created',
+        String(id),
+        session,
+      );
       return organizationDto(org!.toObject(), member!.toObject());
     });
   }
@@ -188,6 +199,15 @@ export class MongoTenantRepository {
         )
         .lean();
       if (!org) throw conflict();
+      await recordAudit(
+        this.connection,
+        organizationId,
+        userId,
+        'organization',
+        'organization.updated',
+        organizationId,
+        session,
+      );
       return organizationDto(org, member);
     });
   }
@@ -235,6 +255,15 @@ export class MongoTenantRepository {
       await this.models.workspaceMemberships.create([{ organizationId, workspaceId: id, userId }], {
         session,
       });
+      await recordAudit(
+        this.connection,
+        organizationId,
+        userId,
+        'workspace',
+        'workspace.created',
+        String(id),
+        session,
+      );
       return workspaceDto(ws!.toObject(), member);
     });
   }
@@ -267,6 +296,15 @@ export class MongoTenantRepository {
         )
         .lean();
       if (!ws) throw conflict();
+      await recordAudit(
+        this.connection,
+        organizationId,
+        userId,
+        'workspace',
+        'workspace.updated',
+        workspaceId,
+        session,
+      );
       return workspaceDto(ws, member);
     });
   }

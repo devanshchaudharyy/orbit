@@ -89,6 +89,9 @@ try {
   );
   for (const path of [
     '/app',
+    '/app/search?q=launch',
+    '/app/preferences',
+    `/app/organizations/${'a'.repeat(24)}/administration`,
     `/app/organizations/${'a'.repeat(24)}/billing`,
     `/app/organizations/${'a'.repeat(24)}/team`,
     `/app/organizations/${'a'.repeat(24)}/workspaces/${'b'.repeat(24)}/settings`,

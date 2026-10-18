@@ -2,6 +2,7 @@ import { billingDashboardSchema, type CheckoutInput } from '@orbit/contracts';
 import { BillingRepository, billingError, fingerprint } from './repository.js';
 import { stripeUrl, type BillingProvider } from './provider.js';
 import { AuthError } from '../auth/errors.js';
+import { recordAudit } from '../administration/models.js';
 export class BillingService {
   constructor(
     readonly repository: BillingRepository,
@@ -98,6 +99,18 @@ export class BillingService {
       );
     const url = await this.provider.portal(row.customerId, org);
     await this.repository.access(actor, org, true);
+    await this.repository.connection.transaction(async (session) => {
+      await this.repository.access(actor, org, true, session);
+      await recordAudit(
+        this.repository.connection,
+        org,
+        actor,
+        'billing',
+        'portal.created',
+        org,
+        session,
+      );
+    });
     return { url: stripeUrl(url, 'portal') };
   }
   async synchronize(org: string, event?: { id: string; type: string; hash: string }) {

@@ -154,7 +154,12 @@ async function settle(page: Page) {
     );
   });
 }
-async function audit(page: Page, name: string, triggerName?: string) {
+async function audit(
+  page: Page,
+  name: string,
+  triggerName?: string,
+  prepare?: (page: Page) => Promise<void>,
+) {
   for (const theme of ['dark', 'light'])
     for (const width of [375, 768, 1440]) {
       await page.setViewportSize({ width, height: 950 });
@@ -167,6 +172,7 @@ async function audit(page: Page, name: string, triggerName?: string) {
       if (trigger) {
         await trigger.click();
         await expect(page.getByRole('dialog')).toBeVisible();
+        await prepare?.(page);
         for (let index = 0; index < 16; index++) {
           await page.keyboard.press('Tab');
           expect(
@@ -247,6 +253,7 @@ test.afterEach(async () => {
       'billing_operations',
       'billing_events',
       'billing_invoices',
+      'audit_logs',
       'work_preferences',
       'saved_task_filters',
       'project_milestones',
@@ -263,6 +270,8 @@ test.afterEach(async () => {
       await db.collection(collection).deleteMany({ organizationId: { $in: orgs } });
     await db.collection('organizations').deleteMany({ _id: { $in: orgs } });
     await db.collection('billing_accounts').deleteMany({ _id: { $in: orgs } });
+    await db.collection('organization_integrations').deleteMany({ _id: { $in: orgs } });
+    await db.collection('notification_preferences').deleteMany({ _id: { $in: ids } });
     await db.collection('auth_sessions').deleteMany({ userId: { $in: ids } });
     await db.collection('auth_users').deleteMany({ _id: { $in: ids } });
     await clearTestLoopbackLimits(db);

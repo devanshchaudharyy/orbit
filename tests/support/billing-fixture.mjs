@@ -44,7 +44,8 @@ export async function cleanupBillingFixtures(uri, orgs) {
   await database(uri, async (db) => {
     const ids = orgs.map((id) => new ObjectId(String(id)));
     await db.collection('billing_accounts').deleteMany({ _id: { $in: ids } });
-    for (const name of ['billing_operations', 'billing_invoices', 'billing_events'])
+    await db.collection('organization_integrations').deleteMany({ _id: { $in: ids } });
+    for (const name of ['billing_operations', 'billing_invoices', 'billing_events', 'audit_logs'])
       await db.collection(name).deleteMany({ organizationId: { $in: ids } });
   });
 }

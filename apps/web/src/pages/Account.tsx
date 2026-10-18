@@ -477,6 +477,7 @@ export default function Account() {
                   Your account is ready. Create an organization, give your work a space, and make
                   yourself at home.
                 </p>
+                <Link to="/app/preferences">Notification preferences</Link>
               </div>
               <Button asChild variant="outline" size="small">
                 <Link to="/app">

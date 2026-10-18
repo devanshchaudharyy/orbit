@@ -8,6 +8,7 @@ import {
   messageSchema,
   responseMetaSchema,
   analyticsQuerySchema,
+  searchQuerySchema,
   type AuthSession,
   type OrbitUser,
 } from '@orbit/contracts';
@@ -32,7 +33,7 @@ export async function authRequest<T>(
     method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
     data?: unknown;
     csrfToken?: string;
-    scope?: 'auth' | 'organizations';
+    scope?: 'auth' | 'organizations' | 'discovery';
     timeoutMs?: number;
   } = {},
 ): Promise<T> {
@@ -91,7 +92,7 @@ interface AuthContextValue {
     schema: z.ZodType<T>,
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
     data?: unknown,
-    scope?: 'auth' | 'organizations',
+    scope?: 'auth' | 'organizations' | 'discovery',
     timeoutMs?: number,
   ) => Promise<T>;
   acceptSession: (session: AuthSession) => void;
@@ -149,7 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     schema: z.ZodType<T>,
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
     data?: unknown,
-    scope: 'auth' | 'organizations' = 'auth',
+    scope: 'auth' | 'organizations' | 'discovery' = 'auth',
     timeoutMs?: number,
   ): Promise<T> {
     const session =
@@ -225,6 +226,20 @@ export function safeReturnTo(value: string | null): string {
   const target = new URL(value, 'https://orbit.invalid');
   if (target.origin !== 'https://orbit.invalid') return '/onboarding';
   const path = target.pathname;
+  if (path === '/app/search') {
+    const keys = [...target.searchParams.keys()];
+    if (target.hash || keys.includes('cursor') || new Set(keys).size !== keys.length)
+      return '/onboarding';
+    return !target.search ||
+      searchQuerySchema.safeParse(Object.fromEntries(target.searchParams)).success
+      ? `${path}${target.search}`
+      : '/onboarding';
+  }
+  if (
+    path === '/app/preferences' ||
+    /^\/app\/organizations\/[a-f0-9]{24}\/administration$/.test(path)
+  )
+    return target.search || target.hash ? '/onboarding' : path;
   if (/^\/app\/organizations\/[a-f0-9]{24}\/billing$/.test(path) && target.hash)
     return '/onboarding';
   if (value.split(/[?#]/)[0] !== path) return '/onboarding';

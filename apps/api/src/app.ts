@@ -35,6 +35,8 @@ import { BillingRepository } from './modules/billing/repository.js';
 import { BillingService } from './modules/billing/service.js';
 import { createBillingProvider } from './modules/billing/provider.js';
 import { billingRoutes, billingWebhookRoute } from './modules/billing/routes.js';
+import { AdministrationRepository } from './modules/administration/repository.js';
+import { administrationRoutes } from './modules/administration/routes.js';
 
 export function createApp(
   dependencies: Dependencies,
@@ -94,6 +96,10 @@ export function createApp(
   if (auth && tenants && payments)
     app.use('/api/v1/organizations', billingRoutes(auth, tenants, payments));
   if (auth && tenants && projects) {
+    app.use(
+      '/api/v1/discovery',
+      administrationRoutes(auth, tenants, new AdministrationRepository(projects.repository)),
+    );
     const assistant =
       ai ??
       new AIService(

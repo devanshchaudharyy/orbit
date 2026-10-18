@@ -14,10 +14,11 @@ Audit hooks append within local mutations and capture action/actor/resource iden
 
 ## Evidence so far
 
-- Strict types, lint, production builds and 254 unit/component/API tests across 39 files passed. The nine new contract/calendar/direct-link tests cover validation, safe returns, escaping, Unicode line folding, stable identifiers and cursor filter binding.
+- Strict types, lint, production builds and 255 unit/component/API tests across 39 files passed. The ten new contract/calendar/direct-link/UI tests cover validation, safe returns, escaping, Unicode line folding, stable identifiers, cursor filter binding and continuing from an empty page with another cursor after concurrent permission changes.
 - All 23 administration integration checks passed against an owned MongoDB test database with real authentication, CSRF and transactions. Earlier application integration suites passed after adding transactional audit hooks and notification delivery preferences.
 - All seven final browser scenarios passed directly after the attachment-parent correction, in 1.9 minutes. They include 60 axe scans with zero violations in both themes at 375/768/1440, real notification suppression, stale preference drafts, actual calendar-file bytes, audit pagination, private guest/revocation, unavailable retries and search pagination/archive-filter resets. The gallery retains 60 new captures, totaling 693 PNGs.
 - Review found that file search needed to exclude ready attachments whose task/document parent was deleted or foreign. A new regression failed with one leaked result before correction; joins now filter those parents before pagination and recheck their availability before returning. All 23 integration checks passed afterward. An owned earlier browser run was stopped before rebuilding shared contracts; interrupted scenarios are not counted as passed.
+- A focused UI test also reproduced an empty-page edge: final permission checks can remove every result on a page while a next cursor remains. Search now offers truthful continuation feedback and Load more in that state. The full 255-test run passed after correction. The application follow-up supersedes the first publication CI run; final CI must verify the corrected source.
 - Production verification passed 25 route/build checks, including search, notification preferences and administration sign-in returns. No external calendar account or live payment was exercised. The selected integrations require no additional dependency or environment credential.
 
 ## Commands and publication

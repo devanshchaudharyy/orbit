@@ -43,8 +43,25 @@ export function SearchResults({
     return (
       <div className="discovery-empty">
         <Search size={25} />
-        <h2>No matches in your spaces.</h2>
-        <p>Try another name or title, change the type, or include archived projects.</p>
+        <h2>
+          {query.hasNextPage
+            ? 'This page no longer has accessible matches.'
+            : 'No matches in your spaces.'}
+        </h2>
+        <p>
+          {query.hasNextPage
+            ? 'More results may be available. Continue loading or refresh your search.'
+            : 'Try another name or title, change the type, or include archived projects.'}
+        </p>
+        {query.hasNextPage ? (
+          <Button
+            variant="outline"
+            disabled={query.isFetchingNextPage}
+            onClick={() => void query.fetchNextPage()}
+          >
+            {query.isFetchingNextPage ? 'Loading results…' : 'Load more results'}
+          </Button>
+        ) : null}
       </div>
     );
   return (

@@ -21,8 +21,7 @@ assert(
 source.pathname = `/orbit_test_release${token}`;
 const localUri = source.href;
 const email = `release-${token}@example.test`;
-const mailbox = process.env.MAILPIT_URL ?? 'http://127.0.0.1:8025';
-assert(['127.0.0.1', 'localhost', '[::1]'].includes(new URL(mailbox).hostname));
+const mailbox = 'http://127.0.0.1:18026';
 const composeFile = 'infra/release/compose.yaml';
 const releaseEnv = resolve(directory, 'runtime.env');
 const childEnv = {
@@ -55,6 +54,8 @@ const compose = (...args) =>
     ...(existsSync(override) ? ['-f', override] : []),
     '-p',
     `orbit-verify-${token}`,
+    '--profile',
+    'worker',
     ...args,
   ]);
 function containerUrl(value, hostname) {
@@ -81,14 +82,15 @@ try {
     S3_BUCKET: process.env.S3_BUCKET,
     S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,
     S3_SECRET_KEY: process.env.S3_SECRET_KEY,
-    SMTP_HOST: 'mailpit',
-    SMTP_PORT: process.env.SMTP_PORT ?? '1025',
+    SMTP_HOST: 'release-mail',
+    SMTP_PORT: '1025',
     SMTP_SECURE: 'false',
     SMTP_FROM: 'ORBIT <release@orbit.local>',
     LOG_LEVEL: 'warn',
     AI_PROVIDER: 'disabled',
     AI_QUEUE_NAME: queueName,
     BILLING_MODE: 'disabled',
+    NODE_EXTRA_CA_CERTS: '/run/release-ca/fullchain.pem',
   };
   for (const value of Object.values(configuration))
     assert(
@@ -116,7 +118,7 @@ try {
       '-subj',
       '/CN=localhost',
       '-addext',
-      'subjectAltName=DNS:localhost,IP:127.0.0.1',
+      'subjectAltName=DNS:localhost,DNS:release-mail,IP:127.0.0.1',
       '-keyout',
       resolve(directory, 'privkey.pem'),
       '-out',
@@ -130,25 +132,45 @@ try {
   // Join only the existing owned local Compose network; published services stay loopback-only.
   await writeFile(
     override,
-    'services:\n  api:\n    networks:\n      dependencies: {}\n  worker:\n    networks:\n      dependencies: {}\nnetworks:\n  dependencies:\n    external: true\n    name: orbit-local_default\n',
+    `services:
+  api:
+    networks:
+      dependencies: {}
+    volumes:
+      - ${JSON.stringify(resolve(directory, 'fullchain.pem') + ':/run/release-ca/fullchain.pem:ro')}
+    depends_on:
+      release-mail:
+        condition: service_healthy
+  worker:
+    networks:
+      dependencies: {}
+    volumes:
+      - ${JSON.stringify(resolve(directory, 'fullchain.pem') + ':/run/release-ca/fullchain.pem:ro')}
+  release-mail:
+    image: axllent/mailpit:v1.27.10
+    environment:
+      MP_SMTP_TLS_CERT: /run/tls/fullchain.pem
+      MP_SMTP_TLS_KEY: /run/tls/privkey.pem
+      MP_SMTP_REQUIRE_STARTTLS: 'true'
+      MP_SMTP_DISABLE_RDNS: 'true'
+      MP_MAX_MESSAGES: '10'
+    volumes:
+      - ${JSON.stringify(directory + ':/run/tls:ro')}
+    ports: ['127.0.0.1:18026:8025']
+    networks: [release]
+    healthcheck:
+      test: [CMD, /mailpit, readyz]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+networks:
+  dependencies:
+    external: true
+    name: orbit-local_default
+`,
   );
   started = true;
-  await run('docker', [
-    'compose',
-    '-f',
-    composeFile,
-    '-f',
-    override,
-    '-p',
-    `orbit-verify-${token}`,
-    '--profile',
-    'worker',
-    'up',
-    '-d',
-    '--wait',
-    '--wait-timeout',
-    '90',
-  ]);
+  await compose('up', '-d', '--wait', '--wait-timeout', '90');
   await compose(
     'exec',
     '-T',
@@ -226,20 +248,7 @@ try {
         await queue.close();
         redis.disconnect();
       }
-      const response = await fetch(`${mailbox}/api/v1/search?query=${encodeURIComponent(email)}`);
-      assert(response.ok);
-      const data = await response.json();
-      const IDs = (data.messages ?? []).map((message) => message.ID);
-      if (IDs.length)
-        assert(
-          (
-            await fetch(`${mailbox}/api/v1/messages`, {
-              method: 'DELETE',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ IDs }),
-            })
-          ).ok,
-        );
+      // Captured email belonged to the removed, uniquely owned TLS Mailpit container.
     } catch {
       console.error('Owned release fixture cleanup requires attention.');
       process.exitCode = 1;

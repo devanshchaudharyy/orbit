@@ -71,8 +71,13 @@ export async function verifyRelease(origin, mailbox, email, evidenceDirectory) {
         headers: { Origin: origin, 'X-CSRF-Token': session.csrfToken },
         data,
       });
-      assert.equal(res.status(), expected, `Unexpected response to ${method} ${path}`);
-      return (await res.json()).data;
+      const body = await res.json();
+      assert.equal(
+        res.status(),
+        expected,
+        `Unexpected response to ${method} ${path}: HTTP ${res.status()}, code ${body.error?.code ?? 'success'}`,
+      );
+      return body.data;
     }
     const denied = await context.request.post('/api/v1/auth/register', {
       headers: { Origin: origin },

@@ -60,7 +60,9 @@ pnpm exec playwright install chromium
 pnpm test:release
 ```
 
-The last command needs Docker and OpenSSL. It builds both release targets, joins only `orbit-local_default` for test dependencies, creates an isolated `orbit_test_release<uuid>` database and Redis queue, disables AI/billing, creates a one-day synthetic TLS certificate and exercises the real HTTPS stack. It stops only its own containers, drops its unique database/queue and removes only its account's captured mail. Secrets/certificates stay under ignored `.local/release-smoke/`; evidence is under ignored `test-results/release/`. It does not delete or restart the shared infrastructure volumes. This CI smoke check is distinct from public deployment and Windows named-volume restart acceptance.
+The last command needs Docker and OpenSSL and free loopback ports 8443 and 18026. It builds both release targets, joins only `orbit-local_default` for test dependencies, creates an isolated `orbit_test_release<uuid>` database and Redis queue, disables AI/billing, creates a one-day synthetic TLS certificate and exercises the real HTTPS stack. A dedicated pinned Mailpit container requires [STARTTLS](https://mailpit.axllent.org/docs/configuration/smtp/) and captures only this smoke run's email on loopback 18026. The API explicitly trusts the synthetic public certificate through `NODE_EXTRA_CA_CERTS`; production's encrypted SMTP requirement and certificate verification are preserved. No system trust store is changed.
+
+It stops only its own containers, including the worker profile and captured-mail container, then deletes its unique database/queue/private objects. Secrets/certificates stay under ignored `.local/release-smoke/`; evidence is under ignored `test-results/release/`. It does not delete or restart the shared infrastructure volumes. This CI smoke check is distinct from public deployment and Windows named-volume restart acceptance.
 
 ## Health and operations
 

@@ -10,21 +10,7 @@
     />
     <link rel="icon" type="image/svg+xml" href="/orbit.svg" />
     <title>ORBIT — Make space for great work</title>
-    <script>
-      (() => {
-        let preference = 'dark';
-        try {
-          const stored = localStorage.getItem('orbit.theme.v1');
-          if (['dark', 'light', 'system'].includes(stored)) preference = stored;
-        } catch {}
-        document.documentElement.dataset.theme =
-          preference === 'system'
-            ? matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark'
-              : 'light'
-            : preference;
-      })();
-    </script>
+    <script src="/theme.js"></script>
   </head>
   <body>
     <div id="root"></div>

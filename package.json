@@ -54,7 +54,10 @@
     "test:billing:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/billing.ts",
     "test:billing:e2e": "pnpm --filter @orbit/contracts build && node scripts/check-billing-browser.mjs",
     "test:administration:integration": "pnpm --filter @orbit/contracts build && pnpm --filter @orbit/api exec tsx ../../tests/integration/administration.ts",
-    "test:administration:e2e": "playwright test -c playwright.administration.config.ts"
+    "test:administration:e2e": "playwright test -c playwright.administration.config.ts",
+    "check:budgets": "node scripts/check-budgets.mjs",
+    "test:release": "node scripts/check-release.mjs",
+    "audit:production": "pnpm audit --prod --audit-level=low"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",

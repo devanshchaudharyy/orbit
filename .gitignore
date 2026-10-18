@@ -5,6 +5,7 @@ dist/
 infra/.local/
 .local/
 .env.auth-test.local
+.env.production.local
 coverage/
 test-results/
 playwright-report/

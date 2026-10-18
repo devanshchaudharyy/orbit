@@ -1,0 +1,14 @@
+**/node_modules
+**/dist
+.git
+.codex
+.agents
+.local
+.env*
+infra/.local
+test-results
+playwright-report
+coverage
+docs/screenshots
+*.log
+apps/web/public/pdfjs

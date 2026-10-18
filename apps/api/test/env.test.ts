@@ -29,4 +29,26 @@ describe('Environment validation', () => {
       expect((error as Error).message).not.toContain('credential-secret');
     }
   });
+  it('parses explicit proxy addresses while rejecting wildcard and hop-count trust', () => {
+    expect(
+      parseEnvironment({ ...valid, TRUST_PROXY_CIDRS: '127.0.0.1, ::1, 172.30.0.10/32' })
+        .TRUST_PROXY_CIDRS,
+    ).toEqual(['127.0.0.1', '::1', '172.30.0.10/32']);
+    expect(parseEnvironment(valid).TRUST_PROXY_CIDRS).toEqual([]);
+    for (const value of [
+      'true',
+      '1',
+      '*',
+      'loopback',
+      '0.0.0.0/0',
+      '::/0',
+      '10.0.0.1/33',
+      '::1/129',
+      '10.0.0.1/01',
+      'https://proxy.test',
+    ])
+      expect(() => parseEnvironment({ ...valid, TRUST_PROXY_CIDRS: value })).toThrow(
+        'explicit proxy',
+      );
+  });
 });

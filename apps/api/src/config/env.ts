@@ -2,6 +2,7 @@ import { loadEnvFile } from 'node:process';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
+import { validProxyAddress } from '../http/proxy.js';
 
 const localEnv = fileURLToPath(new URL('../../../../.env.local', import.meta.url));
 if (existsSync(localEnv)) loadEnvFile(localEnv);
@@ -11,6 +12,19 @@ export const envSchema = z
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     PORT: z.coerce.number().int().min(1).max(65535).default(4000),
     HOST: z.string().default('127.0.0.1'),
+    TRUST_PROXY_CIDRS: z
+      .string()
+      .default('')
+      .transform((value) =>
+        value
+          .split(',')
+          .map((part) => part.trim())
+          .filter(Boolean),
+      )
+      .refine(
+        (values) => values.length <= 16 && values.every(validProxyAddress),
+        'Use at most 16 explicit proxy IPs/CIDRs; wildcard and zero-prefix trust are forbidden',
+      ),
     LOG_LEVEL: z
       .enum(['silent', 'fatal', 'error', 'warn', 'info', 'debug', 'trace'])
       .default('info'),

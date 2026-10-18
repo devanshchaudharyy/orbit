@@ -7,7 +7,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -18,15 +18,18 @@ jobs:
           node-version: 24.18.0
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm audit:production
       - run: pnpm setup
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
+      - run: pnpm check:budgets
       - run: pnpm infra:up
       - run: pnpm test:integration
       - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:release
       - run: node scripts/check-production.mjs
       - run: pnpm test:e2e
       - run: pnpm test:auth:compose

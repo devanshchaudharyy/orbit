@@ -1,5 +1,7 @@
 # API
 
+Phase 14 hardening applies `Cache-Control: no-store` and request IDs to parser errors and unknown routes as well as authenticated responses. ETags are disabled. JSON bodies are bounded to 64 KiB; compressed bodies and unsupported character encodings receive a safe 415 `ENCODING_UNSUPPORTED` response. Production client IPs are resolved only through explicit validated `TRUST_PROXY_CIDRS`; unconfigured forwarded headers are ignored. [Production proxy and security headers](DEPLOYMENT.md).
+
 ## Phase 11 private AI and workflow APIs
 
 All endpoints below are relative to the authorized organization/workspace/project prefix used by analytics. Cookie sessions, completed verified profiles, explicit workspace/project access, request-ID envelopes and no-store headers apply. Mutations require exact Origin and CSRF. Rate limit: 60 AI API operations per actor/minute, with separate durable generation quotas.

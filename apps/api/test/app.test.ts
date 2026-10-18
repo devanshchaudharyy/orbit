@@ -3,6 +3,7 @@ import request from 'supertest';
 import { healthResponseSchema, apiErrorSchema } from '@orbit/contracts';
 import { createApp } from '../src/app.js';
 import { createLogger } from '../src/infrastructure/logger.js';
+import { gzipSync } from 'node:zlib';
 
 const logger = createLogger('silent');
 function app(mongo = false, redis = false) {
@@ -39,6 +40,8 @@ describe('HTTP foundation', () => {
   it('returns a consistent 404 without disclosing internal details', async () => {
     const result = await request(app()).get('/api/v1/projects').expect(404);
     expect(apiErrorSchema.parse(result.body).error.code).toBe('NOT_FOUND');
+    expect(result.headers['cache-control']).toBe('no-store');
+    expect(result.headers.etag).toBeUndefined();
   });
   it('rejects malformed JSON before request handling', async () => {
     const result = await request(app())
@@ -60,6 +63,45 @@ describe('HTTP foundation', () => {
     expect(result.headers['x-content-type-options']).toBe('nosniff');
     expect(result.headers['content-security-policy']).toBeDefined();
     expect(result.headers['x-powered-by']).toBeUndefined();
+  });
+  it('rejects compressed bodies before decompression with safe, uncached feedback', async () => {
+    const result = await request(app())
+      .post('/api/v1/unknown')
+      .set('Content-Type', 'application/json')
+      .set('Content-Encoding', 'gzip')
+      .send(gzipSync('{"value":"compressed"}'))
+      .expect(415);
+    expect(apiErrorSchema.parse(result.body).error.code).toBe('ENCODING_UNSUPPORTED');
+    expect(result.headers['cache-control']).toBe('no-store');
+    expect(result.body.meta.requestId).toBe(result.headers['x-request-id']);
+  });
+  it('ignores forged forwarded addresses by default and trusts only configured peers', async () => {
+    // Exercise Express's address resolution using the actual application setting.
+    const { default: express } = await import('express');
+    for (const [trusted, expected] of [
+      [[], false],
+      [['127.0.0.1', '::1'], true],
+      [['192.0.2.1'], false],
+    ] as const) {
+      const foundation = createApp(
+        { check: async () => ({ mongo: false, redis: false }), close: async () => {} },
+        logger,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        { trustedProxies: [...trusted] },
+      );
+      const probe = express();
+      probe.set('trust proxy', foundation.get('trust proxy'));
+      probe.get('/', (req, res) => res.json({ ip: req.ip }));
+      const result = await request(probe).get('/').set('X-Forwarded-For', '198.51.100.23');
+      expect(result.body.ip === '198.51.100.23').toBe(expected);
+    }
   });
   it('converts unexpected dependency failures into safe API errors', async () => {
     const failing = createApp(

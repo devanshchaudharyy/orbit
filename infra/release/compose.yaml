@@ -1,0 +1,75 @@
+name: orbit-release
+services:
+  api:
+    image: orbit-api:${ORBIT_RELEASE_TAG:-local}
+    build:
+      context: ../..
+      dockerfile: infra/release/Dockerfile
+      target: api
+    env_file: ${ORBIT_RELEASE_ENV:-../../.env.production.local}
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 4000
+      TRUST_PROXY_CIDRS: 172.30.0.10/32
+    init: true
+    read_only: true
+    tmpfs: [/tmp:size=32m, mode=1777]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    stop_grace_period: 10s
+    mem_limit: 1g
+    cpus: 1.0
+    networks:
+      release:
+        ipv4_address: 172.30.0.20
+  web:
+    image: orbit-web:${ORBIT_RELEASE_TAG:-local}
+    build:
+      context: ../..
+      dockerfile: infra/release/Dockerfile
+      target: web
+    ports: ['127.0.0.1:8443:8443']
+    volumes:
+      - ${ORBIT_TLS_DIRECTORY:?Set ORBIT_TLS_DIRECTORY to the absolute certificate directory}:/run/tls:ro
+    read_only: true
+    tmpfs: [/tmp:size=32m, mode=1777]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    stop_grace_period: 10s
+    mem_limit: 128m
+    cpus: 0.5
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      release:
+        ipv4_address: 172.30.0.10
+  worker:
+    image: orbit-api:${ORBIT_RELEASE_TAG:-local}
+    profiles: [worker]
+    command: [node, dist/worker.js]
+    env_file: ${ORBIT_RELEASE_ENV:-../../.env.production.local}
+    init: true
+    read_only: true
+    tmpfs: [/tmp:size=32m, mode=1777]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    stop_grace_period: 110s
+    mem_limit: 1g
+    cpus: 1.0
+    healthcheck:
+      test: [CMD, node, dist/worker-health.js]
+      interval: 15s
+      timeout: 8s
+      start_period: 30s
+      retries: 3
+    networks: [release]
+networks:
+  release:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

@@ -1,5 +1,7 @@
 # Architecture
 
+Phase 14 adds production packaging and operating procedures without changing the persistent Node/worker or tenant model. The web container terminates HTTPS and proxies same-origin API/WebSocket traffic to one private API instance; the optional worker uses its own recent-dispatch health probe. Build tooling and private configuration are excluded from runtime images. The application shell catches render failures with accessible manual recovery. [Topology and operational limits](DEPLOYMENT.md).
+
 ## Phase 11 AI and worker boundary
 
 The persistent API exposes a lazy private project AI section with eight modes and actor-owned draft history. Contracts, bounded context repository, local provider adapter, generation/application service and HTTP routes remain separate. The AI SDK and provider execute only in Node. Loopback Ollama is optional and disabled by default; no cloud fallback or browser secret is introduced. Context uses current resource authority and excludes account credentials/file bytes/other projects. Dynamic mode/ID schemas and independent validation constrain output; plain-text rendering and explicit user review remain necessary for factual quality.

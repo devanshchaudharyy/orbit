@@ -49,14 +49,19 @@ export function createApp(
   documents?: DocumentService,
   ai?: AIService,
   billing?: BillingService,
+  options: { trustedProxies?: string[] } = {},
 ) {
   const app = express();
   app.disable('x-powered-by');
+  app.disable('etag');
+  app.set('trust proxy', options.trustedProxies?.length ? options.trustedProxies : false);
   app.use(helmet());
   app.use((_req, res, next) => {
     const requestId = randomUUID();
     res.locals.requestId = requestId;
     res.setHeader('X-Request-ID', requestId);
+    // Includes parser failures, unknown endpoints and dependency errors.
+    res.setHeader('Cache-Control', 'no-store');
     const start = performance.now();
     res.on('finish', () =>
       logger.info(
@@ -90,7 +95,7 @@ export function createApp(
         )
       : null);
   if (payments) app.use('/api/v1/webhooks', billingWebhookRoute(payments));
-  app.use(express.json({ limit: '64kb' }));
+  app.use(express.json({ limit: '64kb', inflate: false }));
   app.use('/api/v1/health', healthRoutes(dependencies));
   if (auth) app.use('/api/v1/auth', authRoutes(auth));
   if (auth && tenants && payments)

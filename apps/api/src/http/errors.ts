@@ -31,6 +31,13 @@ export function errorHandler(logger: Logger): ErrorRequestHandler {
       status = 413;
       code = 'PAYLOAD_TOO_LARGE';
       message = 'Request body exceeds the allowed size.';
+    } else if (
+      candidate?.type === 'encoding.unsupported' ||
+      candidate?.type === 'charset.unsupported'
+    ) {
+      status = 415;
+      code = 'ENCODING_UNSUPPORTED';
+      message = 'Send an uncompressed UTF-8 request body.';
     }
     if (status === 500)
       logger.error({ requestId: res.locals.requestId }, 'Unhandled request error');

@@ -50,9 +50,13 @@ const server = createServer(
     documents,
     new AIService(new AIRepository(projects.repository), createAIProvider(env)),
     new BillingService(new BillingRepository(tenants.repository), createBillingProvider(env)),
+    { trustedProxies: env.TRUST_PROXY_CIDRS },
   ),
 );
 const live = createRealtime(server, auth, tenants, collaboration, logger);
+server.requestTimeout = 30_000;
+server.headersTimeout = 15_000;
+server.keepAliveTimeout = 5_000;
 server.listen(env.PORT, env.HOST, () => logger.info({ port: env.PORT }, 'ORBIT API listening'));
 server.on('error', (error) => {
   logger.fatal({ code: (error as NodeJS.ErrnoException).code }, 'API failed to listen');

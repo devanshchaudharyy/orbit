@@ -11,6 +11,7 @@ import './styles.css';
 import { ThemeProvider } from './components/ThemeProvider';
 import { AuthProvider } from './lib/auth';
 import { AuthGate } from './components/AuthLayout';
+import { AppBoundary } from './components/AppBoundary';
 
 const labEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_DESIGN_LAB === 'true';
 const DesignLab = labEnabled ? lazy(() => import('./pages/DesignLab')) : null;
@@ -72,153 +73,157 @@ function Unavailable() {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <QueryClientProvider client={client}>
-      <ThemeProvider>
-        <MotionConfig reducedMotion="user">
-          <TooltipProvider delayDuration={300}>
-            <BrowserRouter>
-              <AuthProvider>
-                <Suspense
-                  fallback={
-                    <main className="unavailable" role="status">
-                      Opening ORBIT…
-                    </main>
-                  }
-                >
-                  <Routes>
-                    {(['directory', 'project', 'task'] as const).map((mode) => (
+    <AppBoundary>
+      <QueryClientProvider client={client}>
+        <ThemeProvider>
+          <MotionConfig reducedMotion="user">
+            <TooltipProvider delayDuration={300}>
+              <BrowserRouter>
+                <AuthProvider>
+                  <Suspense
+                    fallback={
+                      <main className="unavailable" role="status">
+                        Opening ORBIT…
+                      </main>
+                    }
+                  >
+                    <Routes>
+                      {(['directory', 'project', 'task'] as const).map((mode) => (
+                        <Route
+                          key={mode}
+                          path={`/app/organizations/:organizationId/workspaces/:workspaceId/projects${mode !== 'directory' ? '/:projectId' : ''}${mode === 'task' ? '/tasks/:taskId' : ''}`}
+                          element={
+                            <AuthGate requireOnboarding>
+                              <ProjectRoute mode={mode} />
+                            </AuthGate>
+                          }
+                        />
+                      ))}
+                      <Route path="/" element={<Marketing />} />
                       <Route
-                        key={mode}
-                        path={`/app/organizations/:organizationId/workspaces/:workspaceId/projects${mode !== 'directory' ? '/:projectId' : ''}${mode === 'task' ? '/tasks/:taskId' : ''}`}
+                        path="/app/search"
                         element={
                           <AuthGate requireOnboarding>
-                            <ProjectRoute mode={mode} />
+                            <SearchPage />
                           </AuthGate>
                         }
                       />
-                    ))}
-                    <Route path="/" element={<Marketing />} />
-                    <Route
-                      path="/app/search"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <SearchPage />
-                        </AuthGate>
-                      }
-                    />
-                    <Route
-                      path="/app/preferences"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <PreferencesPage />
-                        </AuthGate>
-                      }
-                    />
-                    <Route
-                      path="/app/organizations/:organizationId/administration"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <AdministrationPage />
-                        </AuthGate>
-                      }
-                    />
-                    <Route
-                      path="/app/organizations/:organizationId/billing"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <BillingPage />
-                        </AuthGate>
-                      }
-                    />
-                    <Route path="/auth/register" element={<RegisterPage />} />
-                    <Route path="/auth/login" element={<LoginPage />} />
-                    <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
-                    <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
-                    <Route path="/auth/verify-email" element={<VerifyEmailPage />} />
-                    <Route path="/invitations/accept" element={<InvitationPage />} />
-                    <Route
-                      path="/app/organizations/:organizationId/team"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <TeamPage />
-                        </AuthGate>
-                      }
-                    />
-                    <Route
-                      path="/app"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <Organizations />
-                        </AuthGate>
-                      }
-                    />
-                    <Route
-                      path="/app/organizations/:organizationId"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <OrganizationOverview />
-                        </AuthGate>
-                      }
-                    />
-                    <Route
-                      path="/app/organizations/:organizationId/settings"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <TenantSettings />
-                        </AuthGate>
-                      }
-                    />
-                    <Route
-                      path="/app/organizations/:organizationId/workspaces/:workspaceId"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <WorkspacePage />
-                        </AuthGate>
-                      }
-                    />
-                    <Route
-                      path="/app/organizations/:organizationId/workspaces/:workspaceId/settings"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <TenantSettings workspace />
-                        </AuthGate>
-                      }
-                    />
-                    <Route
-                      path="/onboarding"
-                      element={
-                        <AuthGate>
-                          <Onboarding />
-                        </AuthGate>
-                      }
-                    />
-                    <Route
-                      path="/account"
-                      element={
-                        <AuthGate requireOnboarding>
-                          <Account />
-                        </AuthGate>
-                      }
-                    />
-                    {DesignLab ? <Route path="/dev/design-system" element={<DesignLab />} /> : null}
-                    <Route path="*" element={<Unavailable />} />
-                  </Routes>
-                </Suspense>
-              </AuthProvider>
-            </BrowserRouter>
-            <Toaster
-              position="bottom-right"
-              toastOptions={{
-                style: {
-                  background: 'var(--surface-raised)',
-                  color: 'var(--foreground)',
-                  border: '1px solid var(--border)',
-                },
-              }}
-            />
-          </TooltipProvider>
-        </MotionConfig>
-      </ThemeProvider>
-    </QueryClientProvider>
+                      <Route
+                        path="/app/preferences"
+                        element={
+                          <AuthGate requireOnboarding>
+                            <PreferencesPage />
+                          </AuthGate>
+                        }
+                      />
+                      <Route
+                        path="/app/organizations/:organizationId/administration"
+                        element={
+                          <AuthGate requireOnboarding>
+                            <AdministrationPage />
+                          </AuthGate>
+                        }
+                      />
+                      <Route
+                        path="/app/organizations/:organizationId/billing"
+                        element={
+                          <AuthGate requireOnboarding>
+                            <BillingPage />
+                          </AuthGate>
+                        }
+                      />
+                      <Route path="/auth/register" element={<RegisterPage />} />
+                      <Route path="/auth/login" element={<LoginPage />} />
+                      <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+                      <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+                      <Route path="/auth/verify-email" element={<VerifyEmailPage />} />
+                      <Route path="/invitations/accept" element={<InvitationPage />} />
+                      <Route
+                        path="/app/organizations/:organizationId/team"
+                        element={
+                          <AuthGate requireOnboarding>
+                            <TeamPage />
+                          </AuthGate>
+                        }
+                      />
+                      <Route
+                        path="/app"
+                        element={
+                          <AuthGate requireOnboarding>
+                            <Organizations />
+                          </AuthGate>
+                        }
+                      />
+                      <Route
+                        path="/app/organizations/:organizationId"
+                        element={
+                          <AuthGate requireOnboarding>
+                            <OrganizationOverview />
+                          </AuthGate>
+                        }
+                      />
+                      <Route
+                        path="/app/organizations/:organizationId/settings"
+                        element={
+                          <AuthGate requireOnboarding>
+                            <TenantSettings />
+                          </AuthGate>
+                        }
+                      />
+                      <Route
+                        path="/app/organizations/:organizationId/workspaces/:workspaceId"
+                        element={
+                          <AuthGate requireOnboarding>
+                            <WorkspacePage />
+                          </AuthGate>
+                        }
+                      />
+                      <Route
+                        path="/app/organizations/:organizationId/workspaces/:workspaceId/settings"
+                        element={
+                          <AuthGate requireOnboarding>
+                            <TenantSettings workspace />
+                          </AuthGate>
+                        }
+                      />
+                      <Route
+                        path="/onboarding"
+                        element={
+                          <AuthGate>
+                            <Onboarding />
+                          </AuthGate>
+                        }
+                      />
+                      <Route
+                        path="/account"
+                        element={
+                          <AuthGate requireOnboarding>
+                            <Account />
+                          </AuthGate>
+                        }
+                      />
+                      {DesignLab ? (
+                        <Route path="/dev/design-system" element={<DesignLab />} />
+                      ) : null}
+                      <Route path="*" element={<Unavailable />} />
+                    </Routes>
+                  </Suspense>
+                </AuthProvider>
+              </BrowserRouter>
+              <Toaster
+                position="bottom-right"
+                toastOptions={{
+                  style: {
+                    background: 'var(--surface-raised)',
+                    color: 'var(--foreground)',
+                    border: '1px solid var(--border)',
+                  },
+                }}
+              />
+            </TooltipProvider>
+          </MotionConfig>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </AppBoundary>
   </React.StrictMode>,
 );

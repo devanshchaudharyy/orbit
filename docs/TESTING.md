@@ -1,5 +1,13 @@
 # Testing and local infrastructure
 
+## Phase 14 release verification
+
+After `pnpm build`, run `pnpm check:budgets` to inspect all HTML entry/preload JavaScript (200 KiB gzip total), per-chunk JavaScript (170 KiB gzip), inline-script exclusion and private source maps. These are build regression limits, not hosted performance scores. `pnpm audit:production` checks current published package advisories and fails on any reported severity.
+
+With the owned `orbit-local` Compose services running and Playwright/OpenSSL installed, `pnpm test:release` builds the actual non-root release targets and checks HTTPS through nginx → compiled API → MongoDB/Redis/captured email. It verifies production cookies, CSRF/Origin denial, durable browser-created work, direct refresh, literal text, private routes, theme/keyboard behavior, security/cache/compression headers, excluded lab, and 18 responsive axe scans in both themes. The optional worker starts with AI disabled and a unique queue; readiness checks its real dispatch heartbeat. All test artifacts are synthetic and uniquely scoped; no model is loaded. [Exact setup, cleanup and limits](DEPLOYMENT.md#repeatable-container-smoke-check).
+
+GitHub CI adds production advisory, budget and release-container checks to the full prior integration/browser suite. This is separate from the user-deferred Windows Docker/WSL/named-volume restart acceptance and public hosted acceptance. No backup restore, hosted load test or uptime result is implied. [Current evidence](PHASE14_REPORT.md).
+
 ## Phase 11 AI verification
 
 `pnpm test:ai:integration` runs actual isolated MongoDB/API/transaction checks with an explicit injected test provider. It also exercises the real SDK's HTTP structured-output transport. `pnpm test:ai:e2e` starts owned API 4002/web 5175 plus a loopback deterministic HTTP provider and tests real accounts, task changes and workflow configuration. Occupied ports abort without interrupting other services. Test-provider content is labeled and never counts as live-model verification.

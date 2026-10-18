@@ -15,6 +15,8 @@ export async function verifyRelease(origin, mailbox, email, evidenceDirectory) {
   };
   const artifacts = resolve('test-results/release');
   await mkdir(artifacts, { recursive: true });
+  let activePage;
+  const errors = [];
   try {
     const context = await browser.newContext({
       baseURL: origin,
@@ -22,13 +24,22 @@ export async function verifyRelease(origin, mailbox, email, evidenceDirectory) {
       reducedMotion: 'reduce',
     });
     const page = await context.newPage();
-    const errors = [];
+    activePage = page;
     page.on('pageerror', (error) => errors.push(error.message));
     page.on('console', (message) => {
       if (message.type() === 'error') errors.push(message.text());
     });
     const response = await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Make space for great work.' })).toBeVisible();
+    const navigation = await page.evaluate(() => {
+      const timing = performance.getEntriesByType('navigation')[0];
+      return timing
+        ? {
+            domContentLoadedMs: Math.round(timing.domContentLoadedEventEnd),
+            loadMs: Math.round(timing.loadEventEnd),
+          }
+        : null;
+    });
     const headers = response.headers();
     assert.equal(headers['cache-control'], 'no-store');
     assert.equal(headers['x-content-type-options'], 'nosniff');
@@ -256,7 +267,17 @@ export async function verifyRelease(origin, mailbox, email, evidenceDirectory) {
     pass('18 responsive axe scans: dark/light at 375/768/1440 with reduced motion');
     await page.reload();
     assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
-    await page.keyboard.press('Tab');
+    // Route navigation already focuses main content. Traverse back to the skip
+    // link using the real keyboard sequence before testing its activation.
+    for (let step = 0; step < 40; step++) {
+      if (
+        await page
+          .getByRole('link', { name: 'Skip to content', exact: true })
+          .evaluate((node) => node === document.activeElement)
+      )
+        break;
+      await page.keyboard.press('Shift+Tab');
+    }
     await expect(page.getByRole('link', { name: 'Skip to content', exact: true })).toBeFocused();
     await page.keyboard.press('Enter');
     await expect(page.locator('#workspace-main')).toBeFocused();
@@ -276,25 +297,28 @@ export async function verifyRelease(origin, mailbox, email, evidenceDirectory) {
     assert.deepEqual(errors, [], 'Production browser must have no console/runtime/CSP errors');
     pass('no unexpected console, runtime or CSP errors');
     await context.close();
-    const navigation = await page.evaluate(() => {
-      const timing = performance.getEntriesByType('navigation')[0];
-      return timing
-        ? {
-            domContentLoadedMs: Math.round(timing.domContentLoadedEventEnd),
-            loadMs: Math.round(timing.loadEventEnd),
-          }
-        : null;
-    });
     const report = {
       checks: results.length,
       axeScans: scans,
       screenshots: scans,
-      finalRouteNavigation: navigation,
+      initialRouteNavigation: navigation,
       results,
     };
     await writeFile(resolve(artifacts, 'summary.json'), JSON.stringify(report, null, 2));
     await writeFile(resolve(evidenceDirectory, 'summary.json'), JSON.stringify(report, null, 2));
     console.log(`All ${results.length} release checks passed; ${scans} axe scans and screenshots.`);
+  } catch (error) {
+    await activePage
+      ?.screenshot({ path: resolve(artifacts, 'failure.png'), fullPage: true })
+      .catch(() => {});
+    await writeFile(
+      resolve(artifacts, 'failure.json'),
+      JSON.stringify({ lastPassed: results.at(-1), message: error?.message, errors }, null, 2),
+    );
+    console.error(
+      `Release browser failed after ${results.at(-1) ?? 'startup'}: ${String(error?.message ?? 'unknown failure').split('\n')[0]}`,
+    );
+    throw error;
   } finally {
     await browser.close();
   }

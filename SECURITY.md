@@ -4,7 +4,7 @@ ORBIT is a private development project. Public hosting and provider acceptance r
 
 ## Implemented controls
 
-- Opaque MongoDB-backed sessions, Argon2id passwords, session rotation/expiry/revocation, host-only Secure HttpOnly cookies in production, exact Origin and session-bound CSRF on browser mutations. No browser-stored bearer token.
+- Opaque MongoDB-backed sessions, Argon2id passwords, session rotation/expiry/revocation, host-only Secure HttpOnly cookies in production, exact Origin and session-bound CSRF on browser mutations. No JavaScript-readable bearer token in local/session storage.
 - Server-verified organization/workspace/project/resource grants for reads, writes, downloads, search and Socket.IO subscriptions. Administrative roles do not imply workspace content membership. Transaction fences and original versions protect authorization changes and concurrent writes.
 - Strict contracts, bounded bodies/pages/provider calls, persistent authentication/feature rate limits, safe centralized error envelopes and fresh request IDs. Production proxy trust is explicit; forwarded headers from untrusted peers are ignored. JSON compression is rejected before inflation.
 - Private validated file storage, bounded type/size checks, safe rich-text rendering and isolated local previews. No public object bucket or long-lived bearer download URL. Active content is not executed as a project document.

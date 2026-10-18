@@ -2,11 +2,11 @@
 
 **The Intelligent Work Operating System** — a phased, production-oriented SaaS build.
 
-Phase 14 release hardening and deployment preparation are in progress. [Current report](docs/PHASE14_REPORT.md), [deployment and operations](docs/DEPLOYMENT.md). Public hosting remains pending by user choice.
+Phase 14 release hardening and deployment preparation are complete. [Verification report](docs/PHASE14_REPORT.md), [deployment and operations](docs/DEPLOYMENT.md). Public hosting remains pending by user choice.
 
 Phase 13 adds private global search, keyboard commands, notification controls, organization usage/audit pages and authenticated calendar exports. [Operating guide](docs/ADMINISTRATION.md), [verification report](docs/PHASE13_REPORT.md). Marketing sample content demonstrates the product; actual workspace features use authenticated API/database operations. Test billing is implemented, with live Stripe sandbox acceptance explicitly deferred.
 
-Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–13 are implemented and published. [Phase 13 CI](https://github.com/devanshchaudharyy/orbit/actions/runs/39110060786) passed 255 tests, 320 application integration checks, four infrastructure checks, 25 production checks and 94 browser scenarios without retries. Live Stripe sandbox verification is pending by explicit user choice. Windows Docker/WSL and restart acceptance remain deferred; local fixture and remote Compose evidence are recorded separately. Llama remains unloaded at the user's request; generating another local AI draft loads it again. Phase 14 has not started.
+Source repository: [devanshchaudharyy/orbit](https://github.com/devanshchaudharyy/orbit) (private). Phases 0–14 are implemented within the agreed scope; public hosting is pending. [Phase 14 CI](https://github.com/devanshchaudharyy/orbit/actions/runs/39142186282) passed 259 tests, 320 application integration checks, four infrastructure checks, 26 production frontend checks and 94 browser scenarios without retries. The actual HTTPS release containers also passed 17 browser flow checks, packaging/worker readiness and 18 responsive accessibility scans; recovery adds six more scans, all with zero axe violations. Live Stripe sandbox verification is pending by explicit user choice. Windows Docker/WSL and restart acceptance remain deferred; local fixture and remote Compose evidence are recorded separately. Llama remains unloaded at the user's request; generating another local AI draft loads it again.
 
 ## Search and administration
 

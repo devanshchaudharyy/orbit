@@ -6,6 +6,8 @@ import { readFile, readdir } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { chromium } from '@playwright/test';
 import { createServer } from 'node:net';
+import AxeBuilder from '@axe-core/playwright';
+import { mkdir } from 'node:fs/promises';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const require = createRequire(import.meta.url);
@@ -138,6 +140,48 @@ try {
     );
   }
   console.log('PASS production JavaScript excludes lab content');
+  await mkdir(resolve(root, 'test-results/recovery'), { recursive: true });
+  for (const theme of ['dark', 'light']) {
+    const recoveryContext = await browser.newContext({ reducedMotion: 'reduce' });
+    try {
+      await recoveryContext.addInitScript(
+        (value) => localStorage.setItem('orbit.theme.v1', value),
+        theme,
+      );
+      const recovery = await recoveryContext.newPage();
+      await recovery.route('**/assets/Marketing-*.js', (route) => route.abort());
+      await recovery.goto('http://127.0.0.1:4173/');
+      await recovery
+        .getByRole('heading', { name: 'ORBIT could not open this page', exact: true })
+        .waitFor();
+      assert(await recovery.getByRole('main').evaluate((node) => node === document.activeElement));
+      for (const width of [375, 768, 1440]) {
+        await recovery.setViewportSize({ width, height: 950 });
+        assert(await recovery.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+        const scan = await new AxeBuilder({ page: recovery })
+          .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+          .analyze();
+        assert.deepEqual(
+          scan.violations.map((item) => item.id),
+          [],
+        );
+        await recovery.screenshot({
+          path: resolve(root, `test-results/recovery/recovery-${theme}-${width}.png`),
+          fullPage: true,
+        });
+      }
+      await recovery.unroute('**/assets/Marketing-*.js');
+      await recovery.getByRole('button', { name: 'Reload page', exact: true }).click();
+      await recovery
+        .getByRole('heading', { name: 'Make space for great work.', exact: true })
+        .waitFor();
+    } finally {
+      await recoveryContext.close();
+    }
+  }
+  console.log(
+    'PASS production failed route chunk: focused recovery, six responsive axe scans, deliberate reload',
+  );
 } finally {
   if (browser) await browser.close();
   server.kill('SIGTERM');

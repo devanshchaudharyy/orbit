@@ -14,7 +14,7 @@ services:
       TRUST_PROXY_CIDRS: 172.30.0.10/32
     init: true
     read_only: true
-    tmpfs: [/tmp:size=32m, mode=1777]
+    tmpfs: ['/tmp:size=32m,mode=1777']
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     restart: unless-stopped
@@ -34,7 +34,7 @@ services:
     volumes:
       - ${ORBIT_TLS_DIRECTORY:?Set ORBIT_TLS_DIRECTORY to the absolute certificate directory}:/run/tls:ro
     read_only: true
-    tmpfs: [/tmp:size=32m, mode=1777]
+    tmpfs: ['/tmp:size=32m,mode=1777']
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     restart: unless-stopped
@@ -54,7 +54,7 @@ services:
     env_file: ${ORBIT_RELEASE_ENV:-../../.env.production.local}
     init: true
     read_only: true
-    tmpfs: [/tmp:size=32m, mode=1777]
+    tmpfs: ['/tmp:size=32m,mode=1777']
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     restart: unless-stopped

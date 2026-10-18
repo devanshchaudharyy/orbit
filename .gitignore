@@ -6,6 +6,8 @@ infra/.local/
 .local/
 .env.auth-test.local
 .env.production.local
+*.pem
+*.key
 coverage/
 test-results/
 playwright-report/

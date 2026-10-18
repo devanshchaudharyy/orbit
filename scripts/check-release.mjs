@@ -162,6 +162,10 @@ try {
   console.log('PASS release non-root API/web images and worker readiness');
   await verifyRelease('https://localhost:8443', mailbox, email, directory);
 } catch (error) {
+  if (started) {
+    await compose('ps', '--all').catch(() => {});
+    await compose('logs', '--no-color', '--tail', '20', 'web').catch(() => {});
+  }
   // Process/driver errors can contain configuration. Keep the report content-free.
   console.error(
     error instanceof assert.AssertionError ||

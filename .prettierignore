@@ -8,4 +8,5 @@ infra/.local
 .env.local
 .local
 .env.auth-test.local
+.env.production.local
 apps/web/public/pdfjs

@@ -5,6 +5,8 @@
 .agents
 .local
 .env*
+**/*.pem
+**/*.key
 infra/.local
 test-results
 playwright-report

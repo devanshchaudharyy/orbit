@@ -31,7 +31,7 @@ export function CommandPalette({ organization }: { organization: Organization | 
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         if (!open && document.querySelector('[role="dialog"][data-state="open"]')) return;
         event.preventDefault();
-        previous.current = document.activeElement as HTMLElement;
+        if (!open) previous.current = document.activeElement as HTMLElement;
         setOpen(!open);
         if (open) {
           setValue('');

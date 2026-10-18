@@ -149,6 +149,12 @@ test('real global search, direct links, filters and keyboard command palette acr
   ).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(trigger).toBeFocused();
+  await page.keyboard.press('Control+k');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByLabel('Search your work', { exact: true })).toBeFocused();
+  await page.keyboard.press('Control+k');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(trigger).toBeFocused();
   expect(errors).toEqual([]);
 });
 test('notification controls persist, suppress actual inbox entries and preserve stale drafts until explicit reload', async ({

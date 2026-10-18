@@ -248,7 +248,22 @@ export async function verifyRelease(origin, mailbox, email, evidenceDirectory) {
               exact: true,
             })
             .click();
+          await page.mouse.move(0, 0);
+          if (name === 'marketing') {
+            await expect(page.locator('.hero-copy > div')).toHaveCSS('opacity', '1');
+            await expect(page.locator('#product')).toHaveCSS('opacity', '1');
+          }
           await page.evaluate(() => document.fonts.ready);
+          await page.evaluate(async () => {
+            await Promise.all(
+              document
+                .getAnimations()
+                .filter(
+                  (animation) => animation.effect?.getComputedTiming().iterations !== Infinity,
+                )
+                .map((animation) => animation.finished.catch(() => {})),
+            );
+          });
           assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
           const scan = await new AxeBuilder({ page })
             .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
